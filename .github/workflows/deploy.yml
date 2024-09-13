@@ -1,0 +1,34 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code in your repository
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Specify your required Node.js version
+
+      # Step 3: Install dependencies and build the Vite app
+      - name: Install dependencies and build the app
+        run: |
+          yarn install
+          yarn build
+
+      # Step 4: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist  # This is where Vite outputs the build files
