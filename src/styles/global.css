@@ -1,0 +1,226 @@
+/*
+ * P0 foundation — global stylesheet + design tokens (Tailwind 4, CSS-config).
+ *
+ * THE single source of design tokens. The only other file allowed to mention
+ * tokens is src/tokens.ts, which re-exports them as var() strings.
+ * No literal hex / font / shadow values anywhere else in the repo.
+ * Spec: design_handoff_portfolio/README.md §Design Tokens.
+ */
+@import "tailwindcss";
+
+/* Fonts (self-hosted via fontsource) — weights per README §Typography */
+@import "@fontsource/archivo-black"; /* 400 file = the 900-weight display face */
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/jetbrains-mono/800.css";
+@import "@fontsource/caveat/400.css";
+@import "@fontsource/caveat/600.css";
+@import "@fontsource/caveat/700.css";
+
+@theme {
+  /* ── Colors — README §Design Tokens ─────────────────────── */
+  --color-cream: #f5f1e8;
+  --color-ink: #1e293b;
+  --color-red: #dc2626;
+  --color-cyan: #0891b2;
+  --color-yellow: #fde047;
+  --color-success: #22c55e;
+  --color-cream-warm: #fef7ed; /* Now / Resume slab background */
+  --color-cork: #f5ead0; /* Now cork-board graph paper */
+
+  /* Sticky-note palette (Now section) */
+  --color-sticky-yellow: #fde047;
+  --color-sticky-mint: #a7f3d0;
+  --color-sticky-red: #fecaca;
+  --color-sticky-sky: #bae6fd;
+  --color-sticky-lavender: #ddd6fe;
+  --color-sticky-orange: #fdba74;
+
+  /* Confetti palette (rave-mode easter egg) */
+  --color-confetti-1: #dc2626;
+  --color-confetti-2: #0891b2;
+  --color-confetti-3: #fde047;
+  --color-confetti-4: #a7f3d0;
+  --color-confetti-5: #ddd6fe;
+  --color-confetti-6: #fdba74;
+
+  /* Support greys (placeholder stripes, range track) — from the prototype */
+  --color-slate: #475569;
+  --color-slate-mid: #94a3b8;
+  --color-slate-light: #cbd5e1;
+
+  /* ── Fonts ──────────────────────────────────────────────── */
+  --font-display: "Archivo Black", sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-hand: "Caveat", cursive;
+
+  /* ── Shadows — all hard, ZERO blur (trap 7) ─────────────── */
+  --shadow-card: 6px 6px 0 #1e293b;
+  --shadow-pressed: 2px 2px 0 #1e293b;
+  --shadow-lifted: 8px 8px 0 #1e293b;
+  --shadow-card-hover: 12px 12px 0 #1e293b;
+  --shadow-slab: 14px 14px 0 #1e293b;
+  --shadow-sticky: 8px 8px 0 rgba(30, 41, 59, 0.18);
+  --shadow-sticky-drag: 14px 14px 0 rgba(30, 41, 59, 0.18);
+
+  /* ── Fluid type scale ───────────────────────────────────────────────
+     Preferred value = design-px / 1440 × 100vw, so 1440px renders exactly
+     at spec and larger viewports cap at the design size. */
+  --text-mega: clamp(72px, 15.28vw, 220px);
+  --text-mega--line-height: 0.85;
+  --text-mega--letter-spacing: -0.04em;
+  --text-section: clamp(56px, 7.64vw, 110px);
+  --text-section--line-height: 0.85;
+  --text-section--letter-spacing: -0.04em;
+  --text-sub: clamp(48px, 6.67vw, 96px);
+  --text-sub--line-height: 0.9;
+  --text-sub--letter-spacing: -0.03em;
+  --text-project: clamp(40px, 5.56vw, 80px);
+  --text-project--line-height: 0.85;
+  --text-project--letter-spacing: -0.03em;
+  --text-card-title: clamp(24px, 2.22vw, 32px);
+  --text-card-title--line-height: 0.95;
+  --text-card-title--letter-spacing: -0.02em;
+  --text-lead: clamp(20px, 1.81vw, 26px);
+  --text-lead--line-height: 1.35;
+  --text-body: clamp(18px, 1.53vw, 22px);
+  --text-body--line-height: 1.45;
+  --text-small: clamp(16px, 1.25vw, 18px);
+  --text-small--line-height: 1.4;
+  --text-stat: clamp(28px, 2.64vw, 38px);
+  --text-stat--line-height: 1;
+  /* Contact headline (200px in the prototype; not in the README table) */
+  --text-contact: clamp(68px, 13.89vw, 200px);
+  --text-contact--line-height: 0.85;
+  --text-contact--letter-spacing: -0.04em;
+
+  /* ── Spacing — README §Spacing ──────────────────────────── */
+  --spacing-slab-x: clamp(20px, 5.5vw, 80px);
+  --spacing-slab-y: 90px;
+  --spacing-slab-top-deep: 110px; /* sections after the hero */
+}
+
+/* ── Keyframes — copied from Portfolio.html ─────────────────── */
+@keyframes marq {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+@keyframes marqV {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-33.333%);
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.5;
+  }
+}
+@keyframes fall {
+  0% {
+    transform: translateY(-30px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(7000px) rotate(720deg);
+    opacity: 1;
+  }
+}
+@keyframes jitter {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  25% {
+    transform: translate(-1px, 1px) rotate(-0.5deg);
+  }
+  50% {
+    transform: translate(1px, -1px) rotate(0.5deg);
+  }
+  75% {
+    transform: translate(-1px, -1px) rotate(-0.3deg);
+  }
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--color-red);
+  color: var(--color-cream);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Range input styling — from Portfolio.html (Hue Democracy slider) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--color-slate);
+  border-radius: 999px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--color-cream);
+  border: 3px solid var(--color-ink);
+  border-radius: 50%;
+  cursor: none;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--color-cream);
+  border: 3px solid var(--color-ink);
+  border-radius: 50%;
+  cursor: none;
+}
+
+/* ── Reduced motion — marquee (marq/marqV), pulse and fall must never
+     run; jumping every CSS animation to its final frame freezes marquees
+     (tripled content still fills the strip) and drops confetti off-screen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+  }
+}

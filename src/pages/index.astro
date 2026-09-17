@@ -1,0 +1,60 @@
+---
+import "../styles/global.css";
+import archivoBlackWoff2 from "@fontsource/archivo-black/files/archivo-black-latin-400-normal.woff2?url";
+import Portfolio from "../portfolio/Portfolio";
+
+const site = "https://theshakeabhi.github.io";
+const title = "Abhishek Chandrasenan — Senior Frontend Engineer";
+const description =
+  "Senior frontend engineer in Bengaluru shipping payments products at EximPe. Work, writing, playground experiments and a portfolio with entirely too many easter eggs.";
+const ogImage = `${site}/og.png`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={`${site}/`} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Hero display face — preload to avoid FOUT on the mega headline -->
+    <link
+      rel="preload"
+      href={archivoBlackWoff2}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Open Graph / Twitter (og.png is added by P8) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`${site}/`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      is:inline
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-X8L7GJY3D8"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-X8L7GJY3D8");
+    </script>
+  </head>
+  <body>
+    <Portfolio client:load />
+  </body>
+</html>
