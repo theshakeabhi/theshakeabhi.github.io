@@ -156,7 +156,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               borderRadius: "50%",
               background: success,
               boxShadow: `0 0 0 3px color-mix(in srgb, ${success} 25%, transparent)`,
-              animation: "pulse 2s infinite",
+              animation: reducedMotion ? "none" : "pulse 2s infinite",
             }}
           />
           <span>AVAILABLE FOR HIRE</span>

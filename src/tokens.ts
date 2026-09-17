@@ -9,6 +9,7 @@
 /* ── Colors ─────────────────────────────────────────────────── */
 export const cream = "var(--color-cream)";
 export const ink = "var(--color-ink)";
+export const inkDeep = "var(--color-ink-deep)";
 export const red = "var(--color-red)";
 export const cyan = "var(--color-cyan)";
 export const yellow = "var(--color-yellow)";

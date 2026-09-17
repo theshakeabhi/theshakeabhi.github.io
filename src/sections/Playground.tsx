@@ -14,6 +14,7 @@ import {
   cream,
   cyan,
   ink,
+  inkDeep,
   red,
   yellow,
   slateLight,
@@ -21,11 +22,6 @@ import {
   fonts,
   text,
 } from "../tokens";
-
-// The prototype's card background is #0f172a — one shade deeper than ink,
-// which has no token. Approximated by darkening ink; asked P0 for a
-// --color-ink-deep token in HANDOFF_NOTES.md.
-const inkDeep = `color-mix(in srgb, ${ink} 65%, black)`;
 
 const cardStyle: CSSProperties = {
   border: `4px solid ${cream}`,
