@@ -2,12 +2,15 @@
 import "../styles/global.css";
 import archivoBlackWoff2 from "@fontsource/archivo-black/files/archivo-black-latin-400-normal.woff2?url";
 import Portfolio from "../portfolio/Portfolio";
+import CookieConsent from "../components/chrome/CookieConsent";
 
 const site = "https://theshakeabhi.github.io";
 const title = "Abhishek Chandrasenan — Senior Frontend Engineer";
 const description =
-  "Senior frontend engineer in Bengaluru shipping payments products at EximPe. Work, writing, playground experiments and a portfolio with entirely too many easter eggs.";
+  "Senior frontend engineer in Bengaluru shipping payments products at EximPe. Work, writing, playground experiments and entirely too many easter eggs.";
 const ogImage = `${site}/og.png`;
+const ogImageAlt =
+  "ABHISHEK CHANDRASENAN — senior frontend engineer, Bengaluru. Brutalist mega type on cream with a red accent block.";
 ---
 
 <!doctype html>
@@ -19,6 +22,10 @@ const ogImage = `${site}/og.png`;
     <meta name="description" content={description} />
     <link rel="canonical" href={`${site}/`} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- --color-cream; a meta tag cannot reference CSS custom properties -->
+    <meta name="theme-color" content="#f5f1e8" />
 
     <!-- Hero display face — preload to avoid FOUT on the mega headline -->
     <link
@@ -29,32 +36,50 @@ const ogImage = `${site}/og.png`;
       crossorigin
     />
 
-    <!-- Open Graph / Twitter (og.png is added by P8) -->
+    <!-- Open Graph / Twitter -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={`${site}/`} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
+    <!-- Google Consent Mode v2 — defaults DENIED before gtag.js loads.
+         The CookieConsent island upgrades analytics_storage after opt-in
+         and replays a stored "accepted" on later visits. -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+        wait_for_update: 0,
+      });
+    </script>
     <!-- Google tag (gtag.js) -->
     <script
       is:inline
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-X8L7GJY3D8"></script>
     <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
       gtag("js", new Date());
       gtag("config", "G-X8L7GJY3D8");
     </script>
   </head>
   <body>
     <Portfolio client:load />
+    <!-- Own island, outside PointerProvider — keeps the normal OS cursor -->
+    <CookieConsent client:idle />
   </body>
 </html>

@@ -1,0 +1,167 @@
+---
+// P8 — /privacy: plain-language privacy policy in the house brutalist
+// style. Static Astro page, no React island; token utilities only.
+import "../styles/global.css";
+
+const site = "https://theshakeabhi.github.io";
+const title = "Privacy — Abhishek Chandrasenan";
+const description =
+  "Privacy policy: a static portfolio on GitHub Pages, Google Analytics only after consent, device-only localStorage and no other tracking.";
+const updated = "September 17, 2026";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={`${site}/privacy/`} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body class="bg-cream text-ink font-body">
+    <main
+      class="relative mx-auto min-h-screen max-w-[880px]"
+      style="padding: 110px var(--spacing-slab-x) 90px;"
+    >
+      <div
+        class="font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
+      >
+        11 // PRIVACY
+      </div>
+
+      <a
+        href="/"
+        class="font-mono border-ink bg-cream text-ink shadow-card hover:bg-ink hover:text-cream inline-block border-[3px] px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em] no-underline"
+      >
+        ← BACK
+      </a>
+
+      <h1 class="font-display text-section mt-10 mb-4 uppercase">
+        The fine<br /><span class="text-red">print.</span>
+      </h1>
+      <p
+        class="font-mono text-[13px] font-bold tracking-[0.15em] uppercase"
+        style="margin-bottom: 56px;"
+      >
+        Last updated — {updated}
+      </p>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-red mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          01 — WHAT THIS SITE IS
+        </h2>
+        <p class="text-body m-0 font-medium">
+          This is a personal portfolio — a static site built with Astro and
+          served from GitHub Pages. There is no backend, no database, no
+          accounts and no forms. When you load a page, GitHub Pages (the host)
+          may record standard server logs such as your IP address and browser
+          type; that logging is governed by&#32;<a
+            href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+            rel="noopener noreferrer"
+            class="decoration-red font-semibold underline decoration-[3px] underline-offset-4"
+            >GitHub's privacy statement</a
+          >, not by me.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-red mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          02 — ANALYTICS (ONLY IF YOU SAY YES)
+        </h2>
+        <p class="text-body m-0 mb-4 font-medium">
+          I use Google Analytics 4 (property&#32;<code
+            class="font-mono text-[0.85em] font-bold">G-X8L7GJY3D8</code>)
+          to see roughly how many people visit and which sections they read.
+          Analytics consent defaults to <em>denied</em> — Google Analytics sets
+          no cookies and stores no identifiers unless you press ACCEPT on the
+          cookie banner. If you decline (or just ignore the banner), it stays
+          off.
+        </p>
+        <p class="text-body m-0 font-medium">
+          If you accept, Google Analytics collects approximate location
+          (city-level, from IP), device and browser type, pages viewed and
+          time on page. I see aggregated statistics only — nothing that
+          identifies you personally. You can change your mind by clearing this
+          site's data in your browser, which brings the banner back.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-red mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          03 — WHAT LIVES IN YOUR BROWSER
+        </h2>
+        <p class="text-body m-0 mb-5 font-medium">
+          The site keeps a few things in your browser's&#32;<code
+            class="font-mono text-[0.85em] font-bold">localStorage</code>.
+          All of it stays on your device — it is never transmitted anywhere:
+        </p>
+        <ul class="m-0 grid list-none gap-4 p-0">
+          <li class="border-ink shadow-card bg-cream border-[3px] p-4">
+            <span class="font-mono text-[13px] font-extrabold tracking-[0.1em]"
+              >sticky_v2_*</span
+            >
+            <span class="text-small block font-medium"
+              >Where you dragged the sticky notes on the NOW board.</span
+            >
+          </li>
+          <li class="border-ink shadow-card bg-cream border-[3px] p-4">
+            <span class="font-mono text-[13px] font-extrabold tracking-[0.1em]"
+              >portfolio.tweaks</span
+            >
+            <span class="text-small block font-medium"
+              >Your preferences: sound effects, custom cursor, magnetic
+              buttons.</span
+            >
+          </li>
+          <li class="border-ink shadow-card bg-cream border-[3px] p-4">
+            <span class="font-mono text-[13px] font-extrabold tracking-[0.1em]"
+              >portfolio.consent</span
+            >
+            <span class="text-small block font-medium"
+              >Whether you accepted or declined analytics cookies.</span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-red mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          04 — WHAT I DON'T DO
+        </h2>
+        <p class="text-body m-0 font-medium">
+          No advertising, no ad cookies, no fingerprinting, no social-media
+          pixels, no selling or sharing of data, no other tracking of any kind.
+          The sound effects are synthesized in your browser — nothing is
+          fetched, and nothing about you is recorded when they play.
+        </p>
+      </section>
+
+      <section>
+        <h2
+          class="font-mono text-red mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          05 — QUESTIONS
+        </h2>
+        <p class="text-body m-0 font-medium">
+          Email me at&#32;<a
+            href="mailto:theshakeabhi@gmail.com"
+            class="decoration-red font-semibold underline decoration-[3px] underline-offset-4"
+            >theshakeabhi@gmail.com</a
+          > — happy to explain or delete anything (though, as above, your data
+          lives in your browser, so you hold the delete key).
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
