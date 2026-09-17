@@ -28,10 +28,10 @@ const LINKEDIN = "https://www.linkedin.com/in/theshakeabhi/";
 const tapeRed = `color-mix(in srgb, ${red} 55%, transparent)`;
 
 const PAPER_SECTIONS = [
-  "EXIMPE · LEAD · 2022→",
+  "FANPROSTUDIO AI · LEAD · 2026→",
+  "EXIMPE · LEAD · 2022→26",
   "SELECTED WINS",
   "STACK",
-  "EDUCATION",
 ];
 
 export default function Resume() {

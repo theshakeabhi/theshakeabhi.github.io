@@ -63,7 +63,7 @@ export const shadows = {
 export const borders = {
   /** Default 3px ink border used on nearly everything. */
   default: "3px solid var(--color-ink)",
-  /** 4px ink border — big EximPe card, section dividers. */
+  /** 4px ink border — the two mega work cards, section dividers. */
   thick: "4px solid var(--color-ink)",
 } as const;
 

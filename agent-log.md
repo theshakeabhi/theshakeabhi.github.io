@@ -1033,3 +1033,40 @@ gap={10} />` absolutely positioned next to the FOUNDING ENERGY burst
 - Lighthouse `errors-in-console` clean → no hydration warnings (QA-1/QA-2
   SSR rule holds).
 - Preview server confirmed killed (port 4321 closed, no astro processes).
+
+## Career-narrative update (FanProStudio AI) · 2026-09-18T01:40:00+05:30
+
+Lead-directed copy update on `feat/handoff-redesign` (PR #1): present role
+moves to FanProStudio AI (Lead Frontend Developer, JAN '26 → NOW, AI media
+generation); EximPe becomes previous (MAY '22 → APR '26). No git writes.
+
+- **Files touched**: `src/sections/Work.tsx` (new FanProStudio AI mega-card
+  above EximPe — 4px ink border, `--shadow-slab`, opposite ±0.35deg
+  rotations, LEAD FRONTEND / CURRENT / AI MEDIA stamps, FANPRO + red
+  STUDIO AI title, 5 descriptive bullets, `PlaceholderImg` right column, IN
+  PRODUCTION rubber stamp moved here; EximPe card gets SHIPPED & SCALED
+  stamp, "4 YEARS" stamp, meta → MAY '22 → APR '26; header stamp → "TWO BIG
+  ONES · THREE WARM-UPS"), `src/sections/Hero.tsx` (lead paragraph now
+  FanPro present-tense; marquee FINTECH → AI MEDIA), `src/sections/About.tsx`
+  (para 1 reworked: yellow Hover highlight moves to FanProStudio AI, EximPe
+  past tense; para 2 + stat grid untouched per instruction),
+  `src/sections/Resume.tsx` (paper rows: FANPROSTUDIO AI · LEAD · 2026→ /
+  EXIMPE · LEAD · 2022→26 / SELECTED WINS / STACK — still 4 rows),
+  `src/pages/index.astro` (meta/og/twitter description → FanPro, 149 chars),
+  `src/portfolio/Portfolio.tsx` (divider "FOUR YEARS OF SHIPPING" → "SEVEN
+  YEARS OF SHIPPING", consistent with the Hero "Senior · 7 yrs" sticker).
+- **Decisions/deviations**: no invented FanPro metrics — bullets are
+  descriptive only, right column is a placeholder with no KPI tiles; all
+  EximPe metrics (50K+ MAUs, 25→85%, −50%, −60%, +30%) stay on the EximPe
+  card; About stat grid + hero "50K+ MAUs" marquee item kept as career
+  stats. Kept About para 2 ("I run a team of two…") verbatim per
+  instruction — flagged for lead review since it is present tense and
+  EximPe-era. EximPe card keeps its FINTECH stamp (domain label on a dated
+  role card, not a present-tense claim). Portfolio.tsx/index.astro are
+  P7/P8-owned — edited under the lead's explicit sweep instruction.
+- **Self-check**: `npx -y yarn@1 build` — astro check 0 errors, 4 pages
+  built; `npx -y yarn@1 lint` — clean. dist/index.html: FANPRO present,
+  `MAY '22 → APR '26` rendered, "4 YRS · CURRENT" absent, IN PRODUCTION
+  appears once (inside the FanPro card, offset-ordered before the EximPe
+  card), SHIPPED & SCALED once, "payments products" absent. No dev servers
+  started.

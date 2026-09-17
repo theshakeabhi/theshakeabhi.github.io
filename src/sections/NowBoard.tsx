@@ -72,7 +72,7 @@ const NOTES: NowNote[] = [
     w: 230,
     h: 200,
     label: "Mentoring →",
-    body: '2 juniors. We do weekly "code postmortems" — no shame, all signal.',
+    body: 'Weekly "code postmortems" — no shame, all signal.',
   },
   {
     id: "n4",

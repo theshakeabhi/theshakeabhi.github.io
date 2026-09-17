@@ -1,8 +1,10 @@
 // P5 — Work slab (portfolio-1.jsx 288–463, README §Section Highlights).
-// The EximPe mega-card (4px border, 14px slab shadow, IN PRODUCTION rubber
-// stamp, KPI tiles, 50K+ MAUs burst) followed by the three BEFORE-EXIMPE
-// tilt cards (SAWO Labs / QBurst / Zomato) with metric stamps per bullet.
-// Copy and metrics are FINAL (AGENT_TEAM_HANDOFF §P5).
+// Two mega-cards (4px border, 14px slab shadow, slight opposite rotations):
+// FanProStudio AI (current — IN PRODUCTION rubber stamp, descriptive
+// bullets, no invented metrics) above EximPe (SHIPPED & SCALED stamp, KPI
+// tiles, 50K+ MAUs burst), followed by the three BEFORE-EXIMPE tilt cards
+// (SAWO Labs / QBurst / Zomato) with metric stamps per bullet.
+// EximPe copy and metrics are FINAL (AGENT_TEAM_HANDOFF §P5).
 import Slab from "../components/primitives/Slab";
 import Stamp from "../components/primitives/Stamp";
 import Burst from "../components/primitives/Burst";
@@ -29,6 +31,30 @@ const WINS = [
   { metric: "−60%", kicker: "production incidents YoY", color: ink },
   { metric: "+30%", kicker: "speedup on revenue flows", color: red },
 ] as const;
+
+// Descriptive only — no metrics until there are real ones to show.
+const FANPRO_BULLETS: [string, string][] = [
+  [
+    "Own the frontend for the generation studio — the surface where AI influencers and on-brand UGC get made: images, image edits, short videos, trend recreations.",
+    red,
+  ],
+  [
+    "Build media-heavy interfaces that stay honest about state — queued, generating, failed, done — across image and video pipelines.",
+    cyan,
+  ],
+  [
+    "Ship prompt-to-preview flows that keep creators in the loop while the models do the heavy lifting.",
+    ink,
+  ],
+  [
+    "Run the design system so every new surface lands on-brand by default.",
+    red,
+  ],
+  [
+    "Hold the review bar — quality, a11y, and performance are part of done, not a follow-up ticket.",
+    cyan,
+  ],
+];
 
 const EXIMPE_BULLETS: [string, string][] = [
   [
@@ -231,11 +257,11 @@ export default function Work() {
         </h2>
         {/* Ink, not cyan — 14px mono fails WCAG contrast on cream in cyan */}
         <Stamp color={ink} rotate={4}>
-          ONE BIG ONE · THREE WARM-UPS · ALL THE OWNERSHIP
+          TWO BIG ONES · THREE WARM-UPS · ALL THE OWNERSHIP
         </Stamp>
       </div>
 
-      {/* Big project card — EximPe */}
+      {/* Big project card — FanProStudio AI (current) */}
       <div
         style={{
           position: "relative",
@@ -243,6 +269,8 @@ export default function Work() {
           background: cream,
           boxShadow: shadows.slab,
           padding: "clamp(24px, 2.8vw, 40px) clamp(20px, 2.9vw, 42px)",
+          transform: "rotate(-0.35deg)",
+          marginBottom: 70,
         }}
       >
         <RubberStamp
@@ -262,9 +290,135 @@ export default function Work() {
                 flexWrap: "wrap",
               }}
             >
+              <Stamp rotate={-3}>LEAD FRONTEND</Stamp>
+              <Stamp color={cyan} rotate={2}>
+                CURRENT
+              </Stamp>
+              <Stamp color={ink} rotate={-1}>
+                AI MEDIA
+              </Stamp>
+            </div>
+            <h3
+              style={{
+                fontFamily: fonts.display,
+                fontWeight: 900,
+                fontSize: text.project,
+                lineHeight: "var(--text-project--line-height)",
+                letterSpacing: "var(--text-project--letter-spacing)",
+                color: ink,
+                margin: "14px 0 6px",
+              }}
+            >
+              FANPRO
+              <br />
+              <span style={{ color: red }}>STUDIO&nbsp;AI</span>
+            </h3>
+            <div
+              style={{
+                fontFamily: fonts.mono,
+                fontWeight: 700,
+                fontSize: 16,
+                color: ink,
+                letterSpacing: "0.1em",
+                marginBottom: 22,
+              }}
+            >
+              LEAD FRONTEND DEVELOPER · JAN '26 → NOW
+            </div>
+            <ul
+              style={{
+                listStyle: "none",
+                padding: 0,
+                margin: 0,
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+              }}
+            >
+              {FANPRO_BULLETS.map(([copy, c], i) => (
+                <li
+                  key={i}
+                  style={{ display: "flex", gap: 14, alignItems: "flex-start" }}
+                >
+                  <span
+                    aria-hidden='true'
+                    style={{
+                      flexShrink: 0,
+                      width: 22,
+                      height: 22,
+                      marginTop: 4,
+                      background: c,
+                      color: cream,
+                      display: "grid",
+                      placeItems: "center",
+                      fontWeight: 900,
+                      fontSize: 13,
+                      fontFamily: fonts.mono,
+                      transform: `rotate(${i * 5 - 8}deg)`,
+                    }}
+                  >
+                    ▸
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: fonts.body,
+                      fontWeight: 500,
+                      fontSize: text.small,
+                      lineHeight: 1.4,
+                      color: ink,
+                    }}
+                  >
+                    {copy}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right: product placeholder — no KPI tiles until the numbers
+              are real (no invented metrics for FanPro). */}
+          <div style={{ position: "relative" }}>
+            <PlaceholderImg
+              w='100%'
+              h={440}
+              label='Product Screens'
+              tone='mid'
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Big project card — EximPe */}
+      <div
+        style={{
+          position: "relative",
+          border: borders.thick,
+          background: cream,
+          boxShadow: shadows.slab,
+          padding: "clamp(24px, 2.8vw, 40px) clamp(20px, 2.9vw, 42px)",
+          transform: "rotate(0.35deg)",
+        }}
+      >
+        <RubberStamp
+          text='SHIPPED & SCALED'
+          color={red}
+          rotate={-14}
+          size={200}
+          style={{ bottom: -28, left: "min(360px, 45%)" }}
+        />
+        <div className='grid grid-cols-1 gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-[50px]'>
+          <div>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                marginBottom: 16,
+                flexWrap: "wrap",
+              }}
+            >
               <Stamp rotate={-3}>FOUNDING FRONTEND</Stamp>
               <Stamp color={cyan} rotate={2}>
-                4 YRS · CURRENT
+                4 YEARS
               </Stamp>
               <Stamp color={ink} rotate={-1}>
                 FINTECH
@@ -293,7 +447,7 @@ export default function Work() {
                 marginBottom: 22,
               }}
             >
-              FRONTEND PRODUCT ENG LEAD · MAY '22 → NOW
+              FRONTEND PRODUCT ENG LEAD · MAY '22 → APR '26
             </div>
             <ul
               style={{

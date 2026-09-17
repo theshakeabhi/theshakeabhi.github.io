@@ -52,7 +52,7 @@ const MARQUEE_ITEMS = [
   "✦",
   "FOUNDING ENGINEER ENERGY",
   "✦",
-  "FINTECH",
+  "AI MEDIA",
   "✦",
   "50K+ MAUs",
   "✦",
@@ -319,8 +319,8 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               founding-team speed
             </em>
             , mentors humans, and treats production incidents like a sport.
-            Currently scaling a cross-border fintech to 50K+ MAUs from
-            Bengaluru.
+            Currently leading frontend at FanProStudio AI, shipping AI-media
+            generation — AI influencers and on-brand UGC — from Bengaluru.
           </p>
           <div
             style={{

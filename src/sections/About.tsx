@@ -147,18 +147,19 @@ export default function About() {
               maxWidth: 760,
             }}
           >
-            I've spent the last <strong>4+ years</strong> as the first frontend
-            hire at{" "}
+            These days I'm the <strong>Lead Frontend Developer</strong> at{" "}
             <Hover
               as='span'
               kind='link'
               style={{ background: yellow, padding: "0 6px" }}
             >
-              EximPe
+              FanProStudio AI
             </Hover>
-            , building cross-border fintech the way you'd build something you
-            actually use yourself — opinionated, fast, and a little stubborn
-            about quality. Before that, three years of agency + product work
+            , building AI media generation — AI influencers and on-brand UGC —
+            the way you'd build something you actually use yourself:
+            opinionated, fast, and a little stubborn about quality. Before that,
+            four years as the first frontend hire at EximPe building
+            cross-border fintech, on top of three years of agency + product work
             cramming the fundamentals.
           </p>
           <p
@@ -172,7 +173,7 @@ export default function About() {
               marginTop: 18,
             }}
           >
-            I run a team of two, write the design system, take the 2am pages,
+            I lead the frontend, write the design system, take the 2am pages,
             and unironically enjoy the part where you finally find the bug.
           </p>
 

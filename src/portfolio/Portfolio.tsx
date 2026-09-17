@@ -38,7 +38,7 @@ const RIBBON_ITEMS = [
   "✶ BENGALURU · IST · GMT+5:30",
   "✶ REMOTE-FIRST",
   "✶ THESHAKEABHI@GMAIL.COM",
-  "✶ MAY 2026",
+  "✶ SEP 2026",
   "✶ SCROLL TO CONTINUE ↓",
 ];
 
@@ -78,7 +78,7 @@ export default function Portfolio() {
               "↓",
               "WHO IS THIS GUY",
               "↓",
-              "FOUR YEARS OF SHIPPING",
+              "SEVEN YEARS OF SHIPPING",
               "↓",
               "KEEP SCROLLING",
             ]}
