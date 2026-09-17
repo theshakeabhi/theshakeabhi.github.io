@@ -1,19 +1,54 @@
-// STUB(P2): replaced by package P2 (framer-motion magnet: 0.35 strength,
-// pull capped at half the shortest dimension, home-position subtraction
-// (trap 3), press squish 0.94 + shadow collapse — README §Magnetic Buttons).
-// The kind styles below are final so P5/P6 layouts look right meanwhile.
-import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
+/*
+ * P2 — Magnetic button. Pulls toward the cursor with a framer-motion spring
+ * (stiffness 300, damping 22), wobbles from horizontal pull, squishes on
+ * press while the hard shadow collapses 6px→2px. Port of micro.jsx 171–246;
+ * spec README §Magnetic Buttons.
+ *
+ * Trap 3 (magnetic drift): the measured rect already contains the applied
+ * translation, so the springs' current output is subtracted to recover the
+ * button's HOME position — without this the magnet drifts indefinitely.
+ *
+ * Fallback (prefs.magnetic off, reduced motion, or coarse pointer): plain
+ * button with a tap/press scale only — no magnet, no wobble, no hover scale.
+ *
+ * SSR-safe: rect/pointer math runs only in the magnet effect; first-paint
+ * markup is the untranslated button on server and client alike.
+ */
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  type Transition,
+} from "framer-motion";
+import { usePointer } from "../pointer/PointerProvider";
+import { usePrefs } from "../../lib/prefs";
 import { cream, cyan, ink, red, fonts, shadows } from "../../tokens";
 
 export type MagneticButtonKind = "primary" | "danger" | "cyan" | "ghost";
 
-export interface MagneticButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface MagneticButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  // These React DOM handler types collide with framer-motion's own
+  // gesture/animation props on motion.button; none are used by the design.
+  "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
+> {
   kind?: MagneticButtonKind;
   strength?: number;
   wobble?: boolean;
   style?: CSSProperties;
   children?: ReactNode;
 }
+
+const SPRING = { stiffness: 300, damping: 22 } as const;
 
 const PALETTE: Record<
   MagneticButtonKind,
@@ -27,21 +62,116 @@ const PALETTE: Record<
 
 export default function MagneticButton({
   kind = "primary",
-  strength: _strength = 0.35,
-  wobble: _wobble = true,
+  strength = 0.35,
+  wobble = true,
   style,
   children,
+  onClick,
+  onPointerEnter,
+  onPointerLeave,
+  onPointerDown,
+  onPointerUp,
+  onPointerCancel,
   ...rest
 }: MagneticButtonProps) {
+  const { p, setHot, sfx, containerRef } = usePointer();
+  const prefs = usePrefs();
+  const ref = useRef<HTMLButtonElement>(null);
+  const [hover, setHover] = useState(false);
+  const [press, setPress] = useState(false);
+
+  const magnetOn =
+    prefs.magnetic && !prefs.reducedMotion && !prefs.coarsePointer;
+
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, SPRING);
+  const sy = useSpring(my, SPRING);
+  // Wobble: ±deg from horizontal pull (dx * 0.03, so the half-dimension cap
+  // keeps it within ~±3deg). Driven by the spring so it settles with x.
+  const rotate = useTransform(sx, (v) => (wobble && magnetOn ? v * 0.03 : 0));
+
+  useEffect(() => {
+    if (!magnetOn || !hover) {
+      mx.set(0);
+      my.set(0);
+      return;
+    }
+    const el = ref.current;
+    const cont = containerRef.current;
+    if (!el || !cont) return;
+    const r = el.getBoundingClientRect();
+    const cr = cont.getBoundingClientRect();
+    const s = cr.width / cont.offsetWidth || 1;
+    // Button center in PointerProvider container coords. Subtract the
+    // currently applied translation (spring output) so we always measure the
+    // button's HOME position, not its translated position (trap 3).
+    const cx = (r.left - cr.left) / s + r.width / s / 2 - sx.get();
+    const cy = (r.top - cr.top) / s + r.height / s / 2 - sy.get();
+    const rawDx = (p.x - cx) * strength;
+    const rawDy = (p.y - cy) * strength;
+    // Cap pull at half the button's shortest dimension so the click target
+    // can never drift far enough to lose the press.
+    const maxPull = (Math.min(r.width, r.height) / s) * 0.5;
+    const mag = Math.hypot(rawDx, rawDy);
+    const k = mag > maxPull ? maxPull / mag : 1;
+    mx.set(rawDx * k);
+    my.set(rawDy * k);
+  }, [p.x, p.y, hover, magnetOn, strength, containerRef, mx, my, sx, sy]);
+
   const palette = PALETTE[kind];
+  const scaleTarget = press ? 0.94 : hover && magnetOn ? 1.03 : 1;
+  // While hovered: 80ms ease-out (deliberately non-overshoot — overshoot
+  // beziers jitter on rapid pointer moves). On leave: overshoot snap-back.
+  const scaleTransition: Transition = prefs.reducedMotion
+    ? { duration: 0 }
+    : hover
+      ? { duration: 0.08, ease: "easeOut" }
+      : { duration: 0.35, ease: [0.2, 1.6, 0.3, 1] };
+
   return (
-    <button
+    <motion.button
+      ref={ref}
       {...rest}
+      onClick={(e) => {
+        sfx.click();
+        onClick?.(e);
+      }}
+      onPointerEnter={(e) => {
+        setHover(true);
+        setHot("link");
+        sfx.hover();
+        onPointerEnter?.(e);
+      }}
+      onPointerLeave={(e) => {
+        setHover(false);
+        setHot(null);
+        setPress(false);
+        onPointerLeave?.(e);
+      }}
+      onPointerDown={(e) => {
+        setPress(true);
+        onPointerDown?.(e);
+      }}
+      onPointerUp={(e) => {
+        setPress(false);
+        onPointerUp?.(e);
+      }}
+      onPointerCancel={(e) => {
+        setPress(false);
+        onPointerCancel?.(e);
+      }}
+      initial={false}
+      animate={{ scale: scaleTarget }}
+      transition={scaleTransition}
       style={{
+        x: sx,
+        y: sy,
+        rotate,
         background: palette.bg,
         color: palette.fg,
         border: `3px solid ${palette.border}`,
-        boxShadow: shadows.card,
+        boxShadow: press ? shadows.pressed : shadows.card,
         padding: "14px 22px",
         fontFamily: fonts.body,
         fontWeight: 700,
@@ -52,11 +182,14 @@ export default function MagneticButton({
         display: "inline-flex",
         alignItems: "center",
         gap: 10,
+        // OS-cursor hiding is owned globally by PointerProvider
+        // (data-cursor-hidden, !important); "pointer" is the fallback shown
+        // whenever the custom cursor is off.
         cursor: "pointer",
         ...style,
       }}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }
