@@ -278,7 +278,34 @@ export default function Contact() {
         }}
       >
         <div>© 2026 · BUILT WITH SPITE AND LOVE · BENGALURU 🇮🇳</div>
-        <div>NO COOKIES. NO TRACKING. NO BS.</div>
+        <div style={{ display: "flex", gap: 16 }}>
+          <Hover
+            as='a'
+            href='/privacy'
+            kind='link'
+            style={{
+              color: "inherit",
+              textDecoration: "underline",
+              textDecorationThickness: 2,
+              textUnderlineOffset: 4,
+            }}
+          >
+            PRIVACY
+          </Hover>
+          <Hover
+            as='a'
+            href='/terms'
+            kind='link'
+            style={{
+              color: "inherit",
+              textDecoration: "underline",
+              textDecorationThickness: 2,
+              textUnderlineOffset: 4,
+            }}
+          >
+            TERMS
+          </Hover>
+        </div>
         <Hover
           as='button'
           type='button'

@@ -656,3 +656,224 @@ color .2s`, `3px 3px 0` ink text shadow) — every keyword is a
   merge, don't clobber, consumer pointer handlers (prototype behavior).
 - **P8**: SideRibbon default items still say `HI@ABHISHEK.SH` in Portfolio.tsx
   (P0/P7-owned) — should become `THESHAKEABHI@GMAIL.COM` per the user decision.
+
+# agent-log.P7 — Integration, a11y & preferences
+
+## P7 · 2026-09-17T20:45:00+05:30
+
+### Files touched
+
+- `src/portfolio/Portfolio.tsx` — rewired: `useEasterEgg()` → RaveOverlay
+  (inside PointerProvider) + Hero (`onLogoClick`/`clicks`); `SfxMuteBridge`
+  child of PrefsProvider runs `sfx.setMuted(!prefs.sfx)` (write-only, no
+  readback per P4 note); Testimonials + its "NICE THINGS…" divider skipped
+  while `testimonials.length === 0`; RIBBON_ITEMS email →
+  `✶ THESHAKEABHI@GMAIL.COM`; `<PreferencesMenu />` mounted with the fixed
+  chrome OUTSIDE PointerProvider.
+- `src/components/chrome/PreferencesMenu.tsx` — NEW. Fixed bottom-right
+  (right: 52px clears the 36px SideRibbon), z-index 9500, brutalist ghost
+  (cream, 3px ink border, hard shadows, zero radius). ⚙ TWEAKS toggle with
+  `aria-expanded`/`aria-controls`; panel always mounted, `hidden` when
+  closed (keeps the aria-controls id valid); three `role="switch"` buttons
+  (Sound effects / Custom cursor / Magnetic buttons) through
+  `usePrefs().setPref`; Esc closes and refocuses the toggle (passive
+  listener, no focus trap — per brief); easter-egg hint list ported from
+  app.jsx TweaksPanel copy (logo ×5, Konami, sticky notes remember,
+  double-click eyes, hover headlines). Keeps the OS cursor: no
+  `data-cursor-hidden`, sits outside the artboard.
+- `src/styles/global.css` — additive: `--color-ink-deep: #0f172a` in the
+  @theme color block.
+- `src/tokens.ts` — additive one-line `inkDeep` re-export (see Deviations).
+- `src/sections/Playground.tsx` — swapped the
+  `color-mix(in srgb, ink 65%, black)` approximation for the new `inkDeep`
+  token; removed the stale comment.
+- `src/sections/Hero.tsx` — available-for-hire pulse dot now gates its
+  animation on `reducedMotion` (parity with Contact's identical dot; the
+  global CSS freeze already covered it, this makes the JS path explicit).
+- `HANDOFF_NOTES.md` — appended `- [P7] resolved: …` acks (append-only).
+
+### Backlog disposition (HANDOFF_NOTES + task list)
+
+1. useEasterEgg wiring — DONE (RaveOverlay inside PointerProvider; Konami
+   listener stays passive; clicks reset after rave).
+2. Testimonials + divider skip — DONE (conditional on
+   `testimonials.length > 0`; verified absent from dist/index.html).
+3. Ribbon email — DONE (4 occurrences in rendered HTML = tripled marquee +
+   static row; zero `HI@ABHISHEK.SH` left in src).
+4. `--color-ink-deep` — DONE (token + Playground switch).
+5. SFX mute — DONE (`SfxMuteBridge`; effect re-runs on pref change; initial
+   defaults-run is a harmless `setMuted(false)` before storage sync, and
+   reduced-motion first-visits resolve to muted via prefs defaults).
+6. PreferencesMenu — DONE (see above).
+7. Reduced-motion audit — PASS with one fix (Hero pulse, above). Verified
+   in-place: Marquee + SideRibbon render `animation: none`; SectionDivider
+   <768px is a static row; CustomCursor/CursorTrail disabled
+   (cursor && !reducedMotion && !coarsePointer); MagneticButton inert +
+   scale transition dropped; Tilt inert; Scramble/ScrambleHover render
+   plain text; Eyes: no tracking, no blink, no double-click spin;
+   RaveOverlay: banner only, no confetti; Playground bouncy-boi transition
+   "none"; Writing padding shift suppressed (inversion kept by design);
+   Contact pulse + both scrollIntoView/scrollTo behaviors already gated;
+   sfx defaults OFF for reduced-motion first visits (prefs.tsx) and the
+   global CSS freeze backstops all keyframes.
+8. Heading audit — PASS, no changes: exactly one `<h1>` (hero name);
+   8 `<h2>` = one per rendered section (Testimonials skipped); 8 `<h3>` =
+   EXIMPE, BEFORE EXIMPE, SAWO/QBURST/ZOMATO, 3 Playground experiments.
+   Writing post titles are list-row links (not headings) — matches the
+   prototype and stays scannable. Counts confirmed against dist/index.html.
+9. Contrast audit — PASS with one fix (in my own new file: panel section
+   labels ink, not red-at-11px). No red body copy exists anywhere. Red
+   below headline size survives only as prototype-verbatim _badges_:
+   Writing tag chips, Stamp/RubberStamp/MetricTile stamps (README specs
+   these as red stamps; they are decorative metric flair, not body copy)
+   and the `aria-hidden` CV paper mock. Red stats/headline spans are all
+   ≥28px display face (large-text AA passes at 3.9:1). Documented rather
+   than "fixed" to honor port-don't-improve; flagging here for the lead.
+10. Trap-1 audit — PASS: rendered tree shows ScrollProgress, SideRibbon and
+    PreferencesMenu as siblings ahead of PointerProvider's container, which
+    is `position:relative;width:100%` with NO transform, so RaveOverlay's
+    fixed banner stays viewport-pinned. The only transforms before the
+    first `<section>` are on the fixed elements' own inner movers
+    (SideRibbon marqV column), never on an ancestor.
+11. STUB sweep — grep for `STUB(` across all ts/tsx/astro/css/js finds
+    ZERO matches; every stub was already replaced by its owner. Nothing to
+    delete, no orphaned stub files to report.
+
+### Decisions / deviations
+
+- `src/tokens.ts` is P0-owned but got a one-line additive `inkDeep` export:
+  the sanctioned alternative (spelling `var(--color-ink-deep)` inside
+  Playground) violates the stronger repo invariant that global.css +
+  tokens.ts are the only files that spell out tokens. Flagged in
+  HANDOFF_NOTES for the lead.
+- PreferencesMenu deliberately does NOT play sfx: it lives outside
+  PointerProvider (usePointer would throw), and clicking "Sound effects"
+  off would race the mute effect. Silence is the least surprising option.
+- Panel stays mounted with `hidden` instead of conditional render so
+  `aria-controls` always references a real id; SSR markup is deterministic
+  (closed) on both server and client.
+- SwitchRow keeps its .15s knob/background transitions under reduced
+  motion — discrete state-change feedback, same category as Writing's
+  kept color inversion.
+
+### Self-check
+
+- `npx -y yarn@1 build` → `astro check`: 0 errors, 0 warnings, 0 hints
+  (50 files); `astro build`: Complete, 1 page.
+- `npx -y yarn@1 lint` → clean; verified again with bare `npx eslint .`
+  (no --fix) → zero findings.
+- dist/index.html spot-checks: TWEAKS toggle + `aria-expanded="false"`
+  present; ribbon email ×4; no `HI@ABHISHEK.SH`; no "NICE THINGS"; no rave
+  banner in first paint; h1/h2/h3 = 1/8/8; `--color-ink-deep` present and
+  the color-mix approximation gone.
+- HANDOFF_NOTES re-read before finishing: no P8-appended requests for P7.
+
+# P8 · Launch & compliance — 2026-09-17T21:05+05:30
+
+## Files touched
+
+- `src/pages/index.astro` — head only + body mount: Consent Mode v2 default
+  script (all four signals denied, `wait_for_update: 0`) inserted BEFORE the
+  async gtag.js loader; loader + `config G-X8L7GJY3D8` kept. Added favicon
+  links (`/favicon.svg`, `/apple-touch-icon.png`), `theme-color`,
+  `og:image:width/height/alt`, `twitter:image:alt`. Meta description
+  tightened to 148 chars (senior frontend engineer, Bengaluru). Kept font
+  preload + sitemap link + canonical. Mounted `<CookieConsent client:idle />`
+  after the Portfolio island.
+- `src/components/chrome/CookieConsent.tsx` — NEW island. Brutalist slab
+  fixed bottom-left (ink bg, cream text, 3px cream border, hard zero-blur
+  `6px 6px 0` red shadow, JetBrains Mono), real `<button>` ACCEPT
+  (red/cream, primary) + DECLINE (ghost), link to /privacy,
+  `aria-label="Cookie consent"`. Persists to localStorage
+  `portfolio.consent` in try/catch; renders nothing until mounted AND no
+  stored choice (SSR-safe, no hydration mismatch). On accept sends
+  `gtag('consent','update',{analytics_storage:'granted'})` via the
+  head-defined `window.gtag`; a stored "accepted" is REPLAYED on every mount
+  (consent default is deny-per-pageload). zIndex 8000 (above SideRibbon 200,
+  below RaveOverlay 9000 / cursor 9999). Tokens only, via `src/tokens.ts`.
+- `src/pages/privacy.astro` — NEW. Plain-language policy: static site on
+  GitHub Pages (host logging → GitHub's privacy statement), GA4
+  G-X8L7GJY3D8 only after consent + what GA collects, localStorage cards
+  for `sticky_v2_*` / `portfolio.tweaks` / `portfolio.consent`
+  (device-only, never transmitted), no other tracking, contact
+  theshakeabhi@gmail.com, last-updated Sept 17 2026. Own title/description,
+  canonical `/privacy/`, `← BACK` chip, `lang="en"`, token utilities only.
+- `src/pages/terms.astro` — NEW. Short: personal portfolio, content/code
+  ownership, no warranties, external links. Same chrome as privacy;
+  canonical `/terms/`.
+- `src/pages/404.astro` — NEW. `LOST?` mega headline (text-mega, display
+  face), corner stamp `404 // NOT FOUND`, red accent block + yellow star
+  (both `aria-hidden`, hidden < md), `← TAKE ME HOME` chip. `noindex`.
+- `public/robots.txt` — NEW. Allow all + `Sitemap:
+https://theshakeabhi.github.io/sitemap-index.xml`.
+- `public/favicon.svg` — NEW. Red "A" mark: red chip, 4px ink stroke, hard
+  ink offset shadow, cream blocky hand-drawn "A" path (no font dependency).
+- `public/apple-touch-icon.png` — NEW. 180×180, full-bleed red variant
+  (iOS rounds its own corners), rasterized from a scratch SVG via
+  sharp-cli, 16-color palette → 1.0 KB.
+- `public/og.png` — NEW. 1200×630 (verified via `sips`), 30.4 KB (32-color
+  palette PNG). Brutalist composition in the exact site palette: cream bg,
+  ink "ABHISHEK" + red "CHANDRASENAN" in Archivo Black, cyan squiggle
+  underline, rotated red accent block with cream "A" + 12px ink hard
+  shadow, ink/red/yellow role chips (all shadows zero-blur), logo chip +
+  AVAILABLE FOR HIRE top bar. Authored as HTML with base64-embedded
+  fontsource woff2s, screenshotted with headless Chrome
+  (`--window-size=1200,630`), palettized with sharp-cli. Intermediate
+  SVG/HTML kept in the session scratchpad, not committed.
+- `HANDOFF_NOTES.md` — appended one bullet (P8 → P7): request footer links
+  to /privacy + /terms in Contact's footer; reported a11y sweep result.
+- `astro.config.mjs` — NOT touched (no addition needed; @astrojs/sitemap
+  already excludes 404 and picked up the new pages).
+
+## Decisions / deviations
+
+1. **Literal colors in static assets**: `favicon.svg`, `og.png`,
+   `apple-touch-icon.png` and the `theme-color` meta carry literal hex by
+   necessity — standalone assets / meta tags cannot reference CSS custom
+   properties. Each file documents the token mapping in a comment. No other
+   file gained a literal.
+2. **Consent replay on mount**: the brief asked for the update on accept;
+   I also re-send `granted` on mount when localStorage says "accepted",
+   because Consent Mode defaults re-deny on every pageload — without the
+   replay, returning accepted visitors would never be measured. Decline
+   also sends an explicit `denied` update (harmless, self-documenting).
+3. **Astro compressHTML whitespace trap**: text ending at a source-line
+   break directly before an inline element gets its space eaten in the
+   build output ("governed byGitHub's…"). Fixed with explicit `&#32;`
+   before those inline elements in privacy/terms.
+4. **Section-label numbering** continues the slab sequence: `11 // PRIVACY`,
+   `12 // TERMS`; 404 uses the mandated `404 // NOT FOUND`.
+5. **CookieConsent primary button** is red-on-ink with a cream hard shadow
+   rather than MagneticButton's ink-primary (invisible on the ink slab);
+   ghost is transparent/cream-border. Both are plain `<button>`s — the
+   slab lives outside PointerProvider so no Hover/Magnetic wrappers, and
+   the OS cursor stays, as specced.
+
+## Self-check
+
+- `npx -y yarn@1 build` (astro check && astro build): **0 errors, 0
+  warnings, 0 hints; 4 pages built** (`/404.html`, `/privacy/index.html`,
+  `/terms/index.html`, `/index.html`).
+- `npx -y yarn@1 lint`: clean (`eslint . --fix` → Done).
+- dist inventory verified: `404.html`, `privacy/index.html`,
+  `terms/index.html`, `robots.txt`, `og.png` (1200×630, 31,126 B),
+  `favicon.svg`, `apple-touch-icon.png` (180×180, 1,029 B) all present.
+- `sitemap-0.xml` contains `/`, `/privacy/`, `/terms/` (404 excluded by
+  the integration itself).
+- Built `index.html`: consent-default script index 2563 < gtag.js loader
+  2834 < config 2939 (order verified programmatically);
+  `wait_for_update` present; CookieConsent astro-island present with
+  `client="idle"`.
+- A11y sweep of built `dist/index.html`: 7 `<svg>` elements, all
+  `aria-hidden="true"`; zero `<img>` elements → nothing unlabeled, no P7
+  fixes needed (reported in HANDOFF_NOTES).
+- Visual checks via headless Chrome on a path-rewritten dist copy:
+  404/privacy/terms render in-style (Archivo Black + mono stamps + hard
+  shadows) at 1440 and phone width. Note: headless Chrome clamps windows
+  to 500px min width (verified `innerWidth=500` with a control page), so
+  "phone" screenshots render a 500px viewport cropped to 390 — apparent
+  right-edge clipping is a tooling artifact, not overflow. Island
+  hydration cannot run over `file://` (module CORS): the known-good
+  Portfolio island fails identically there, so CookieConsent's absence in
+  those screenshots is environmental; its SSR path runs during the build
+  and its markup/logic are covered by astro check + eslint.
