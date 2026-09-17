@@ -3,7 +3,8 @@
 // and a LAST UPDATED stamp line.
 //
 // USER DECISION: no PDF asset exists yet — both CV buttons open the
-// LinkedIn profile (labels kept verbatim per port-don't-improve).
+// LinkedIn profile and say so honestly (no fake DOWNLOAD/.PDF labels,
+// no fabricated LAST UPDATED stamp).
 import Slab from "../components/primitives/Slab";
 import Tape from "../components/interactive/Tape";
 import Eyes from "../components/interactive/Eyes";
@@ -98,10 +99,10 @@ export default function Resume() {
             }}
           >
             <MagneticButton kind='primary' onClick={openLinkedIn}>
-              ↓ DOWNLOAD .PDF
+              CV ON LINKEDIN ↗
             </MagneticButton>
             <MagneticButton kind='ghost' onClick={openLinkedIn}>
-              VIEW ONLINE
+              VIEW PROFILE ↗
             </MagneticButton>
           </div>
           <div
@@ -114,7 +115,7 @@ export default function Resume() {
               letterSpacing: "0.15em",
             }}
           >
-            LAST UPDATED · 2026.05.20 · 84KB
+            PDF VERSION COMING SOON
           </div>
         </div>
 

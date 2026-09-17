@@ -229,7 +229,8 @@ export default function Work() {
           <br />
           <ScrambleHover text='WORK.' />
         </h2>
-        <Stamp color={cyan} rotate={4}>
+        {/* Ink, not cyan — 14px mono fails WCAG contrast on cream in cyan */}
+        <Stamp color={ink} rotate={4}>
           ONE BIG ONE · THREE WARM-UPS · ALL THE OWNERSHIP
         </Stamp>
       </div>

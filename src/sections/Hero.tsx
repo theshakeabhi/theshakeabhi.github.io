@@ -94,12 +94,13 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           marginBottom: 50,
         }}
       >
+        {/* Named from its visible content ("A ABHISHEK.SH") — an aria-label
+            that hides the visible "A" breaks WCAG 2.5.3 voice control. */}
         <Hover
           as='button'
           type='button'
           kind='link'
           onClick={onLogoClick}
-          aria-label='ABHISHEK.SH'
           style={{
             display: "flex",
             alignItems: "center",
@@ -114,7 +115,6 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           }}
         >
           <span
-            aria-hidden='true'
             style={{
               width: 28,
               height: 28,
@@ -335,7 +335,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               SEE THE WORK →
             </MagneticButton>
             <MagneticButton kind='ghost' onClick={openCv}>
-              ↓ DOWNLOAD CV
+              CV ON LINKEDIN ↗
             </MagneticButton>
             <span aria-hidden='true' className='hidden lg:inline'>
               <Arrow

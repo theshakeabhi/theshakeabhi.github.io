@@ -2,11 +2,16 @@
  * P4 — Web Audio SFX, ported from micro.jsx (makeSfx).
  *
  * ONE lazily-created AudioContext per makeSfx() call. It is created/resumed
- * ONLY inside `ensure()`, which only ever runs from the six voice functions,
- * which are only ever invoked from user-gesture handlers (trap 5: autoplay
- * policy). No AudioContext at module top level — SSR-safe. No audio files:
- * every sound is a live oscillator with a 5ms linear attack ramp and an
- * exponential decay to 0.001 over its duration (README §Sound Effects).
+ * ONLY inside a user activation (trap 5: autoplay policy): the click/pop/
+ * grab/drop/yay voices (all invoked from click/pointerdown/keydown paths)
+ * may create it, and a one-time window pointerdown/keydown pre-warm
+ * listener creates it on the first real gesture. hover() is NOT a user
+ * activation (pointerenter) — it never creates the context and bails
+ * silently while none exists, so a fresh load whose first interaction is a
+ * hover logs no autoplay warning and plays no silent beep. No AudioContext
+ * at module top level — SSR-safe. No audio files: every sound is a live
+ * oscillator with a 5ms linear attack ramp and an exponential decay to
+ * 0.001 over its duration (README §Sound Effects).
  */
 
 export interface Sfx {
@@ -23,8 +28,10 @@ export function makeSfx(): Sfx {
   let ctx: AudioContext | null = null;
   let muted = false;
 
-  const ensure = (): AudioContext | null => {
-    if (!ctx) {
+  /** Create (when `create`) and/or resume the context. Creation must only
+   *  happen from a user-activation call path (trap 5). */
+  const ensure = (create: boolean): AudioContext | null => {
+    if (!ctx && create) {
       try {
         const Ctor =
           window.AudioContext ??
@@ -39,14 +46,30 @@ export function makeSfx(): Sfx {
     return ctx;
   };
 
+  // One-time pre-warm: create the context on the first real gesture so the
+  // very first hover after it can already sound. SSR-guarded — makeSfx()
+  // runs during the island's server render.
+  if (typeof window !== "undefined") {
+    const warm = () => {
+      window.removeEventListener("pointerdown", warm);
+      window.removeEventListener("keydown", warm);
+      ensure(true);
+    };
+    window.addEventListener("pointerdown", warm);
+    window.addEventListener("keydown", warm);
+  }
+
   const beep = (
     freq: number,
     dur = 0.08,
     type: OscillatorType = "square",
-    gain = 0.04
+    gain = 0.04,
+    // hover (pointerenter) is not a user activation — it may not create
+    // the AudioContext, only use one that already exists.
+    create = true
   ): void => {
     if (muted) return;
-    const c = ensure();
+    const c = ensure(create);
     if (!c) return;
     const o = c.createOscillator();
     const g = c.createGain();
@@ -63,7 +86,8 @@ export function makeSfx(): Sfx {
 
   /* Voices — exact wave/freq/dur/gain table from README §Sound Effects. */
   return {
-    hover: () => beep(880, 0.04, "sine", 0.025),
+    // Bails silently until a real gesture has created the context.
+    hover: () => beep(880, 0.04, "sine", 0.025, false),
     click: () => {
       beep(440, 0.05, "square", 0.05);
       window.setTimeout(() => beep(880, 0.06, "square", 0.04), 30);

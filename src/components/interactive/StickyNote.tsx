@@ -7,6 +7,9 @@
 // paint renders at the given x/y; the stored position applies in an effect.
 // Keyboard alternative: Tab to focus, Enter picks up, arrows move (8px,
 // 32px with Shift), Esc or Enter drops (persists the same way).
+// Positions are clamped to the offsetParent (cork board) bounds — on
+// mount, on window resize, and before persisting — so notes stay visible
+// when the fluid board is narrower than the 1440 design.
 import {
   useCallback,
   useEffect,
@@ -30,6 +33,14 @@ export interface StickyNoteProps {
   color?: string;
   children?: ReactNode;
   style?: CSSProperties;
+  /**
+   * Width of the board the default x coord was designed against (e.g. 1280
+   * for the Now cork board at the 1440 design width). When set and no stored
+   * position exists, the default x is scaled by clientWidth/designW so
+   * un-dragged notes reflow with the fluid board instead of piling up at the
+   * clamped right edge. Additive optional prop; frozen contract unchanged.
+   */
+  designW?: number;
 }
 
 interface NotePos {
@@ -48,6 +59,7 @@ export default function StickyNote({
   color = sticky.yellow,
   children,
   style,
+  designW,
 }: StickyNoteProps) {
   const { setHot, sfx, containerRef } = usePointer();
   const key = `sticky_v2_${id}`;
@@ -57,29 +69,74 @@ export default function StickyNote({
   const off = useRef({ x: 0, y: 0 });
   const node = useRef<HTMLDivElement>(null);
 
-  // Apply any stored position AFTER mount so server and first client paint
-  // are identical (SSR rule). All storage access is try/catch-guarded.
+  // Clamp a position to the offsetParent (cork board) bounds so the note
+  // stays fully visible inside the overflow-hidden board. Uses clientWidth/
+  // clientHeight (unscaled layout values, EXCLUDING the board's 3px borders —
+  // the overflow clip box) because pos coords live in the board's unscaled
+  // padding-box coordinate space (trap 2).
+  const clamp = useCallback((p: NotePos): NotePos => {
+    const el = node.current;
+    const parent = el?.offsetParent as HTMLElement | null;
+    if (!el || !parent) return p;
+    const maxX = Math.max(0, parent.clientWidth - el.offsetWidth);
+    const maxY = Math.max(0, parent.clientHeight - el.offsetHeight);
+    const nx = Math.min(Math.max(p.x, 0), maxX);
+    const ny = Math.min(Math.max(p.y, 0), maxY);
+    return nx === p.x && ny === p.y ? p : { ...p, x: nx, y: ny };
+  }, []);
+
+  // Scale the DEFAULT x coord with the fluid board width (defaults were
+  // authored against the 1440-design board = designW px wide) so un-dragged
+  // notes reflow instead of all clamping into the same right-edge column.
+  // Stored (user-dragged) positions are never rescaled, only clamped.
+  const scaledDefault = useCallback((): NotePos => {
+    const parent = node.current?.offsetParent as HTMLElement | null;
+    if (!parent || !designW) return { x, y, rotate };
+    const s = Math.min(1, parent.clientWidth / designW);
+    return { x: Math.round(x * s), y, rotate };
+  }, [x, y, rotate, designW]);
+  const fromStorage = useRef(false);
+
+  // Apply the stored (or default) position — clamped to the board —
+  // AFTER mount so server and first client paint are identical (SSR rule:
+  // this is a style-only change, no text mismatch). All storage access is
+  // try/catch-guarded.
   useEffect(() => {
+    let next: NotePos | null = null;
     try {
       const raw = window.localStorage.getItem(key);
-      if (!raw) return;
-      const v: unknown = JSON.parse(raw);
-      if (typeof v !== "object" || v === null) return;
-      const r = v as Record<string, unknown>;
-      if (
-        typeof r.x === "number" &&
-        typeof r.y === "number" &&
-        typeof r.rotate === "number"
-      ) {
-        setPos({ x: r.x, y: r.y, rotate: r.rotate });
+      if (raw) {
+        const v: unknown = JSON.parse(raw);
+        if (typeof v === "object" && v !== null) {
+          const r = v as Record<string, unknown>;
+          if (
+            typeof r.x === "number" &&
+            typeof r.y === "number" &&
+            typeof r.rotate === "number"
+          ) {
+            next = { x: r.x, y: r.y, rotate: r.rotate };
+          }
+        }
       }
     } catch {
       // Storage unavailable (private mode, blocked) — keep defaults.
     }
-  }, [key]);
+    fromStorage.current = next !== null;
+    setPos(clamp(next ?? scaledDefault()));
+  }, [key, clamp, scaledDefault]);
+
+  // Re-fit when the fluid board resizes under the note: un-dragged notes
+  // rescale from their design defaults; dragged/stored ones only clamp.
+  useEffect(() => {
+    const onResize = () =>
+      setPos((p) => clamp(fromStorage.current ? p : scaledDefault()));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [clamp, scaledDefault]);
 
   const persist = useCallback(
     (p: NotePos) => {
+      fromStorage.current = true; // user-placed from here on; never rescale
       try {
         window.localStorage.setItem(key, JSON.stringify(p));
       } catch {
@@ -113,8 +170,9 @@ export default function StickyNote({
       setHot(null);
       sfx.drop();
       setPos((p) => {
-        persist(p);
-        return p;
+        const c = clamp(p);
+        persist(c);
+        return c;
       });
     };
     window.addEventListener("pointermove", move, { passive: true });
@@ -123,7 +181,7 @@ export default function StickyNote({
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
     };
-  }, [drag, containerRef, persist, setHot, sfx]);
+  }, [drag, containerRef, clamp, persist, setHot, sfx]);
 
   const onDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -148,10 +206,11 @@ export default function StickyNote({
     setLifted(false);
     sfx.drop();
     setPos((p) => {
-      persist(p);
-      return p;
+      const c = clamp(p);
+      persist(c);
+      return c;
     });
-  }, [persist, sfx]);
+  }, [clamp, persist, sfx]);
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -180,11 +239,18 @@ export default function StickyNote({
     const d = move[e.key];
     if (d) {
       e.preventDefault();
-      setPos((p) => ({ ...p, x: p.x + d[0], y: p.y + d[1] }));
+      setPos((p) => clamp({ ...p, x: p.x + d[0], y: p.y + d[1] }));
     }
   };
 
   const active = drag || lifted;
+  // Accessible name comes from the note's visible content (WCAG 2.5.3 —
+  // voice control users speak what they see); the drag instructions live
+  // in a hidden aria-describedby span instead of an aria-label. The span
+  // is aria-hidden so it stays OUT of the name-from-contents computation,
+  // yet still resolves as the description (directly-referenced nodes are
+  // always traversed per the AccName spec).
+  const hintId = `sticky-hint-${id}`;
 
   return (
     <div
@@ -193,7 +259,7 @@ export default function StickyNote({
       role='button'
       tabIndex={0}
       aria-pressed={lifted}
-      aria-label='Draggable sticky note. Press Enter to pick it up, move it with the arrow keys (hold Shift for bigger steps), then press Enter or Escape to put it down.'
+      aria-describedby={hintId}
       onPointerDown={onDown}
       onPointerEnter={() => setHot("drag")}
       onPointerLeave={() => {
@@ -229,6 +295,11 @@ export default function StickyNote({
       }}
     >
       {children}
+      <span id={hintId} aria-hidden='true' style={{ display: "none" }}>
+        Draggable sticky note. Press Enter to pick it up, move it with the arrow
+        keys (hold Shift for bigger steps), then press Enter or Escape to put it
+        down.
+      </span>
       <div
         aria-hidden='true'
         style={{

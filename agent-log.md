@@ -877,3 +877,159 @@ https://theshakeabhi.github.io/sitemap-index.xml`.
   Portfolio island fails identically there, so CookieConsent's absence in
   those screenshots is environmental; its SSR path runs during the build
   and its markup/logic are covered by astro check + eslint.
+
+# agent-log.FIX — post-QA fix pass (append-only)
+
+## FIX · 2026-09-17T16:18:43Z
+
+Applied all verified findings from live QA + adversarial review on
+`feat/handoff-redesign`. `npx -y yarn@1 build` (astro check + build) and
+`npx -y yarn@1 lint` both clean. No git writes; no dev servers left running.
+
+### Files touched
+
+- `src/components/pointer/PointerProvider.tsx` — QA-1, F7 follow-up
+- `src/styles/global.css` — QA-1, F2
+- `src/components/interactive/StickyNote.tsx` — QA-2/F8, F1/QA-5(labels)
+- `src/sections/NowBoard.tsx` — untouched (clamping lives in StickyNote;
+  the `sticky_v2_` key contract and default positions are unchanged)
+- `src/pages/index.astro` — QA-3
+- `src/components/chrome/CookieConsent.tsx` — QA-3
+- `src/pages/privacy.astro` — QA-3 (wording), QA-5/F4 (contrast)
+- `src/pages/terms.astro`, `src/pages/404.astro` — QA-5/F4 (contrast)
+- `src/sections/Hero.tsx` — F1/QA-5(labels), F6
+- `src/portfolio/Portfolio.tsx` — QA-5(landmark)
+- `src/sections/Work.tsx` — QA-5/F4 (contrast)
+- `src/components/interactive/Eyes.tsx` — F3
+- `src/sections/About.tsx` — F5
+- `src/sections/Resume.tsx` — F6
+- `src/lib/sfx.ts` — F7
+- `src/sections/Playground.tsx` — QA-5(labels) follow-up (Lighthouse
+  `label-content-name-mismatch` on the "+ 1" counter button)
+
+### Fixes
+
+1. **QA-1 BLOCKER (hydration).** Deleted the `<style>{CURSOR_HIDE_CSS}</style>`
+   text child from PointerProvider (react-dom/server escapes it; browsers
+   don't decode entities inside RAWTEXT `<style>`, → React #425/#423 on every
+   load + full client re-render). The rule
+   `[data-cursor-hidden="true"], [data-cursor-hidden="true"] * { cursor: none !important }`
+   now lives as static CSS in `src/styles/global.css`.
+   Verified: `dist/index.html` contains zero `data-cursor-hidden=&quot`
+   occurrences; the only remaining `<style>` in the page is Astro's own
+   `astro-island` display:contents helper. Lighthouse `errors-in-console`
+   is now clean (score 1, no items) — the hydration errors are gone.
+
+2. **QA-2 MAJOR + F8 (sticky notes clipped off the fluid board).** StickyNote
+   now clamps x/y to its offsetParent bounds — `max(0, parent.offsetWidth −
+el.offsetWidth)` / same for height, via offset* (unscaled) values so the
+   math matches the board coordinate space (trap 2). Clamping applies
+   (a) in the mount effect when the default or stored `sticky_v2_` position
+   is applied, (b) on window resize, (c) before persisting on pointer drop
+   AND on every keyboard move/drop. The `sticky_v2_` key contract is
+   untouched (same shape, same prefix, no migration); SSR first paint still
+   renders the raw default x/y — clamping is a style-only change in the
+   mount effect, so no hydration text mismatch (console clean, see above).
+
+3. **QA-3 MAJOR (DECLINE still pinged GA).** Switched to BASIC Consent Mode.
+   `index.astro` no longer has an unconditional gtag.js `<script src>`; the
+   inline head script keeps the denied consent defaults + dataLayer/gtag
+   bootstrap, defines `window.__loadGtag()` (consent update → js/config →
+   inject the script tag once) and calls it immediately only when
+   `localStorage["portfolio.consent"] === "accepted"`. CookieConsent's
+   ACCEPT stores the choice and calls `__loadGtag()`; DECLINE only stores
+   the choice — gtag.js was never loaded, so nothing is sent, not even
+   cookieless pings. Verified in dist: no `<script src>` to
+   googletagmanager anywhere; the URL only appears inside the loader
+   string. `/privacy` §02 rewritten: "the script does not even load unless
+   you press ACCEPT … no requests to Google at all, cookieless or
+   otherwise".
+
+4. **F1 MAJOR + QA-5 (labels).** StickyNote: dropped the generic aria-label;
+   role=button now takes its accessible name from the note's visible
+   content (WCAG 2.5.3), and the pick-up/move instructions moved to a
+   hidden `aria-describedby` span (aria-hidden so it stays out of the
+   name-from-contents computation; directly-referenced nodes still resolve
+   as the description per the AccName spec). Hero logo button: removed
+   `aria-label='ABHISHEK.SH'` and the `aria-hidden` on the "A" tile — the
+   name is now the visible "A ABHISHEK.SH". Follow-up caught by Lighthouse:
+   Playground's "+ 1" counter button aria-label now starts with its visible
+   text (`+ 1 — increment counter`); `label-content-name-mismatch` now
+   passes.
+
+5. **QA-5 (landmark).** Portfolio.tsx wraps Hero→Contact (all sections +
+   dividers) in a semantic `<main>` with no styles/transform, inside the
+   PointerProvider container (position:relative only — trap 1 safe).
+   CursorTrail/CustomCursor/RaveOverlay stay outside `<main>`; ScrollProgress,
+   SideRibbon and PreferencesMenu remain outside the provider entirely.
+   Verified in dist: `<main>` sits directly inside the provider's
+   `position:relative;width:100%` div; fixed chrome precedes it.
+
+6. **QA-5/F4 (contrast, surgical).** Small red mono headings/eyebrows on the
+   P8 pages → ink: 5 h2s on /privacy, 4 h2s on /terms, the "ERROR // PAGE
+   MISSING" eyebrow on /404 (`text-red` → `text-ink`; the large red display
+   spans in the h1s stay — large text passes at 3:1). Work.tsx "ONE BIG ONE
+   · THREE WARM-UPS · ALL THE OWNERSHIP" Stamp: cyan → ink. NOT touched
+   (documented design decisions for the PR body): prototype-verbatim red
+   rubber stamps/tag chips, danger button cream-on-red, ribbon colors —
+   these are the only remaining Lighthouse color-contrast items.
+
+7. **F2 (range thumbs).** `cursor: none` removed from the base
+   `::-webkit-slider-thumb` / `::-moz-range-thumb` rules; both re-added
+   scoped under `[data-cursor-hidden="true"]` (thumb pseudo-elements aren't
+   reached by the `*` rule). Verified in the built CSS.
+
+8. **F3 (Eyes cursor gate).** Removed the inline
+   `cursor: cursor && !coarsePointer ? "none" : undefined` (missed
+   `!reducedMotion`); the eyes now rely solely on the provider's
+   `[data-cursor-hidden]` CSS, so the gate can never disagree with the
+   provider. Unused `cursor` pref destructuring removed.
+
+9. **F5 (About eyes).** Added the README's About eye pair: `<Eyes size={44}
+gap={10} />` absolutely positioned next to the FOUNDING ENERGY burst
+   (bottom 96 / right −58, rotate 8deg), `aria-hidden`, wrapper
+   `hidden md:block` so it disappears <768px like the other decorative
+   pairs.
+
+10. **F6 (honest CV labels).** Hero ghost CTA: "↓ DOWNLOAD CV" → "CV ON
+    LINKEDIN ↗". Resume: "↓ DOWNLOAD .PDF" → "CV ON LINKEDIN ↗", "VIEW
+    ONLINE" → "VIEW PROFILE ↗"; the fabricated "LAST UPDATED · 2026.05.20 ·
+    84KB" line replaced by "PDF VERSION COMING SOON" (same mono styling).
+    Verified in dist: no "DOWNLOAD"/"84KB" remain.
+
+11. **F7 (AudioContext from hover).** `makeSfx().hover()` can no longer
+    create the AudioContext — `beep(..., create=false)` bails silently when
+    none exists (pointerenter is not a user activation → Chrome autoplay
+    warning + silent beeps). The context is created/resumed only from the
+    gesture voices (click/pop/grab/drop/yay) plus a one-time window
+    pointerdown/keydown pre-warm listener (SSR-guarded — makeSfx runs
+    during the island's server render). PointerProvider's fallback Sfx is
+    now lazy (`sfx ?? makeSfx()`) so the unused fallback instance no longer
+    exists to register a second context via the pre-warm.
+
+12. **QA-4 (perf).** Fresh build + `astro preview` + Lighthouse mobile
+    (headless new), server killed afterwards:
+    - Before (QA baseline): performance 89, LCP 3.2s, hydration discard.
+    - After: **performance 90, accessibility 96, best-practices 100, SEO
+      100; FCP 2.7s, LCP 3.0s, TBT 0ms, CLS 0.01; zero console errors.**
+    - LCP is still >2.5s, but the trace shows it is bound by the
+      render-blocking global stylesheet + self-hosted font chain
+      (`render-blocking` est. savings ~1.58s), NOT hydration: bootup time
+      0.1s, TBT 0ms. `client:idle` for the island therefore cannot move
+      LCP (hydration isn't on the LCP path) while it WOULD delay the
+      custom cursor/prefs/sticky restore — risk with no measurable reward,
+      so per the "if risky, skip" rule it was skipped. Critical-CSS
+      inlining / font subsetting would help but is bundle restructuring
+      (explicitly out of scope).
+
+### Self-check
+
+- `npx -y yarn@1 build` — astro check 0 errors/0 warnings, 4 pages built.
+- `npx -y yarn@1 lint` — clean (prettier applied via --fix).
+- dist spot-checks: no escaped `<style>` payload, no gtag `<script src>`,
+  `<main>` landmark with untransformed ancestors, 8 sticky notes with
+  content-derived names + describedby hints, honest CV labels, ink
+  headings on privacy/terms/404, scoped range-thumb cursor rules.
+- Lighthouse `errors-in-console` clean → no hydration warnings (QA-1/QA-2
+  SSR rule holds).
+- Preview server confirmed killed (port 4321 closed, no astro processes).

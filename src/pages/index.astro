@@ -51,9 +51,13 @@ const ogImageAlt =
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
 
-    <!-- Google Consent Mode v2 — defaults DENIED before gtag.js loads.
-         The CookieConsent island upgrades analytics_storage after opt-in
-         and replays a stored "accepted" on later visits. -->
+    <!-- Google Consent Mode v2, BASIC mode — gtag.js is NOT loaded here.
+         Consent defaults to DENIED and the script tag is injected only
+         after an explicit opt-in: immediately below when localStorage
+         portfolio.consent === "accepted" (returning visitors), or from the
+         CookieConsent island when ACCEPT is clicked. Declined/undecided
+         visitors send ZERO requests to googletagmanager/google-analytics
+         (no cookieless pings). -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -66,15 +70,24 @@ const ogImageAlt =
         analytics_storage: "denied",
         wait_for_update: 0,
       });
-    </script>
-    <!-- Google tag (gtag.js) -->
-    <script
-      is:inline
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-X8L7GJY3D8"></script>
-    <script is:inline>
-      gtag("js", new Date());
-      gtag("config", "G-X8L7GJY3D8");
+      window.__loadGtag = function () {
+        if (window.__gtagLoaded) return;
+        window.__gtagLoaded = true;
+        gtag("consent", "update", { analytics_storage: "granted" });
+        gtag("js", new Date());
+        gtag("config", "G-X8L7GJY3D8");
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-X8L7GJY3D8";
+        document.head.appendChild(s);
+      };
+      try {
+        if (localStorage.getItem("portfolio.consent") === "accepted") {
+          window.__loadGtag();
+        }
+      } catch (_e) {
+        /* storage unavailable — treat as undecided, load nothing */
+      }
     </script>
   </head>
   <body>

@@ -6,6 +6,7 @@ import Star from "../components/primitives/Star";
 import Burst from "../components/primitives/Burst";
 import PlaceholderImg from "../components/primitives/PlaceholderImg";
 import Hover from "../components/pointer/Hover";
+import Eyes from "../components/interactive/Eyes";
 import Tape from "../components/interactive/Tape";
 import ScrambleHover from "../components/text/ScrambleHover";
 import {
@@ -87,6 +88,20 @@ export default function About() {
               <br />
               ENERGY
             </div>
+          </div>
+          {/* Eye pair by the FOUNDING ENERGY burst (README §About) —
+              decorative, hidden <768px like the other pairs. */}
+          <div
+            aria-hidden='true'
+            className='hidden md:block'
+            style={{
+              position: "absolute",
+              bottom: 96,
+              right: -58,
+              transform: "rotate(8deg)",
+            }}
+          >
+            <Eyes size={44} gap={10} />
           </div>
         </div>
 

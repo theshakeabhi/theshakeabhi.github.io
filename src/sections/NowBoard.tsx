@@ -328,6 +328,9 @@ export default function NowBoard() {
               color={n.color}
               w={n.w}
               h={n.h}
+              // Board content width at the 1440 design (1440 − 2×80 slab
+              // padding); default coords scale against it on narrower boards.
+              designW={1280}
             >
               <NoteContent label={n.label} body={n.body} />
             </StickyNote>

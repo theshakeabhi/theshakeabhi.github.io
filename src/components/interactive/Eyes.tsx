@@ -35,7 +35,7 @@ export default function Eyes({
   style,
 }: EyesProps) {
   const { p, containerRef } = usePointer();
-  const { reducedMotion, coarsePointer, cursor } = usePrefs();
+  const { reducedMotion, coarsePointer } = usePrefs();
   const [blinking, setBlinking] = useState(false);
   const [spin, setSpin] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
@@ -145,9 +145,10 @@ export default function Eyes({
           : null),
         display: positioned ? "flex" : "inline-flex",
         gap,
-        // Prototype hides the OS cursor over the eyes (the custom cursor is
-        // the pointer) — only while the custom cursor is actually active.
-        cursor: cursor && !coarsePointer ? "none" : undefined,
+        // OS-cursor hiding over the eyes comes from the provider's
+        // [data-cursor-hidden] CSS (global.css) — no inline gate here, so
+        // it can never disagree with the provider's reducedMotion/
+        // coarsePointer/pref logic.
         ...style,
       }}
     >

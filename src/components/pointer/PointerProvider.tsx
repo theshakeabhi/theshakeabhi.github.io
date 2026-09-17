@@ -2,12 +2,15 @@
 // Container-relative coords, hot states, effective-scale division (trap 2).
 // The context SHAPE is the frozen contract and must not change.
 //
-// OS-cursor hiding: this provider owns the mechanism. It renders a scoped
-// <style> and toggles `data-cursor-hidden` on the container. The attribute
-// is applied only after mount (and only when usePrefs().cursor is on and
-// neither reducedMotion nor coarsePointer applies), so first-paint markup
-// is identical on server and client and the OS cursor is never hidden
-// before the custom cursor can render.
+// OS-cursor hiding: this provider owns the mechanism. It toggles
+// `data-cursor-hidden` on the container; the matching `cursor: none` rule
+// is static CSS in src/styles/global.css (an inline <style> child gets
+// HTML-escaped by react-dom/server and never decoded inside RAWTEXT,
+// causing hydration errors #425/#423). The attribute is applied only after
+// mount (and only when usePrefs().cursor is on and neither reducedMotion
+// nor coarsePointer applies), so first-paint markup is identical on server
+// and client and the OS cursor is never hidden before the custom cursor
+// can render.
 import {
   createContext,
   useCallback,
@@ -46,16 +49,12 @@ export interface PointerProviderProps {
   sfx?: Sfx;
 }
 
-const CURSOR_HIDE_CSS = `
-[data-cursor-hidden="true"],
-[data-cursor-hidden="true"] * {
-  cursor: none !important;
-}
-`;
-
 export function PointerProvider({ children, sfx }: PointerProviderProps) {
   const containerRef = useRef<HTMLElement>(null);
-  const [fallbackSfx] = useState(makeSfx);
+  // Only build a fallback Sfx when no instance is passed in — makeSfx now
+  // registers a pre-warm gesture listener, so an unused instance would
+  // needlessly create a second AudioContext.
+  const [fallbackSfx] = useState(() => sfx ?? makeSfx());
   const [p, setP] = useState<PointerState>({
     x: -999,
     y: -999,
@@ -120,7 +119,6 @@ export function PointerProvider({ children, sfx }: PointerProviderProps) {
 
   return (
     <PointerCtx.Provider value={value}>
-      <style>{CURSOR_HIDE_CSS}</style>
       <div
         ref={containerRef as RefObject<HTMLDivElement>}
         data-cursor-hidden={hideOsCursor ? "true" : undefined}

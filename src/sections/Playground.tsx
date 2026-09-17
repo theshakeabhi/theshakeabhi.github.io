@@ -184,7 +184,8 @@ export default function Playground() {
             </MagneticButton>
             <MagneticButton
               kind='cyan'
-              aria-label='Increment counter'
+              // Name starts with the visible "+ 1" (WCAG 2.5.3 label in name)
+              aria-label='+ 1 — increment counter'
               style={{ padding: "10px 16px" }}
               onClick={() => setCounter((n) => n + 1)}
             >

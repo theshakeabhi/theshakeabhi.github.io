@@ -186,6 +186,15 @@ p {
   text-wrap: pretty;
 }
 
+/* ── OS-cursor hiding — PointerProvider toggles the attribute ─────────
+   The rule lives here as static CSS: an inline <style> text child gets
+   HTML-escaped by react-dom/server and is never decoded inside RAWTEXT,
+   which caused hydration errors (#425/#423) on every load. */
+[data-cursor-hidden="true"],
+[data-cursor-hidden="true"] * {
+  cursor: none !important;
+}
+
 /* Range input styling — from Portfolio.html (Hue Democracy slider) */
 input[type="range"] {
   -webkit-appearance: none;
@@ -202,7 +211,6 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--color-cream);
   border: 3px solid var(--color-ink);
   border-radius: 50%;
-  cursor: none;
 }
 input[type="range"]::-moz-range-thumb {
   width: 20px;
@@ -210,6 +218,13 @@ input[type="range"]::-moz-range-thumb {
   background: var(--color-cream);
   border: 3px solid var(--color-ink);
   border-radius: 50%;
+}
+/* Thumb pseudo-elements aren't reached by the `*` rule above — hide the
+   OS cursor on them only while the custom cursor is actually active. */
+[data-cursor-hidden="true"] input[type="range"]::-webkit-slider-thumb {
+  cursor: none;
+}
+[data-cursor-hidden="true"] input[type="range"]::-moz-range-thumb {
   cursor: none;
 }
 

@@ -68,74 +68,78 @@ export default function Portfolio() {
         {/* Inside PointerProvider for sfx.yay(); the provider's container
             carries no transform, so the fixed banner stays viewport-pinned. */}
         <RaveOverlay on={egg.rave} onClose={egg.dismiss} />
-        <Hero onLogoClick={egg.onLogoClick} clicks={egg.clicks} />
-        <SectionDivider
-          items={[
-            "MORE ABOUT ME",
-            "↓",
-            "WHO IS THIS GUY",
-            "↓",
-            "FOUR YEARS OF SHIPPING",
-            "↓",
-            "KEEP SCROLLING",
-          ]}
-        />
-        <About />
-        <SectionDivider
-          items={[
-            "THE STACK",
-            "★",
-            "OPINIONS BELOW",
-            "★",
-            "STRONGLY HELD",
-            "★",
-            "LOOSELY DEFENDED",
-            "★",
-          ]}
-          dir={-1}
-          bg={red}
-        />
-        <Skills />
-        <Work />
-        <SectionDivider
-          items={[
-            "NOW PLAYING",
-            "✦",
-            "IN MY HEAD",
-            "✦",
-            "IN MY BACKLOG",
-            "✦",
-            "IN MY BROWSER",
-            "✦",
-          ]}
-          bg={cyan}
-          fg={cream}
-        />
-        <NowBoard />
-        <Writing />
-        <Playground />
-        {/* No permissioned quotes yet — skip the section AND its divider
+        {/* Semantic landmark for the page content. NO transform here
+            (trap 1) — fixed descendants must stay viewport-pinned. */}
+        <main>
+          <Hero onLogoClick={egg.onLogoClick} clicks={egg.clicks} />
+          <SectionDivider
+            items={[
+              "MORE ABOUT ME",
+              "↓",
+              "WHO IS THIS GUY",
+              "↓",
+              "FOUR YEARS OF SHIPPING",
+              "↓",
+              "KEEP SCROLLING",
+            ]}
+          />
+          <About />
+          <SectionDivider
+            items={[
+              "THE STACK",
+              "★",
+              "OPINIONS BELOW",
+              "★",
+              "STRONGLY HELD",
+              "★",
+              "LOOSELY DEFENDED",
+              "★",
+            ]}
+            dir={-1}
+            bg={red}
+          />
+          <Skills />
+          <Work />
+          <SectionDivider
+            items={[
+              "NOW PLAYING",
+              "✦",
+              "IN MY HEAD",
+              "✦",
+              "IN MY BACKLOG",
+              "✦",
+              "IN MY BROWSER",
+              "✦",
+            ]}
+            bg={cyan}
+            fg={cream}
+          />
+          <NowBoard />
+          <Writing />
+          <Playground />
+          {/* No permissioned quotes yet — skip the section AND its divider
             while the content file is empty (HANDOFF_NOTES P6 → P7). */}
-        {testimonials.length > 0 ? (
-          <>
-            <SectionDivider
-              items={[
-                "NICE THINGS",
-                "★",
-                "PEOPLE HAVE",
-                "★",
-                "SAID ABOUT ME",
-                "★",
-                "(I DIDN’T BRIBE THEM)",
-                "★",
-              ]}
-              dir={-1}
-            />
-            <Testimonials />
-          </>
-        ) : null}
-        <Resume />
-        <Contact />
+          {testimonials.length > 0 ? (
+            <>
+              <SectionDivider
+                items={[
+                  "NICE THINGS",
+                  "★",
+                  "PEOPLE HAVE",
+                  "★",
+                  "SAID ABOUT ME",
+                  "★",
+                  "(I DIDN’T BRIBE THEM)",
+                  "★",
+                ]}
+                dir={-1}
+              />
+              <Testimonials />
+            </>
+          ) : null}
+          <Resume />
+          <Contact />
+        </main>
       </PointerProvider>
     </PrefsProvider>
   );

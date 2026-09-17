@@ -1,14 +1,16 @@
-// P8 — cookie-consent slab + Google Consent Mode v2 wiring.
+// P8 — cookie-consent slab + Google Consent Mode v2 wiring (BASIC mode).
 //
 // This is its OWN island, mounted from index.astro (<CookieConsent
 // client:idle />) OUTSIDE the Portfolio island — no PointerProvider above
 // it, so the normal OS cursor applies here by design.
 //
-// Consent flow: index.astro's head sets gtag consent defaults to "denied"
-// BEFORE gtag.js loads. This slab upgrades analytics_storage to "granted"
-// on ACCEPT, and replays the stored grant on every mount for returning
-// visitors (the head default is deny-per-pageload, so an earlier "accepted"
-// must be re-sent or GA stays cookieless forever).
+// Consent flow (BASIC consent mode): gtag.js is NEVER loaded up front.
+// index.astro's head sets consent defaults to "denied", defines
+// window.__loadGtag (consent update + config + script injection) and calls
+// it immediately only when localStorage already holds "accepted" (returning
+// visitors). This slab calls __loadGtag on ACCEPT. Declined/undecided
+// visitors make ZERO requests to googletagmanager/google-analytics — not
+// even cookieless pings.
 //
 // SSR-safe: renders nothing until mounted AND no stored choice exists, so
 // server and client first paint are byte-identical (both empty).
@@ -23,6 +25,10 @@ declare global {
   interface Window {
     /** Defined by the inline Consent Mode script in index.astro's head. */
     gtag?: (...args: unknown[]) => void;
+    /** Loads gtag.js + fires consent update/config — index.astro's head. */
+    __loadGtag?: () => void;
+    /** Guard so __loadGtag only ever injects the script once. */
+    __gtagLoaded?: boolean;
   }
 }
 
@@ -43,30 +49,26 @@ function storeChoice(choice: Choice) {
   }
 }
 
-function sendConsentUpdate(granted: boolean) {
-  window.gtag?.("consent", "update", {
-    analytics_storage: granted ? "granted" : "denied",
-  });
-}
-
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const stored = readStoredChoice();
-    if (stored === "accepted") sendConsentUpdate(true);
-    if (stored === null) setVisible(true);
+    // A stored "accepted" is replayed by the head script (it loads gtag.js
+    // itself); here we only decide whether to show the banner.
+    if (readStoredChoice() === null) setVisible(true);
   }, []);
 
   if (!visible) return null;
 
   const accept = () => {
-    sendConsentUpdate(true);
     storeChoice("accepted");
+    // Injects gtag.js and fires the consent update + config (BASIC mode).
+    window.__loadGtag?.();
     setVisible(false);
   };
   const decline = () => {
-    sendConsentUpdate(false);
+    // BASIC consent mode: gtag.js was never loaded, so declining sends
+    // nothing anywhere — we only remember the choice.
     storeChoice("declined");
     setVisible(false);
   };
