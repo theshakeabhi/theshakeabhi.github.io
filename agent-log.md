@@ -1070,3 +1070,87 @@ generation); EximPe becomes previous (MAY '22 → APR '26). No git writes.
   appears once (inside the FanPro card, offset-ordered before the EximPe
   card), SHIPPED & SCALED once, "payments products" absent. No dev servers
   started.
+
+## Minimal-mode design toggle · 2026-09-22T23:40:00+05:30
+
+Second design mode behind a persisted top-right switch, on branch
+`feat/minimal-mode` off master merge commit `96e5384` (plan: "Minimal
+Mode — top-right switch"; approval artifact mockup
+`minimal-mode-preview.html`). Six commit-sized change sets; AGENTS.md
+gains the standing two-mode contract.
+
+- **Files touched** (grouped by the six commits):
+  1. `feat(minimal): pref, pre-paint attribute, CSS skin, border tokens`
+     (`fb18b63`) — src/lib/prefs.tsx (minimal pref + data-minimal sync),
+     src/styles/global.css (:root border tokens, @theme hairline/accent,
+     html[data-minimal] override block, box-shadow backstop, data-flourish
+     rule), src/tokens.ts (hairline/accent/borders exports),
+     src/pages/{index,404,privacy,terms}.astro (is:inline pre-paint heads).
+  2. `feat(minimal): MinimalToggle + PreferencesMenu row + quiet
+progress/ribbon + sfx mute` (`d1fa488`) —
+     src/components/chrome/MinimalToggle.tsx (new), PreferencesMenu.tsx,
+     ScrollProgress.tsx, SideRibbon.tsx, src/portfolio/Portfolio.tsx
+     (toggle mount, SfxMuteBridge minimal, AnchorRescroll).
+  3. `feat(minimal): primitive + interaction calm branches` (`98e2b49`) —
+     src/components/primitives/MinimalColumn.tsx (new) + null/calm guards
+     across 20 primitives/interactive/pointer/text/chrome components.
+  4. `feat(minimal): section layouts — Hero, About, Skills, Work` —
+     src/sections/{Hero,About,Skills,Work}.tsx: minimal branches (guard
+     after hooks) + shared content constants lifted (hero lead pre/em/post,
+     CTAs, ABOUT_P1/P2, SKILLS_TITLE + core flags, employer meta/status/
+     bullets/WINS).
+  5. `feat(minimal): section layouts — Now, Playground, Testimonials,
+Resume, Contact` — src/sections/{NowBoard,Playground,Testimonials,
+     Resume,Contact}.tsx minimal branches + src/sections/Writing.tsx
+     (label-row conditional + hover softening only; otherwise branchless).
+  6. `docs(minimal): AGENTS two-mode contract; agent-log entry` —
+     AGENTS.md (§Tokens border/override bullets, hairline/accent/Borders
+     token names, usePrefs frozen contract + sanction note, new §Two
+     design modes, trap 8, three stale HANDOFF_NOTES references retired,
+     definition-of-done += both-modes verification), this entry.
+- **Decisions/deviations**:
+  - prefs.tsx re-syncs `<meta name="theme-color">` at runtime on every
+    mode flip (resolves `--color-cream` from CSS) — beyond the plan's
+    pre-paint-only swap, so the browser chrome tracks live toggles.
+  - Minimal `--text-contact` companions are line-height 1.2 / letter-
+    spacing 0 (heading wraps in the 720px column; the fancy 0.85/-0.04em
+    would collide).
+  - Writing got TWO lead-approved conditionals despite "branchless": the
+    fancy corner chip → standard mono label row, and hover softening (no
+    inversion/padding shift; accent underline on the hovered title).
+  - Minimal Contact drops the SEND EMAIL / BOOK CHAT buttons — the email
+    link covers both mailtos; the CTA label constants are still lifted and
+    shared with the fancy buttons. Footer keeps PRIVACY/TERMS + back-to-
+    top; FOOTER_NOTE const is flag-free (fancy appends 🇮🇳).
+  - Playground's minimal sub-line reuses the fancy PLAYGROUND_SUB copy
+    verbatim (no separate minimal wording); toys stay fully functional in
+    both modes and share their state across the flip.
+  - Stamp's quiet chip keeps the fancy 4px 12px padding (only border/
+    weight/size/rotation calm down).
+  - Minimal section rhythm is explicit paddingTop/paddingBottom longhands
+    (52/64; Hero 84/64 to clear the fixed toggle at 375px) per the
+    approved mockup, instead of the re-scaled spacing tokens. Hairline
+    de-dup: About/NowBoard/Testimonials drop their fancy borderTop (a
+    SectionDivider precedes them), Work/Resume/Contact keep it, Playground
+    ADDS borders.default (fancy relied on the ink-slab contrast), Skills
+    none, Writing keeps automatically.
+  - Work's minimal prior-role rows render the FULL meta constants
+    (including "· HYBRID/REMOTE/ON-SITE", lowercased) — single-source
+    beats the mockup's trimmed strings. Prior names join `name[0]+name[1]`
+    - first stamp text; FanPro/EximPe use minimal-only real-casing name
+      constants (fancy titles are display-face JSX).
+  - The mono label-row style const is repeated per section file — scope
+    was section-file edits only; extracting a shared primitive is P0's
+    call (flagged as a possible follow-up).
+  - Testimonials' header comment lost its stale HANDOFF_NOTES pointer
+    (same retirement sweep as the AGENTS.md fixes).
+  - Fancy Contact's email link now renders the shared lowercase EMAIL
+    constant with `textTransform: uppercase` added to linkStyle — visual
+    output unchanged, copy single-sourced.
+- **Self-check**: `npx -y yarn@1 build` — astro check 0 errors /
+  0 warnings, 4 pages built. `npx -y yarn@1 lint` — clean (prettier
+  applied via --fix). dist CSS contains the generated `.text-ink`,
+  `.text-slate`, `decoration-hairline`, `decoration-accent` utilities
+  (minimal link classes verified referenced). No dev servers started —
+  visual QA runs next. No git writes by this agent; lead commits and
+  opens the PR.
