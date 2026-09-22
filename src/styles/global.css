@@ -55,6 +55,13 @@
   --color-slate-mid: #94a3b8;
   --color-slate-light: #cbd5e1;
 
+  /* Minimal-mode support tokens (also re-exported from src/tokens.ts and
+     used by utilities in the minimal branches, so Tailwind keeps them).
+     --color-accent is the ONLY deliberate red in minimal: MinimalToggle
+     knob when on, link hover underline, status markers. */
+  --color-hairline: #e7e5df;
+  --color-accent: #dc2626;
+
   /* ── Fonts ──────────────────────────────────────────────── */
   --font-display: "Archivo Black", sans-serif;
   --font-body: "Space Grotesk", system-ui, sans-serif;
@@ -105,6 +112,16 @@
   --spacing-slab-x: clamp(20px, 5.5vw, 80px);
   --spacing-slab-y: 90px;
   --spacing-slab-top-deep: 110px; /* sections after the hero */
+}
+
+/* ── Border tokens — plain :root, NOT @theme ─────────────────────
+   Tailwind 4 tree-shakes @theme variables no utility references, and
+   these are consumed only as var() strings via src/tokens.ts
+   (borders.default / borders.thick). The minimal block below re-declares
+   them as hairlines. */
+:root {
+  --border-default: 3px solid var(--color-ink);
+  --border-thick: 4px solid var(--color-ink);
 }
 
 /* ── Keyframes — copied from Portfolio.html ─────────────────── */
@@ -239,4 +256,103 @@ input[type="range"]::-moz-range-thumb {
     animation-iteration-count: 1 !important;
     animation-delay: 0ms !important;
   }
+}
+
+/* ══ MINIMAL MODE — html[data-minimal] ═══════════════════════════════
+   The second design mode: the SAME tokens, re-declared quiet. The
+   attribute is set BEFORE first paint by the is:inline head script in
+   each page (reading localStorage "portfolio.tweaks", owned by
+   src/lib/prefs.tsx) and kept in sync after hydration by prefs.tsx.
+   This block is the only place token VALUES may be re-declared. */
+html[data-minimal] {
+  /* Colors — paper / ink / warm grey. Accents collapse to ink/grey;
+     the deliberate red survives only as --color-accent (unchanged).
+     Yellow → paper because it is dual-use: highlight BACKGROUND under
+     ink text AND text COLOR on ink slabs (e.g. CookieConsent header).
+     Success green is unchanged (availability dot, static). */
+  --color-cream: #fbfbf9;
+  --color-cream-warm: #fbfbf9;
+  --color-cork: #fbfbf9;
+  --color-ink: #171717;
+  --color-ink-deep: #111111;
+  --color-red: #171717;
+  --color-cyan: #72726c;
+  --color-yellow: #fbfbf9;
+  --color-slate: #72726c;
+  --color-slate-mid: #b3b1aa;
+  --color-slate-light: #e7e5df;
+  --color-sticky-yellow: #f4f2ec;
+  --color-sticky-mint: #f4f2ec;
+  --color-sticky-red: #f4f2ec;
+  --color-sticky-sky: #f4f2ec;
+  --color-sticky-lavender: #f4f2ec;
+  --color-sticky-orange: #f4f2ec;
+
+  /* Fonts — JetBrains Mono headings/labels/meta, Space Grotesk body. */
+  --font-display: var(--font-mono);
+  --font-hand: var(--font-body);
+
+  /* Shadows — none (plus the box-shadow backstop below for inlined
+     Tailwind utility literals and inline-style shadows). */
+  --shadow-card: none;
+  --shadow-pressed: none;
+  --shadow-lifted: none;
+  --shadow-card-hover: none;
+  --shadow-slab: none;
+  --shadow-sticky: none;
+  --shadow-sticky-drag: none;
+
+  /* Border tokens → hairlines. */
+  --border-default: 1px solid var(--color-hairline);
+  --border-thick: 1px solid var(--color-hairline);
+
+  /* Type scale — down to document sizes, flat tracking. */
+  --text-mega: clamp(32px, 3.4vw, 48px);
+  --text-mega--line-height: 1.1;
+  --text-mega--letter-spacing: 0;
+  --text-section: clamp(22px, 2.1vw, 30px);
+  --text-section--line-height: 1.15;
+  --text-section--letter-spacing: 0;
+  --text-sub: clamp(20px, 1.9vw, 27px);
+  --text-sub--line-height: 1.2;
+  --text-sub--letter-spacing: 0;
+  --text-project: clamp(19px, 1.7vw, 24px);
+  --text-project--line-height: 1.2;
+  --text-project--letter-spacing: 0;
+  --text-card-title: clamp(16px, 1.3vw, 19px);
+  --text-card-title--line-height: 1.3;
+  --text-card-title--letter-spacing: 0;
+  --text-lead: clamp(16px, 1.25vw, 18px);
+  --text-lead--line-height: 1.55;
+  --text-body: clamp(15px, 1.15vw, 17px);
+  --text-body--line-height: 1.6;
+  --text-small: clamp(13px, 1vw, 15px);
+  --text-small--line-height: 1.55;
+  --text-stat: clamp(18px, 1.6vw, 22px);
+  --text-contact: clamp(26px, 2.5vw, 36px);
+  --text-contact--line-height: 1.2;
+  --text-contact--letter-spacing: 0;
+
+  /* Spacing — tighter slab rhythm. */
+  --spacing-slab-y: 56px;
+  --spacing-slab-top-deep: 64px;
+}
+
+/* Backstop (trap 8): Tailwind 4 inlines RESOLVED shadow literals into
+   its utilities (--tw-shadow: 14px…) and several inline styles compose
+   literal hard shadows — re-declaring --shadow-* alone cannot reach
+   them. Kill every box-shadow under minimal. Corollary: never build
+   focus rings from box-shadow — use outline. */
+html[data-minimal] *,
+html[data-minimal] *::before,
+html[data-minimal] *::after {
+  box-shadow: none !important;
+}
+
+/* Fancy-only flourishes (SideRibbon, fancy SectionDivider roots) carry
+   data-flourish and are CSS-hidden as well as React-skipped, so the
+   pre-hydration frame is already quiet when the pre-paint script set
+   data-minimal (the island pre-renders the full-fat tree). */
+html[data-minimal] [data-flourish] {
+  display: none !important;
 }

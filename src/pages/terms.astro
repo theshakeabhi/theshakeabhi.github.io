@@ -19,6 +19,20 @@ const updated = "September 17, 2026";
     <link rel="canonical" href={`${site}/terms/`} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Pre-paint minimal-mode skin — same localStorage "portfolio.tweaks"
+         key owned by src/lib/prefs.tsx (see index.astro). -->
+    <script is:inline>
+      try {
+        var __tweaks = JSON.parse(
+          localStorage.getItem("portfolio.tweaks") || "{}"
+        );
+        if (__tweaks && __tweaks.minimal === true) {
+          document.documentElement.setAttribute("data-minimal", "");
+        }
+      } catch (_e) {
+        /* storage unavailable — stay full-fat */
+      }
+    </script>
   </head>
   <body class="bg-cream text-ink font-body">
     <main
