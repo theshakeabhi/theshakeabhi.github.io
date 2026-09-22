@@ -1235,3 +1235,20 @@ check` 0 errors / 0 warnings (55 files), `npx -y yarn@1 lint` clean
   (minimal link classes verified referenced). No dev servers started —
   visual QA runs next. No git writes by this agent; lead commits and
   opens the PR.
+
+## Per-folder agent logs · 2026-09-23T01:12:29+05:30
+
+User-requested traceability change: the single root log becomes the
+chronological master, and every source folder now carries its own scoped
+`agent-log.md`.
+
+- **Files touched**: 16 new seeded logs (src/ and its 12 subfolders,
+  public/, .github/, .husky/), AGENTS.md §Protocols (agent-log bullet
+  rewritten for the per-folder protocol), this entry.
+- **Decisions/deviations**: root history left intact (append-only — no
+  migration of old entries into folder logs; seeds point back here);
+  dot-dirs (.github, .husky) log at their top level rather than per
+  subfolder; new folders must seed their log in the same change.
+- **Self-check**: 17 agent-log.md files present outside
+  node_modules/dist/.astro; markdown-only change, prettier via
+  pre-commit hook; committed to feat/minimal-mode and pushed to PR #2.
