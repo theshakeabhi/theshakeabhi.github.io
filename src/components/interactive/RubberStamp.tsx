@@ -1,6 +1,10 @@
 // P0 — double-line rubber stamp, ported FULLY from micro.jsx (P3 owns
-// going forward).
+// going forward). Pure flourish — renders nothing in minimal mode; its
+// text is real info, so minimal section branches surface the same STATUS
+// consts through the quiet Stamp chip instead (AGENTS.md §Two design
+// modes).
 import type { CSSProperties } from "react";
+import { usePrefs } from "../../lib/prefs";
 import { cream, red, fonts } from "../../tokens";
 
 export interface RubberStampProps {
@@ -18,6 +22,8 @@ export default function RubberStamp({
   size = 110,
   style,
 }: RubberStampProps) {
+  const { minimal } = usePrefs();
+  if (minimal) return null;
   return (
     <div
       aria-hidden='true'

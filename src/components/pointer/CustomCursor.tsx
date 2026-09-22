@@ -12,8 +12,9 @@ import { red, cyan, ink } from "../../tokens";
 
 export default function CustomCursor() {
   const { p } = usePointer();
-  const { cursor, reducedMotion, coarsePointer } = usePrefs();
-  const enabled = cursor && !reducedMotion && !coarsePointer;
+  const { cursor, reducedMotion, coarsePointer, minimal } = usePrefs();
+  // minimal folds into `enabled` so the rAF loop stops, not just the render.
+  const enabled = cursor && !reducedMotion && !coarsePointer && !minimal;
   const ringRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
   const target = useRef({ x: 0, y: 0 });

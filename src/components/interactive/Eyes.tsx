@@ -35,7 +35,7 @@ export default function Eyes({
   style,
 }: EyesProps) {
   const { p, containerRef } = usePointer();
-  const { reducedMotion, coarsePointer } = usePrefs();
+  const { reducedMotion, coarsePointer, minimal } = usePrefs();
   const [blinking, setBlinking] = useState(false);
   const [spin, setSpin] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
@@ -46,7 +46,9 @@ export default function Eyes({
   const tracking = !coarsePointer && !reducedMotion;
 
   useEffect(() => {
-    if (!blink || reducedMotion) return;
+    // No blink interval in minimal mode either — the eyes render null there,
+    // so the timer would be pure waste.
+    if (!blink || reducedMotion || minimal) return;
     let close: ReturnType<typeof setTimeout> | undefined;
     const t = setInterval(
       () => {
@@ -59,12 +61,15 @@ export default function Eyes({
       clearInterval(t);
       if (close) clearTimeout(close);
     };
-  }, [blink, reducedMotion]);
+  }, [blink, reducedMotion, minimal]);
 
   useEffect(() => {
     const timers = spinTimers.current;
     return () => timers.forEach(clearTimeout);
   }, []);
+
+  // Pure flourish — nothing in minimal mode (guard AFTER all hooks).
+  if (minimal) return null;
 
   // Resolve eye centers in PointerProvider container coords (so pupils track
   // the real cursor regardless of where in the page the Eyes are mounted).

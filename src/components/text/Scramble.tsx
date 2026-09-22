@@ -23,10 +23,11 @@ export default function Scramble({
   // SSR-safe: initial state is the final text — identical first paint on
   // server and client; the interval only starts in the effect after mount.
   const [v, setV] = useState(text);
-  const { reducedMotion } = usePrefs();
+  const { reducedMotion, minimal } = usePrefs();
 
   useEffect(() => {
-    if (reducedMotion) {
+    // Minimal mode never scrambles either — plain text, no interval.
+    if (reducedMotion || minimal) {
       setV(text);
       return;
     }
@@ -48,7 +49,7 @@ export default function Scramble({
       }
     }, speed);
     return () => window.clearInterval(id);
-  }, [trigger, text, speed, reducedMotion]);
+  }, [trigger, text, speed, reducedMotion, minimal]);
 
   return <span style={style}>{v}</span>;
 }

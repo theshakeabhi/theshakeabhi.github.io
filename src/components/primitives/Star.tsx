@@ -1,5 +1,8 @@
 // P0 foundation — sticker star, ported from portfolio-1.jsx.
+// Pure flourish — renders nothing in minimal mode (AGENTS.md §Two design
+// modes).
 import type { CSSProperties } from "react";
+import { usePrefs } from "../../lib/prefs";
 import { ink, red } from "../../tokens";
 
 export interface StarProps {
@@ -15,6 +18,8 @@ export default function Star({
   rotate = 0,
   style,
 }: StarProps) {
+  const { minimal } = usePrefs();
+  if (minimal) return null;
   return (
     <svg
       width={size}

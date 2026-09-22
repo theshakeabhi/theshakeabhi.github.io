@@ -1,6 +1,8 @@
 // P0 — hand-drawn quadratic-bezier arrow with arrowhead + optional Caveat
-// label, ported FULLY from micro.jsx (P3 owns going forward).
+// label, ported FULLY from micro.jsx (P3 owns going forward). Pure
+// flourish — renders nothing in minimal mode (AGENTS.md §Two design modes).
 import type { CSSProperties } from "react";
+import { usePrefs } from "../../lib/prefs";
 import { red, fonts } from "../../tokens";
 
 export interface ArrowProps {
@@ -20,6 +22,8 @@ export default function Arrow({
   label,
   style,
 }: ArrowProps) {
+  const { minimal } = usePrefs();
+  if (minimal) return null;
   const [x1, y1] = from;
   const [x2, y2] = to;
   const dx = x2 - x1;

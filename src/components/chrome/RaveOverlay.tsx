@@ -28,13 +28,22 @@ interface ConfettiPiece {
 
 export default function RaveOverlay({ on, onClose }: RaveOverlayProps) {
   const { sfx } = usePointer();
-  const { reducedMotion } = usePrefs();
+  const { reducedMotion, minimal } = usePrefs();
   const wasOn = useRef(false);
 
   useEffect(() => {
-    if (on && !wasOn.current) sfx.yay();
+    // Minimal mode: eggs are inert — no fanfare (sfx is muted there anyway,
+    // but yay() would still resume the AudioContext).
+    if (on && !wasOn.current && !minimal) sfx.yay();
     wasOn.current = on;
-  }, [on, sfx]);
+  }, [on, sfx, minimal]);
+
+  // Eggs stay inert in minimal mode: if rave triggers (or was already on
+  // when the mode flipped), dismiss it so the egg state doesn't linger and
+  // replay the party when the visitor switches back to full-fat.
+  useEffect(() => {
+    if (minimal && on) onClose();
+  }, [minimal, on, onClose]);
 
   // Randomized once per rave (stable across re-renders while `on` holds).
   // Server-side `on` is always false, so Math.random never runs during SSR.
@@ -52,7 +61,7 @@ export default function RaveOverlay({ on, onClose }: RaveOverlayProps) {
     [on]
   );
 
-  if (!on) return null;
+  if (!on || minimal) return null;
 
   return (
     <div

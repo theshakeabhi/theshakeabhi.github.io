@@ -80,8 +80,12 @@ export default function MagneticButton({
   const [hover, setHover] = useState(false);
   const [press, setPress] = useState(false);
 
+  // Minimal mode kills the magnet (and the wobble/hover scale with it).
   const magnetOn =
-    prefs.magnetic && !prefs.reducedMotion && !prefs.coarsePointer;
+    prefs.magnetic &&
+    !prefs.reducedMotion &&
+    !prefs.coarsePointer &&
+    !prefs.minimal;
 
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -187,6 +191,24 @@ export default function MagneticButton({
         // whenever the custom cursor is off.
         cursor: "pointer",
         ...style,
+        // Minimal mode: one quiet mono button face, whatever kind/style the
+        // caller asked for — layered AFTER {...style} so per-call fancy
+        // overrides (colors, sizes) can't leak through. Ink border on
+        // purpose (affordance), NOT the hairline token.
+        ...(prefs.minimal
+          ? {
+              background: cream,
+              color: ink,
+              border: `1px solid ${ink}`,
+              boxShadow: "none",
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 13,
+              letterSpacing: "0.08em",
+              textTransform: "lowercase" as const,
+              padding: "8px 14px",
+            }
+          : null),
       }}
     >
       {children}

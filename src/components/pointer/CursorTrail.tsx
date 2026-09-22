@@ -20,8 +20,9 @@ interface TrailDot {
 
 export default function CursorTrail({ count = 4 }: CursorTrailProps) {
   const { p } = usePointer();
-  const { cursor, reducedMotion, coarsePointer } = usePrefs();
-  const enabled = cursor && !reducedMotion && !coarsePointer;
+  const { cursor, reducedMotion, coarsePointer, minimal } = usePrefs();
+  // minimal folds into `enabled` so the rAF loop stops, not just the render.
+  const enabled = cursor && !reducedMotion && !coarsePointer && !minimal;
   const refs = useRef<TrailDot[]>(
     Array.from({ length: count }, () => ({ x: 0, y: 0, el: null }))
   );

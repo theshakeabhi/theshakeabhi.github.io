@@ -1,8 +1,12 @@
 // P0 foundation — between-section marquee strip, ported from app.jsx.
 // Below 768px it renders a static centered tag row instead of the marquee.
+// Minimal mode: a single hairline rule — the fancy root carries
+// data-flourish so the pre-hydration frame is already quiet under
+// html[data-minimal] (AGENTS.md §Two design modes).
 import type { CSSProperties } from "react";
 import Marquee from "../text/Marquee";
 import { useMediaQuery } from "../../lib/useMediaQuery";
+import { usePrefs } from "../../lib/prefs";
 import { cream, ink, borders, fonts } from "../../tokens";
 
 export interface SectionDividerProps {
@@ -28,9 +32,16 @@ export default function SectionDivider({
   fg = cream,
 }: SectionDividerProps) {
   const compact = useMediaQuery("(max-width: 767px)");
+  const { minimal } = usePrefs();
+
+  if (minimal) {
+    return <div aria-hidden='true' style={{ borderTop: borders.default }} />;
+  }
+
   return (
     <div
       aria-hidden='true'
+      data-flourish=''
       style={{
         background: bg,
         color: fg,

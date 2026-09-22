@@ -1,5 +1,8 @@
 // P0 foundation — sticker burst (spiky badge), ported from portfolio-1.jsx.
+// Pure flourish — renders nothing in minimal mode (AGENTS.md §Two design
+// modes).
 import type { CSSProperties } from "react";
+import { usePrefs } from "../../lib/prefs";
 import { ink, yellow } from "../../tokens";
 
 export interface BurstProps {
@@ -17,6 +20,8 @@ export default function Burst({
   points = 12,
   style,
 }: BurstProps) {
+  const { minimal } = usePrefs();
+  if (minimal) return null;
   const r1 = size / 2;
   const r2 = size / 2 - 12;
   const pts: string[] = [];

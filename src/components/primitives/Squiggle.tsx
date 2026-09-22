@@ -1,5 +1,8 @@
 // P0 foundation — hand-drawn squiggle underline, ported from portfolio-1.jsx.
+// Pure flourish — renders nothing in minimal mode (AGENTS.md §Two design
+// modes).
 import type { CSSProperties } from "react";
+import { usePrefs } from "../../lib/prefs";
 import { red } from "../../tokens";
 
 export interface SquiggleProps {
@@ -13,6 +16,8 @@ export default function Squiggle({
   color = red,
   style,
 }: SquiggleProps) {
+  const { minimal } = usePrefs();
+  if (minimal) return null;
   return (
     <svg
       width={w}
