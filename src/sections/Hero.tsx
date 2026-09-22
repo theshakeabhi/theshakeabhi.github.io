@@ -3,7 +3,13 @@
 // two-line mega name with cyan hand-drawn underline, lead copy, magnetic
 // CTAs with the "start here" arrow, two eye pairs, bottom ink marquee.
 // P7 wires onLogoClick/clicks to the rave easter egg (defaults: noop / 0).
+// Minimal mode (AGENTS.md §Two design modes): calm 720px column — mono top
+// row (logo button still wired, egg inert downstream; static dot), real
+// name at document size, role line, shared lead copy, plain links. Both
+// branches read the SAME shared constants below.
+import type { CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Stamp from "../components/primitives/Stamp";
 import Burst from "../components/primitives/Burst";
 import Squiggle from "../components/primitives/Squiggle";
@@ -22,6 +28,7 @@ import {
   cyan,
   yellow,
   success,
+  slate,
   fonts,
   text,
   borders,
@@ -37,10 +44,10 @@ export interface HeroProps {
 // Anchor targets are the real section ids on the Slabs (Work id='work',
 // NowBoard id='now', Contact id='contact'; Writing id='writing' → P6).
 const NAV = [
-  { label: "WORK", href: "#work" },
-  { label: "NOW", href: "#now" },
-  { label: "WRITING", href: "#writing" },
-  { label: "CONTACT", href: "#contact" },
+  { label: "Work", href: "#work" },
+  { label: "Now", href: "#now" },
+  { label: "Writing", href: "#writing" },
+  { label: "Contact", href: "#contact" },
 ] as const;
 
 const MARQUEE_ITEMS = [
@@ -63,8 +70,199 @@ const MARQUEE_ITEMS = [
 // User decision: no CV PDF yet — the ghost CTA links to LinkedIn instead.
 const CV_URL = "https://www.linkedin.com/in/theshakeabhi/";
 
+// Copy shared by BOTH design modes — never duplicated (AGENTS.md §Two
+// design modes). Constants are NATURAL case: fancy uppercases via CSS
+// textTransform (top bar, MagneticButton faces), minimal lowercases its
+// links via CSS. LOGO_TEXT is a wordmark — caps IS its natural case.
+const LOGO_TEXT = "ABHISHEK.SH";
+const AVAILABLE = "Available for hire";
+const LEAD_PRE = "Senior frontend engineer who ships at ";
+const LEAD_EM = "founding-team speed";
+const LEAD_POST =
+  ", mentors humans, and treats production incidents like a sport. Currently leading frontend at FanProStudio AI, shipping AI-media generation — AI influencers and on-brand UGC — from Bengaluru.";
+// Shared label text, per-mode arrow glyph (mock: fancy →, minimal ↓).
+const CTA_WORK_TEXT = "See the work";
+const CTA_WORK_ARROW = { fancy: "→", minimal: "↓" } as const;
+const CTA_CV = "CV on LinkedIn ↗";
+
+// Minimal-only type: the calm hero shows the real name + a role line
+// instead of the mega display face.
+const NAME = "Abhishek Chandrasenan";
+const ROLE_LINE = "senior frontend engineer · bengaluru · IST";
+
+// Canonical minimal link (mockup-derived): decoration colors come from the
+// classes (inline style beats hover classes, so BOTH base + hover colors
+// stay classes) — never the `textDecoration` shorthand, which would reset
+// text-decoration-color back to currentColor.
+const MINIMAL_LINK_CLASSES =
+  "text-ink decoration-hairline hover:decoration-accent";
+const minimalLinkStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 13.5,
+  textDecorationLine: "underline",
+  textDecorationThickness: 1,
+  textUnderlineOffset: 4,
+  textTransform: "lowercase",
+};
+
 export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
-  const { reducedMotion } = usePrefs();
+  const { minimal, reducedMotion } = usePrefs();
+
+  // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
+  // No marquee/eyes/tape/burst/arrow/squiggle wrappers here at all.
+  if (minimal) {
+    return (
+      // paddingTop 84 clears the fixed MinimalToggle at 375px.
+      <Slab bg={cream} style={{ paddingTop: 84, paddingBottom: 64 }}>
+        <MinimalColumn>
+          {/* Mono top row: logo (egg inert downstream), nav, static dot. */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "baseline",
+              gap: "10px 24px",
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 12,
+              letterSpacing: "0.1em",
+              color: ink,
+              marginBottom: 66,
+            }}
+          >
+            <button
+              type='button'
+              onClick={onLogoClick}
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                color: "inherit",
+                font: "inherit",
+                letterSpacing: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              {/* No chip letter here — the mock's minimal top row is
+                  exactly "ABHISHEK.SH". */}
+              {LOGO_TEXT}
+            </button>
+            {/* Mockup .mtop nav a: muted, NO underline, hover → accent
+                COLOR (both colors as classes — inline beats hover). */}
+            <nav aria-label='Primary' style={{ display: "flex", gap: 20 }}>
+              {NAV.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  className='text-slate hover:text-accent'
+                  style={{
+                    textDecoration: "none",
+                    textTransform: "lowercase",
+                  }}
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          <h1
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 700,
+              fontSize: "clamp(25px, 2.5vw, 36px)",
+              letterSpacing: "-0.02em",
+              color: ink,
+              margin: "0 0 10px",
+            }}
+          >
+            {NAME}
+          </h1>
+          <p
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 13,
+              letterSpacing: "0.06em",
+              color: slate,
+              margin: "0 0 28px",
+            }}
+          >
+            {ROLE_LINE}
+          </p>
+          <p
+            style={{
+              fontFamily: fonts.body,
+              fontWeight: 400,
+              fontSize: 16.5,
+              lineHeight: 1.65,
+              color: ink,
+              margin: 0,
+              maxWidth: "62ch",
+            }}
+          >
+            {LEAD_PRE}
+            {LEAD_EM}
+            {LEAD_POST}
+          </p>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 26,
+              marginTop: 26,
+            }}
+          >
+            <a
+              href='#work'
+              className={MINIMAL_LINK_CLASSES}
+              style={minimalLinkStyle}
+            >
+              {CTA_WORK_TEXT} {CTA_WORK_ARROW.minimal}
+            </a>
+            <a
+              href={CV_URL}
+              target='_blank'
+              rel='noreferrer'
+              className={MINIMAL_LINK_CLASSES}
+              style={minimalLinkStyle}
+            >
+              {CTA_CV}
+            </a>
+          </div>
+          {/* Mockup .mavail: the availability line sits BELOW the CTAs
+              with a STATIC dot — no pulse ring/animation. */}
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 12,
+              letterSpacing: "0.08em",
+              color: slate,
+              textTransform: "lowercase",
+              marginTop: 30,
+            }}
+          >
+            <span
+              aria-hidden='true'
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: success,
+              }}
+            />
+            {AVAILABLE}
+          </span>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
 
   const goToWork = () => {
     document
@@ -90,6 +288,8 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           fontWeight: 700,
           fontSize: 12,
           letterSpacing: "0.15em",
+          // Natural-case NAV/AVAILABLE constants → fancy caps via CSS.
+          textTransform: "uppercase",
           color: ink,
           marginBottom: 50,
         }}
@@ -130,7 +330,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           >
             A
           </span>
-          <span>ABHISHEK.SH</span>
+          <span>{LOGO_TEXT}</span>
         </Hover>
         <nav aria-label='Primary' style={{ display: "flex", gap: 28 }}>
           {NAV.map(({ label, href }) => (
@@ -159,7 +359,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               animation: reducedMotion ? "none" : "pulse 2s infinite",
             }}
           />
-          <span>AVAILABLE FOR HIRE</span>
+          <span>{AVAILABLE}</span>
         </div>
       </div>
 
@@ -308,7 +508,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               maxWidth: 680,
             }}
           >
-            Senior frontend engineer who ships at{" "}
+            {LEAD_PRE}
             <em
               style={{
                 background: yellow,
@@ -316,11 +516,9 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
                 fontStyle: "normal",
               }}
             >
-              founding-team speed
+              {LEAD_EM}
             </em>
-            , mentors humans, and treats production incidents like a sport.
-            Currently leading frontend at FanProStudio AI, shipping AI-media
-            generation — AI influencers and on-brand UGC — from Bengaluru.
+            {LEAD_POST}
           </p>
           <div
             style={{
@@ -332,10 +530,10 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
             }}
           >
             <MagneticButton kind='danger' onClick={goToWork}>
-              SEE THE WORK →
+              {CTA_WORK_TEXT} {CTA_WORK_ARROW.fancy}
             </MagneticButton>
             <MagneticButton kind='ghost' onClick={openCv}>
-              CV ON LINKEDIN ↗
+              {CTA_CV}
             </MagneticButton>
             <span aria-hidden='true' className='hidden lg:inline'>
               <Arrow

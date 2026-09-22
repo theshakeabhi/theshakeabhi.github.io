@@ -19,6 +19,12 @@ export const cork = "var(--color-cork)";
 export const slate = "var(--color-slate)";
 export const slateMid = "var(--color-slate-mid)";
 export const slateLight = "var(--color-slate-light)";
+/** 1px-rule color in minimal mode (border tokens resolve to it there). */
+export const hairline = "var(--color-hairline)";
+/** The ONE deliberate red that survives minimal mode: MinimalToggle knob
+ *  when on, link hover underline, status markers. Same value in both
+ *  modes — spend it sparingly. */
+export const accent = "var(--color-accent)";
 
 /** Sticky-note palette (Now section). */
 export const sticky = {
@@ -59,12 +65,15 @@ export const shadows = {
   stickyDrag: "var(--shadow-sticky-drag)",
 } as const;
 
-/* ── Borders — README §Borders ──────────────────────────────── */
+/* ── Borders — README §Borders ──────────────────────────────────────
+   Mode-aware: the values live in a plain :root block in global.css
+   (NOT @theme — Tailwind 4 tree-shakes unreferenced @theme vars) and
+   collapse to 1px hairlines under html[data-minimal]. */
 export const borders = {
-  /** Default 3px ink border used on nearly everything. */
-  default: "3px solid var(--color-ink)",
-  /** 4px ink border — the two mega work cards, section dividers. */
-  thick: "4px solid var(--color-ink)",
+  /** Default border: 3px ink (full-fat) / 1px hairline (minimal). */
+  default: "var(--border-default)",
+  /** Thick border: 4px ink (full-fat) / 1px hairline (minimal). */
+  thick: "var(--border-thick)",
 } as const;
 
 /* ── Fluid type scale ───────────────────────────────────────── */

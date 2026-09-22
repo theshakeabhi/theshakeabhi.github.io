@@ -18,6 +18,7 @@ const TOGGLES: { key: PrefKey; label: string }[] = [
   { key: "sfx", label: "Sound effects" },
   { key: "cursor", label: "Custom cursor" },
   { key: "magnetic", label: "Magnetic buttons" },
+  { key: "minimal", label: "Minimal mode" },
 ];
 
 // Easter-egg hints — copy from the prototype's TweaksPanel (app.jsx).
@@ -162,44 +163,64 @@ export default function PreferencesMenu() {
             onToggle={() => prefs.setPref(key, !prefs[key])}
           />
         ))}
-        <div
-          style={{
-            height: 2,
-            background: ink,
-            margin: "12px 0 10px",
-          }}
-        />
-        <div
-          style={{
-            fontFamily: fonts.mono,
-            fontWeight: 900,
-            fontSize: 11,
-            letterSpacing: "0.2em",
-            color: ink,
-            marginBottom: 6,
-          }}
-        >
-          EASTER EGGS
-        </div>
-        <ul
-          style={{
-            listStyle: "none",
-            margin: 0,
-            padding: "2px 0 0",
-            fontFamily: fonts.body,
-            fontWeight: 500,
-            fontSize: 13,
-            lineHeight: 1.45,
-            color: slate,
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-          }}
-        >
-          {HINTS.map((hint, i) => (
-            <li key={i}>✶ {hint}</li>
-          ))}
-        </ul>
+        {prefs.minimal ? (
+          // Minimal mode mutes sfx, hides the cursor pieces and freezes the
+          // magnet — say so instead of listing eggs that are all inert.
+          <div
+            style={{
+              marginTop: 10,
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 11,
+              letterSpacing: "0.08em",
+              lineHeight: 1.6,
+              color: slate,
+            }}
+          >
+            SFX / CURSOR / MAGNETIC apply to the full-fat theme.
+          </div>
+        ) : (
+          <>
+            <div
+              style={{
+                height: 2,
+                background: ink,
+                margin: "12px 0 10px",
+              }}
+            />
+            <div
+              style={{
+                fontFamily: fonts.mono,
+                fontWeight: 900,
+                fontSize: 11,
+                letterSpacing: "0.2em",
+                color: ink,
+                marginBottom: 6,
+              }}
+            >
+              EASTER EGGS
+            </div>
+            <ul
+              style={{
+                listStyle: "none",
+                margin: 0,
+                padding: "2px 0 0",
+                fontFamily: fonts.body,
+                fontWeight: 500,
+                fontSize: 13,
+                lineHeight: 1.45,
+                color: slate,
+                display: "flex",
+                flexDirection: "column",
+                gap: 4,
+              }}
+            >
+              {HINTS.map((hint, i) => (
+                <li key={i}>✶ {hint}</li>
+              ))}
+            </ul>
+          </>
+        )}
       </section>
       <button
         ref={toggleRef}

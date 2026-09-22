@@ -33,6 +33,14 @@ interaction detail, a11y); this file is the repo's operating manual.
 - `src/styles/global.css` holds the Tailwind 4 `@theme` block: **the only
   place tokens are defined.** `src/tokens.ts` re-exports them as typed
   `var()` strings for inline styles.
+- The border tokens (`--border-default`, `--border-thick`) live in a plain
+  `:root {}` block next to `@theme` — Tailwind 4 tree-shakes `@theme` vars
+  that no utility references, so tokens consumed only through `var()` in
+  inline styles must NOT be declared inside `@theme`.
+- The `html[data-minimal]` block at the bottom of global.css is the ONLY
+  sanctioned second home for token VALUES (see §Two design modes): the
+  minimal mode re-declares the SAME custom properties there. Never fork
+  token NAMES per mode.
 - **No literal hex colors, font-family names, or shadow strings anywhere
   else in the repo.** If you are typing `#1e293b` or `"Archivo Black"` in a
   component, you are in the wrong file — import from `src/tokens.ts`.
@@ -48,7 +56,12 @@ interaction detail, a11y); this file is the repo's operating manual.
   `--color-yellow`, `--color-success`, `--color-cream-warm` (#fef7ed),
   `--color-cork` (#f5ead0), `--color-sticky-{yellow,mint,red,sky,lavender,orange}`,
   `--color-confetti-{1..6}`, `--color-slate`, `--color-slate-mid`,
-  `--color-slate-light`.
+  `--color-slate-light`, `--color-hairline` (#e7e5df, minimal 1px rules),
+  `--color-accent` (#dc2626 — the ONE deliberate red that survives
+  minimal).
+- **Borders** (plain `:root`, not `@theme`): `--border-default` (3px ink),
+  `--border-thick` (4px ink) — both collapse to
+  `1px solid var(--color-hairline)` under `html[data-minimal]`.
 - **Fonts**: `--font-display` (Archivo Black), `--font-body` (Space Grotesk),
   `--font-mono` (JetBrains Mono), `--font-hand` (Caveat).
 - **Shadows**: `--shadow-card` (6px), `--shadow-pressed` (2px),
@@ -70,7 +83,7 @@ interaction detail, a11y); this file is the repo's operating manual.
 
 Keep these signatures identical across the port; sections are written
 against them. Changing a prop name is a coordination event: post it in
-`HANDOFF_NOTES.md` and stop until the lead ack's it.
+`agent-log.md` and stop until the lead ack's it.
 
 ```ts
 usePointer(): {
@@ -105,11 +118,15 @@ usePrefs(): {
   sfx: boolean;          // user pref — defaults OFF when reducedMotion && no stored pref
   cursor: boolean;       // user pref — custom cursor on/off
   magnetic: boolean;     // user pref — magnetic buttons on/off
+  minimal: boolean;      // user pref — minimal design mode (§Two design modes)
   reducedMotion: boolean; // media-derived: (prefers-reduced-motion: reduce)
   coarsePointer: boolean; // media-derived: (pointer: coarse)
-  setPref(k: 'sfx'|'cursor'|'magnetic', v: boolean): void; // persists to localStorage "portfolio.tweaks"
+  setPref(k: 'sfx'|'cursor'|'magnetic'|'minimal', v: boolean): void; // persists to localStorage "portfolio.tweaks"
 }
 ```
+
+(`minimal` was added as a sanctioned coordination event — see agent-log.md
+"Minimal-mode design toggle".)
 
 ## File ownership (never edit a file you don't own)
 
@@ -144,6 +161,57 @@ The design is 1440px-native and re-flows (no viewport-scale hack):
   final frame (marquees freeze, confetti never falls); JS-driven motion must
   check `usePrefs().reducedMotion` too.
 
+## Two design modes (full-fat / minimal)
+
+The site ships TWO complete design modes behind one persisted pref
+(`usePrefs().minimal`, localStorage `"portfolio.tweaks"`, flipped by the
+fixed top-right `MinimalToggle` or the PreferencesMenu row).
+
+- **Mechanism**: an `is:inline` head script in each page sets
+  `data-minimal` on `<html>` BEFORE first paint from the stored pref;
+  `PrefsProvider` keeps the attribute (and the `theme-color` meta) in sync
+  after hydration. The `html[data-minimal]` block in global.css re-declares
+  the token VALUES (colors → paper/ink/warm grey, display/hand fonts →
+  mono/body, type scale → document sizes, shadows → none, borders →
+  hairlines); components branch on `usePrefs().minimal`. Fancy-only
+  flourish roots (SideRibbon, fancy SectionDivider) carry `data-flourish`
+  and are CSS-hidden under `[data-minimal]`, so the pre-hydration frame is
+  already quiet. The island pre-renders full-fat, so a stored minimal pref
+  causes ONE accepted structural reflow right after hydration
+  (`AnchorRescroll` re-anchors any `location.hash` on the next frame).
+- **THE INVARIANT: every new section, component, or copy change lands in
+  BOTH modes in the same PR and is QA'd in both. Mode branches read the
+  SAME shared content constants — copy is never duplicated per mode.**
+  (Constants are written in NATURAL case; each mode applies its own CSS
+  `text-transform` — fancy uppercases where its design needs caps,
+  minimal lowercases only the spots the mockup renders lowercase — and
+  per-mode presentation strings may be derived from the same structured
+  data, so the constants stay single-source.)
+- **Component contract when minimal** (branch guard AFTER all hooks — the
+  SSR rules above still apply): pure decorations render null (Tape, Burst,
+  Star, Squiggle, Scribble, Arrow, Eyes, RubberStamp, SideRibbon,
+  CursorTrail, CustomCursor, RaveOverlay); Stamp → quiet mono chip (its
+  text is real info); Marquee → single static pass; SectionDivider →
+  hairline rule; Tilt / Scramble / ScrambleHover → inert/plain;
+  MagneticButton → plain quiet button; ScrollProgress → 2px hairline strip
+  (no % READ pill); PlaceholderImg → plain hairline box; custom cursor +
+  sfx off; easter eggs inert. StickyNote is a CALL-SITE exception: it has
+  no minimal branch — NowBoard's minimal branch simply never mounts it,
+  and `sticky_v2_*` storage stays untouched (trap 4).
+- **Minimal design language**: one 720px `MinimalColumn` inside the SAME
+  `Slab`s (same section `id`s keep the anchors working in both modes);
+  mono `NN / name` label rows instead of the corner chips (numbering
+  matches the fancy slab labels); 1px hairline rules; no rotation, no
+  shadows, no motion; JetBrains Mono headings/labels/meta/links + Space
+  Grotesk body via the token overrides ONLY — never hardcode the font swap
+  in a component. The deliberate red survives ONLY as `--color-accent`
+  (toggle knob, link hover underline, status markers).
+- **Exceptions**: CookieConsent is its own island OUTSIDE PrefsProvider —
+  it is skinned by CSS only; never give it `usePrefs`. The static pages
+  (404/privacy/terms) honor the mode via their own head scripts. The head
+  scripts duplicate the storage key by necessity — keep them in sync with
+  `src/lib/prefs.tsx`.
+
 ## Known traps (AGENT_TEAM_HANDOFF §3 — each cost real debugging time)
 
 1. **`position: fixed` inside a transform.** `ScrollProgress`, `SideRibbon`,
@@ -166,18 +234,30 @@ The design is 1440px-native and re-flows (no viewport-scale hack):
    dragging or it feels like it's fighting the cursor.
 7. **No soft shadows anywhere.** Every shadow is `Npx Npx 0 <color>` — zero
    blur. One blurred shadow and the whole aesthetic reads as generic.
+8. **Minimal mode reaches shadows through CSS, not tokens.** Tailwind
+   shadow utilities inline their value and a dozen inline styles compose
+   literal shadows — redefining `--shadow-*` alone clears neither; the
+   `html[data-minimal] * { box-shadow: none !important }` rule does.
+   Consequence: never implement focus indicators with box-shadow — use
+   outline.
 
 ## Protocols
 
-- **`HANDOFF_NOTES.md`** — append-only. One bullet per cross-package
-  request (`- [P<n> → P<m>] …`). Never edit or delete existing notes.
-- **`agent-log.md`** — append-only audit log. Every agent appends
-  `## P<n> · <ISO timestamp>` with files touched, decisions/deviations,
-  and self-check results when it finishes.
+- **`HANDOFF_NOTES.md`** — retired (drained into the log, commit
+  `bfbc0cb`); the audit trail is `agent-log.md`.
+- **Agent logs are per-folder.** Every source directory (src and each
+  subfolder, public, .github, .husky) carries its own append-only
+  `agent-log.md`. When an agent finishes, it appends a scoped entry to
+  EACH touched folder's log AND one summary entry to the repo-root
+  `agent-log.md` (the chronological master). Same house format
+  everywhere: `## <Topic> · <ISO timestamp>` with files touched,
+  decisions/deviations, and self-check results. Never edit an existing
+  entry. Creating a new folder means seeding its `agent-log.md` (header
+  - first entry) in the same change.
 - **No git writes by agents** — no `git add`/`commit`/`push`; the lead
   commits.
 - **Only P0 touches `package.json`** (and the lockfile). Need a dependency?
-  Write it in `HANDOFF_NOTES.md`.
+  Write it in `agent-log.md`.
 - Ship with the page still building: land stubs, not broken sections.
 
 ## Commands
@@ -194,4 +274,5 @@ npx eslint .             # lint without --fix
 
 Definition of done per package: renders at 1440px matching the prototype,
 zero build/lint errors, no console errors/warnings, `prefers-reduced-motion`
-path implemented, a11y notes for owned surfaces satisfied.
+path implemented, a11y notes for owned surfaces satisfied, and the surface
+verified in BOTH design modes (full-fat and minimal).

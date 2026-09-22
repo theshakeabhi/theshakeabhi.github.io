@@ -1,6 +1,8 @@
 // P0 — hand-drawn double-stroke underline, ported FULLY from micro.jsx
-// (P3 owns going forward).
+// (P3 owns going forward). Pure flourish — renders nothing in minimal mode
+// (AGENTS.md §Two design modes).
 import type { CSSProperties } from "react";
+import { usePrefs } from "../../lib/prefs";
 import { red } from "../../tokens";
 
 export interface ScribbleProps {
@@ -18,6 +20,8 @@ export default function Scribble({
   strokeWidth = 4,
   style,
 }: ScribbleProps) {
+  const { minimal } = usePrefs();
+  if (minimal) return null;
   return (
     <svg
       width={w}

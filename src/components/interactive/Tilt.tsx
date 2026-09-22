@@ -42,7 +42,8 @@ export default function Tilt({
 }: TiltProps) {
   const { p, containerRef } = usePointer();
   const prefs = usePrefs();
-  const inert = prefs.reducedMotion || prefs.coarsePointer;
+  // Minimal mode is inert too — the wrapper stays, the 3D tilt never runs.
+  const inert = prefs.reducedMotion || prefs.coarsePointer || prefs.minimal;
   const ref = useRef<HTMLDivElement>(null);
   const [t, setT] = useState(REST);
   const [over, setOver] = useState(false);

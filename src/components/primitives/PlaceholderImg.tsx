@@ -1,6 +1,17 @@
 // P0 foundation — striped image placeholder, ported from portfolio-1.jsx.
+// Minimal mode: a plain hairline box with a quiet mono label — still
+// role='img' (it stands in for real content in both modes).
 import type { CSSProperties } from "react";
-import { cream, ink, slateLight, slateMid, fonts } from "../../tokens";
+import { usePrefs } from "../../lib/prefs";
+import {
+  borders,
+  cream,
+  ink,
+  slate,
+  slateLight,
+  slateMid,
+  fonts,
+} from "../../tokens";
 
 export interface PlaceholderImgProps {
   w?: number | string;
@@ -19,7 +30,42 @@ export default function PlaceholderImg({
   tone = "mid",
   style,
 }: PlaceholderImgProps) {
+  const { minimal } = usePrefs();
   const c = TONES[tone];
+
+  if (minimal) {
+    return (
+      <div
+        role='img'
+        aria-label={label}
+        style={{
+          width: w,
+          height: h,
+          border: borders.default,
+          background: cream,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          ...style,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: fonts.mono,
+            fontWeight: 500,
+            fontSize: 11,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: slate,
+          }}
+        >
+          {label}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div
       role='img'

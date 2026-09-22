@@ -63,7 +63,7 @@ export function PointerProvider({ children, sfx }: PointerProviderProps) {
     hot: null,
   });
   const [mounted, setMounted] = useState(false);
-  const { cursor, reducedMotion, coarsePointer } = usePrefs();
+  const { cursor, reducedMotion, coarsePointer, minimal } = usePrefs();
 
   useEffect(() => {
     setMounted(true);
@@ -115,7 +115,9 @@ export function PointerProvider({ children, sfx }: PointerProviderProps) {
     [p, setHot, sfx, fallbackSfx]
   );
 
-  const hideOsCursor = mounted && cursor && !reducedMotion && !coarsePointer;
+  // Minimal mode keeps the OS cursor — CustomCursor renders null there.
+  const hideOsCursor =
+    mounted && cursor && !reducedMotion && !coarsePointer && !minimal;
 
   return (
     <PointerCtx.Provider value={value}>

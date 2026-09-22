@@ -18,29 +18,50 @@ const description =
     <meta name="robots" content="noindex" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Pre-paint minimal-mode skin — same localStorage "portfolio.tweaks"
+         key owned by src/lib/prefs.tsx (see index.astro). -->
+    <script is:inline>
+      try {
+        var __tweaks = JSON.parse(
+          localStorage.getItem("portfolio.tweaks") || "{}"
+        );
+        if (__tweaks && __tweaks.minimal === true) {
+          document.documentElement.setAttribute("data-minimal", "");
+        }
+      } catch (_e) {
+        /* storage unavailable — stay full-fat */
+      }
+    </script>
   </head>
   <body class="bg-cream text-ink font-body">
     <main
       class="relative flex min-h-screen flex-col items-start justify-center overflow-hidden"
       style="padding: 110px var(--spacing-slab-x) 90px;"
     >
+      <!-- corner-chip: quiet mono text under html[data-minimal] (global.css) -->
       <div
-        class="font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
+        class="corner-chip font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
       >
         404 // NOT FOUND
       </div>
 
-      <!-- Red accent block + burst, hidden from AT (decorative) -->
+      <!-- Red accent block + star: pure decorations — data-flourish hides
+           them wholesale in minimal (same rule as the React flourishes).
+           Rotation via rotate-[..] utilities so the minimal rotation
+           backstop can neutralize them; borders consume the mode-aware
+           tokens. -->
       <div
         aria-hidden="true"
-        class="bg-red border-ink shadow-slab absolute hidden border-4 md:block"
-        style="width: 220px; height: 220px; right: 12%; top: 16%; transform: rotate(9deg);"
+        data-flourish
+        class="bg-red shadow-slab rotate-[9deg] absolute hidden md:block"
+        style="width: 220px; height: 220px; right: 12%; top: 16%; border: var(--border-thick);"
       >
       </div>
       <svg
         aria-hidden="true"
-        class="absolute hidden md:block"
-        style="right: 24%; bottom: 18%; transform: rotate(-12deg);"
+        data-flourish
+        class="rotate-[-12deg] absolute hidden md:block"
+        style="right: 24%; bottom: 18%;"
         width="110"
         height="110"
         viewBox="0 0 100 100"
@@ -66,8 +87,8 @@ const description =
       </p>
       <a
         href="/"
-        class="font-mono bg-ink text-cream border-ink shadow-card hover:bg-red inline-block border-[3px] px-7 py-4 text-[14px] font-extrabold tracking-[0.1em] no-underline"
-        style="transform: rotate(-1deg);"
+        class="font-mono bg-ink text-cream shadow-card hover:bg-red rotate-[-1deg] inline-block px-7 py-4 text-[14px] font-extrabold tracking-[0.1em] no-underline"
+        style="border: var(--border-default);"
       >
         ← TAKE ME HOME
       </a>

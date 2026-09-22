@@ -27,6 +27,27 @@ const ogImageAlt =
     <!-- --color-cream; a meta tag cannot reference CSS custom properties -->
     <meta name="theme-color" content="#f5f1e8" />
 
+    <!-- Pre-paint minimal-mode skin: reads the SAME localStorage
+         "portfolio.tweaks" key owned by src/lib/prefs.tsx and sets
+         data-minimal on <html> before first paint, so a stored pref
+         never flashes the full-fat colors/type. prefs.tsx keeps the
+         attribute (and theme-color) in sync after hydration. -->
+    <script is:inline>
+      try {
+        var __tweaks = JSON.parse(
+          localStorage.getItem("portfolio.tweaks") || "{}"
+        );
+        if (__tweaks && __tweaks.minimal === true) {
+          document.documentElement.setAttribute("data-minimal", "");
+          /* minimal --color-cream (paper); meta can't read CSS vars */
+          var __tc = document.querySelector('meta[name="theme-color"]');
+          if (__tc) __tc.setAttribute("content", "#fbfbf9");
+        }
+      } catch (_e) {
+        /* storage unavailable — stay full-fat */
+      }
+    </script>
+
     <!-- Hero display face — preload to avoid FOUT on the mega headline -->
     <link
       rel="preload"

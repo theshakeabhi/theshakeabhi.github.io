@@ -18,7 +18,7 @@ export default function ScrambleHover({ text, style }: ScrambleHoverProps) {
   const [v, setV] = useState(text);
   const tickRef = useRef<number | null>(null);
   const { setHot, sfx } = usePointer();
-  const { reducedMotion } = usePrefs();
+  const { reducedMotion, minimal } = usePrefs();
 
   // Clear any in-flight scramble if unmounted mid-glitch.
   useEffect(() => {
@@ -26,6 +26,10 @@ export default function ScrambleHover({ text, style }: ScrambleHoverProps) {
       if (tickRef.current !== null) window.clearInterval(tickRef.current);
     };
   }, []);
+
+  // Minimal mode: plain text, no pointer handlers, no glitch (guard AFTER
+  // all hooks).
+  if (minimal) return <span style={style}>{text}</span>;
 
   const start = () => {
     setHot("link");

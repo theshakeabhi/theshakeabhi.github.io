@@ -6,13 +6,15 @@
 // browser APIs live inside the effect). Must mount OUTSIDE any transformed
 // ancestor (trap 1) — Portfolio.tsx mounts it at the top level.
 import { useEffect, useState, type RefObject } from "react";
-import { cream, cyan, fonts, ink, red } from "../../tokens";
+import { usePrefs } from "../../lib/prefs";
+import { cream, cyan, fonts, hairline, ink, red } from "../../tokens";
 
 export interface ScrollProgressProps {
   targetRef?: RefObject<HTMLElement | null>;
 }
 
 export default function ScrollProgress({ targetRef }: ScrollProgressProps) {
+  const { minimal } = usePrefs();
   // SSR-safe: 0% on the server and on the first client paint.
   const [pct, setPct] = useState(0);
 
@@ -32,6 +34,34 @@ export default function ScrollProgress({ targetRef }: ScrollProgressProps) {
     onScroll();
     return () => target.removeEventListener("scroll", onScroll);
   }, [targetRef]);
+
+  // Minimal mode: a 2px hairline strip with an ink fill — no candy stripes,
+  // no "% READ" pill.
+  if (minimal) {
+    return (
+      <div
+        aria-hidden='true'
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 9999,
+          height: 2,
+          background: hairline,
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${pct}%`,
+            background: ink,
+            transition: "width .12s linear",
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

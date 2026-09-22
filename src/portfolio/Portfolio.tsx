@@ -8,7 +8,7 @@
 // fixed chrome OUTSIDE PointerProvider (trap 1 — and it keeps the OS
 // cursor); the Testimonials section AND its "NICE THINGS…" divider are
 // skipped while src/content/testimonials.ts ships empty.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PrefsProvider, usePrefs } from "../lib/prefs";
 import { makeSfx, type Sfx } from "../lib/sfx";
 import { useEasterEgg } from "../lib/useEasterEgg";
@@ -17,6 +17,7 @@ import CustomCursor from "../components/pointer/CustomCursor";
 import CursorTrail from "../components/pointer/CursorTrail";
 import ScrollProgress from "../components/chrome/ScrollProgress";
 import SideRibbon from "../components/chrome/SideRibbon";
+import MinimalToggle from "../components/chrome/MinimalToggle";
 import RaveOverlay from "../components/chrome/RaveOverlay";
 import PreferencesMenu from "../components/chrome/PreferencesMenu";
 import SectionDivider from "../components/primitives/SectionDivider";
@@ -42,12 +43,32 @@ const RIBBON_ITEMS = [
   "✶ SCROLL TO CONTINUE ↓",
 ];
 
-/** Follows prefs.sfx with sfx.setMuted (must live INSIDE PrefsProvider). */
+/** Follows prefs.sfx with sfx.setMuted (must live INSIDE PrefsProvider).
+ *  Minimal mode is silent by design, whatever the sfx pref says. */
 function SfxMuteBridge({ sfx }: { sfx: Sfx }) {
-  const { sfx: soundOn } = usePrefs();
+  const { sfx: soundOn, minimal } = usePrefs();
   useEffect(() => {
-    sfx.setMuted(!soundOn);
-  }, [sfx, soundOn]);
+    sfx.setMuted(!soundOn || minimal);
+  }, [sfx, soundOn, minimal]);
+  return null;
+}
+
+/** Flipping minimal swaps the whole section structure in one reflow, which
+ *  strands any #hash scroll position — re-anchor it on the frame after the
+ *  swap (must live INSIDE PrefsProvider). */
+function AnchorRescroll() {
+  const { minimal } = usePrefs();
+  const prev = useRef(minimal);
+  useEffect(() => {
+    if (prev.current === minimal) return;
+    prev.current = minimal;
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const raf = requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [minimal]);
   return null;
 }
 
@@ -58,9 +79,11 @@ export default function Portfolio() {
   return (
     <PrefsProvider>
       <SfxMuteBridge sfx={sfx} />
+      <AnchorRescroll />
       {/* Fixed chrome lives OUTSIDE any transformed ancestor (trap 1). */}
       <ScrollProgress />
       <SideRibbon items={RIBBON_ITEMS} />
+      <MinimalToggle />
       <PreferencesMenu />
       <PointerProvider sfx={sfx}>
         <CursorTrail />

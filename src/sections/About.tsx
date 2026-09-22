@@ -1,7 +1,12 @@
 // P5 — About slab (portfolio-1.jsx 186–239, README §Section Highlights).
 // Two-column (stacks < lg): taped portrait with the FOUNDING ENERGY burst,
 // headline + two body paragraphs with yellow highlights, 4-stat grid.
+// Minimal mode (AGENTS.md §Two design modes): label row + the two shared
+// paragraphs + STATS as hairline rows. Both branches read the SAME shared
+// constants below.
+import type { CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Star from "../components/primitives/Star";
 import Burst from "../components/primitives/Burst";
 import PlaceholderImg from "../components/primitives/PlaceholderImg";
@@ -9,12 +14,14 @@ import Hover from "../components/pointer/Hover";
 import Eyes from "../components/interactive/Eyes";
 import Tape from "../components/interactive/Tape";
 import ScrambleHover from "../components/text/ScrambleHover";
+import { usePrefs } from "../lib/prefs";
 import {
   cream,
   ink,
   red,
   cyan,
   yellow,
+  slate,
   fonts,
   text,
   borders,
@@ -29,11 +36,108 @@ const STATS = [
   { n: "−60%", l: "Prod incidents", c: ink },
 ] as const;
 
+// Paragraph copy shared by BOTH design modes — fancy dresses the parts
+// (strong / yellow Hover highlight), minimal renders them plain.
+const ABOUT_P1 = {
+  pre: "These days I'm the ",
+  strong: "Lead Frontend Developer",
+  mid: " at ",
+  link: "FanProStudio AI",
+  post: ", building AI media generation — AI influencers and on-brand UGC — the way you'd build something you actually use yourself: opinionated, fast, and a little stubborn about quality. Before that, four years as the first frontend hire at EximPe building cross-border fintech, on top of three years of agency + product work cramming the fundamentals.",
+} as const;
+const ABOUT_P2 =
+  "I lead the frontend, write the design system, take the 2am pages, and unironically enjoy the part where you finally find the bug.";
+
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
+
+const minimalBodyStyle: CSSProperties = {
+  fontFamily: fonts.body,
+  fontWeight: 400,
+  fontSize: 16.5,
+  lineHeight: 1.65,
+  color: ink,
+  maxWidth: "62ch",
+};
+
 export default function About() {
+  const { minimal } = usePrefs();
+
+  // Minimal branch — guard AFTER hooks (AGENTS.md §Two design modes). No
+  // borderTop here: the preceding SectionDivider already draws the hairline.
+  if (minimal) {
+    return (
+      <Slab bg={cream} id='about' style={{ paddingTop: 52, paddingBottom: 64 }}>
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>02 / about</span>
+          </div>
+          <p style={{ ...minimalBodyStyle, margin: "0 0 16px" }}>
+            {ABOUT_P1.pre}
+            {ABOUT_P1.strong}
+            {ABOUT_P1.mid}
+            {ABOUT_P1.link}
+            {ABOUT_P1.post}
+          </p>
+          <p style={{ ...minimalBodyStyle, margin: 0 }}>{ABOUT_P2}</p>
+          <div style={{ borderTop: borders.default, marginTop: 30 }}>
+            {STATS.map((s, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: 18,
+                  borderBottom: borders.default,
+                  // Mockup .mstat rows are 12px, not the generic 13px.
+                  padding: "12px 2px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontWeight: 700,
+                    fontSize: 17,
+                    color: ink,
+                    minWidth: 96,
+                  }}
+                >
+                  {s.n}
+                </span>
+                <span
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontWeight: 500,
+                    fontSize: 12,
+                    letterSpacing: "0.08em",
+                    color: slate,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {s.l.replace(" ✶", "")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
+
   return (
     <Slab
       bg={cream}
       label='02 // ABOUT'
+      id='about'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",
         borderTop: borders.thick,
@@ -147,20 +251,17 @@ export default function About() {
               maxWidth: 760,
             }}
           >
-            These days I'm the <strong>Lead Frontend Developer</strong> at{" "}
+            {ABOUT_P1.pre}
+            <strong>{ABOUT_P1.strong}</strong>
+            {ABOUT_P1.mid}
             <Hover
               as='span'
               kind='link'
               style={{ background: yellow, padding: "0 6px" }}
             >
-              FanProStudio AI
+              {ABOUT_P1.link}
             </Hover>
-            , building AI media generation — AI influencers and on-brand UGC —
-            the way you'd build something you actually use yourself:
-            opinionated, fast, and a little stubborn about quality. Before that,
-            four years as the first frontend hire at EximPe building
-            cross-border fintech, on top of three years of agency + product work
-            cramming the fundamentals.
+            {ABOUT_P1.post}
           </p>
           <p
             style={{
@@ -173,8 +274,7 @@ export default function About() {
               marginTop: 18,
             }}
           >
-            I lead the frontend, write the design system, take the 2am pages,
-            and unironically enjoy the part where you finally find the bug.
+            {ABOUT_P2}
           </p>
 
           {/* Stats slabs */}

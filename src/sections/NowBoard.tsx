@@ -5,8 +5,12 @@
 // LAYOUT" ghost button clears them and remounts the board via a key bump.
 // Below 768px the board collapses into a vertical list of notes (drag off
 // — AGENTS.md §Responsive breakpoints).
+// Minimal mode (AGENTS.md §Two design modes): the SAME notes as label→body
+// hairline rows — no board/pins/StickyNote/reset (sticky_v2_* storage is
+// untouched because StickyNote is simply never mounted here).
 import { useState, type CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Stamp from "../components/primitives/Stamp";
 import StickyNote from "../components/interactive/StickyNote";
 import Eyes from "../components/interactive/Eyes";
@@ -14,11 +18,15 @@ import MagneticButton from "../components/interactive/MagneticButton";
 import ScrambleHover from "../components/text/ScrambleHover";
 import { usePointer } from "../components/pointer/PointerProvider";
 import { useMediaQuery } from "../lib/useMediaQuery";
+import { usePrefs } from "../lib/prefs";
 import {
+  cream,
   creamWarm,
   cork,
   ink,
   red,
+  slate,
+  accent,
   sticky,
   borders,
   fonts,
@@ -140,8 +148,25 @@ const PINS: CSSProperties[] = [
   { right: 76, top: 480 },
 ];
 
+// Stamp copy shared by BOTH design modes (label-row right side in
+// minimal) — natural case; the fancy Stamp and the minimal label row
+// both uppercase via CSS.
+const UPDATED = "Updated May '26";
+
 const ink25 = `color-mix(in srgb, ${ink} 25%, transparent)`;
 const gridLine = `color-mix(in srgb, ${ink} 6%, transparent)`;
+
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
 
 const noteLabelStyle: CSSProperties = {
   fontFamily: fonts.mono,
@@ -169,7 +194,67 @@ function NoteContent({ label, body }: { label: string; body: string }) {
 export default function NowBoard() {
   const { sfx } = usePointer();
   const compact = useMediaQuery("(max-width: 767px)");
+  const { minimal } = usePrefs();
   const [boardKey, setBoardKey] = useState(0);
+
+  // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
+  // No borderTop: the preceding SectionDivider already draws the hairline.
+  if (minimal) {
+    return (
+      <Slab bg={cream} id='now' style={{ paddingTop: 52, paddingBottom: 64 }}>
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>05 / now</span>
+            <span>{UPDATED}</span>
+          </div>
+          <div style={{ borderTop: borders.default }}>
+            {NOTES.map((n) => (
+              <div
+                key={n.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: compact
+                    ? "1fr"
+                    : "minmax(120px, 150px) 1fr",
+                  gap: compact ? 4 : 16,
+                  borderBottom: borders.default,
+                  padding: "13px 2px",
+                }}
+              >
+                <b
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontWeight: 700,
+                    fontSize: 12,
+                    letterSpacing: "0.08em",
+                    color: ink,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {n.label.replace(" →", "")}{" "}
+                  <span aria-hidden='true' style={{ color: accent }}>
+                    →
+                  </span>
+                </b>
+                <p
+                  style={{
+                    fontFamily: fonts.body,
+                    fontWeight: 400,
+                    fontSize: 14.5,
+                    lineHeight: 1.5,
+                    color: ink,
+                    margin: 0,
+                  }}
+                >
+                  {n.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
 
   const resetLayout = () => {
     try {
@@ -251,7 +336,7 @@ export default function NowBoard() {
             </MagneticButton>
           )}
           <Stamp color={ink} rotate={-4}>
-            UPDATED MAY '26
+            {UPDATED}
           </Stamp>
         </div>
       </div>
