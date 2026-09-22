@@ -26,6 +26,8 @@ import {
 
 type Tone = "ink" | "red" | "cyan";
 
+// Natural-case entries — the fancy cloud uppercases via CSS, the minimal
+// word list lowercases via CSS (mock shows "react · typescript · …").
 const STACK: {
   t: string;
   size: number;
@@ -33,28 +35,29 @@ const STACK: {
   rot: number;
   core?: boolean;
 }[] = [
-  { t: "REACT", size: 72, tone: "ink", rot: -3, core: true },
-  { t: "TYPESCRIPT", size: 56, tone: "red", rot: 2, core: true },
-  { t: "DESIGN SYSTEMS", size: 48, tone: "ink", rot: -1, core: true },
-  { t: "CLAUDE", size: 86, tone: "cyan", rot: 4, core: true },
-  { t: "NEXT.JS", size: 44, tone: "ink", rot: -2 },
-  { t: "NODE", size: 38, tone: "ink", rot: 3 },
-  { t: "MENTORSHIP", size: 52, tone: "red", rot: -3, core: true },
-  { t: "CODE REVIEW", size: 36, tone: "ink", rot: 1 },
-  { t: "INCIDENT RESPONSE", size: 44, tone: "ink", rot: -1 },
-  { t: "OBSERVABILITY", size: 40, tone: "cyan", rot: 2 },
-  { t: "PERF", size: 96, tone: "red", rot: -4, core: true },
-  { t: "DELEGATION", size: 42, tone: "ink", rot: 2 },
-  { t: "A11Y", size: 50, tone: "ink", rot: -2, core: true },
-  { t: "ROOT-CAUSE", size: 44, tone: "ink", rot: 3 },
-  { t: "MIGRATIONS", size: 38, tone: "ink", rot: -1 },
-  { t: "COMMUNICATION", size: 46, tone: "cyan", rot: 1 },
-  { t: "RELEASE DISCIPLINE", size: 40, tone: "ink", rot: -2 },
-  { t: "ANIMATION", size: 54, tone: "red", rot: 3 },
+  { t: "React", size: 72, tone: "ink", rot: -3, core: true },
+  { t: "TypeScript", size: 56, tone: "red", rot: 2, core: true },
+  { t: "Design systems", size: 48, tone: "ink", rot: -1, core: true },
+  { t: "Claude", size: 86, tone: "cyan", rot: 4, core: true },
+  { t: "Next.js", size: 44, tone: "ink", rot: -2 },
+  { t: "Node", size: 38, tone: "ink", rot: 3 },
+  { t: "Mentorship", size: 52, tone: "red", rot: -3, core: true },
+  { t: "Code review", size: 36, tone: "ink", rot: 1 },
+  { t: "Incident response", size: 44, tone: "ink", rot: -1 },
+  { t: "Observability", size: 40, tone: "cyan", rot: 2 },
+  { t: "Perf", size: 96, tone: "red", rot: -4, core: true },
+  { t: "Delegation", size: 42, tone: "ink", rot: 2 },
+  { t: "A11y", size: 50, tone: "ink", rot: -2, core: true },
+  { t: "Root-cause", size: 44, tone: "ink", rot: 3 },
+  { t: "Migrations", size: 38, tone: "ink", rot: -1 },
+  { t: "Communication", size: 46, tone: "cyan", rot: 1 },
+  { t: "Release discipline", size: 40, tone: "ink", rot: -2 },
+  { t: "Animation", size: 54, tone: "red", rot: 3 },
 ];
 
-// Title copy shared by BOTH design modes (minimal lowercases via CSS).
-const SKILLS_TITLE = "STUFF I'M GOOD AT";
+// Title copy shared by BOTH design modes — natural case per mock
+// ("Stuff I'm good at"); the fancy headline uppercases via CSS.
+const SKILLS_TITLE = "Stuff I'm good at";
 
 const minimalLabelStyle: CSSProperties = {
   display: "flex",
@@ -82,11 +85,16 @@ export default function Skills() {
   // preceding SectionDivider already draws the hairline.
   if (minimal) {
     return (
-      <Slab bg={cream} style={{ paddingTop: 52, paddingBottom: 64 }}>
+      <Slab
+        bg={cream}
+        id='skills'
+        style={{ paddingTop: 52, paddingBottom: 64 }}
+      >
         <MinimalColumn>
           <div style={minimalLabelStyle}>
             <span>03 / stack</span>
           </div>
+          {/* Mock .mh2 keeps the title's natural case. */}
           <h2
             style={{
               fontFamily: fonts.mono,
@@ -95,7 +103,6 @@ export default function Skills() {
               letterSpacing: "-0.01em",
               color: ink,
               margin: "0 0 22px",
-              textTransform: "lowercase",
             }}
           >
             {SKILLS_TITLE}
@@ -113,17 +120,23 @@ export default function Skills() {
               textTransform: "lowercase",
             }}
           >
+            {/* Real spaces around the separators + inline-block entries:
+                the line WRAPS at entry boundaries instead of clipping
+                glyphs at 375 (deliberately better than the mock, which
+                joined entries unbreakably). */}
             {STACK.map((s, i) => (
               <Fragment key={s.t}>
                 {i > 0 && (
-                  <span
-                    aria-hidden='true'
-                    style={{ color: hairline, padding: "0 7px" }}
-                  >
-                    ·
-                  </span>
+                  <>
+                    {" "}
+                    <span aria-hidden='true' style={{ color: hairline }}>
+                      ·
+                    </span>{" "}
+                  </>
                 )}
-                {s.core ? <b style={{ fontWeight: 700 }}>{s.t}</b> : s.t}
+                <span style={{ display: "inline-block" }}>
+                  {s.core ? <b style={{ fontWeight: 700 }}>{s.t}</b> : s.t}
+                </span>
               </Fragment>
             ))}
           </p>
@@ -148,6 +161,7 @@ export default function Skills() {
     <Slab
       bg={ink}
       label='03 // STACK'
+      id='skills'
       style={{ color: cream, paddingTop: "var(--spacing-slab-top-deep)" }}
     >
       <h2
@@ -159,10 +173,13 @@ export default function Skills() {
           letterSpacing: "var(--text-sub--letter-spacing)",
           color: cream,
           margin: 0,
+          // Natural-case shared title → display caps (mock h2.sec).
+          textTransform: "uppercase",
         }}
       >
         <ScrambleHover text={SKILLS_TITLE} />{" "}
-        <span style={{ color: yellow }}>(probably)</span>
+        {/* Mock .acc2: the aside stays lowercase inside the caps h2. */}
+        <span style={{ color: yellow, textTransform: "none" }}>(probably)</span>
       </h2>
       <p
         style={{
@@ -200,6 +217,8 @@ export default function Skills() {
               transform: `rotate(${s.rot}deg)`,
               letterSpacing: "-0.02em",
               lineHeight: 1,
+              // Natural-case entries → cloud caps via CSS.
+              textTransform: "uppercase",
               transition: "transform .2s, color .2s",
               textShadow: `3px 3px 0 ${ink}`,
             }}

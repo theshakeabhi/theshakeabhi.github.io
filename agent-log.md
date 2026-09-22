@@ -1171,6 +1171,63 @@ Resume, Contact` — src/sections/{NowBoard,Playground,Testimonials,
     directly), and shared-copy constants beat mockup-only wordings
     ("see the work →" / "all posts →" arrows, social link labels,
     "↑ back to top", full prior-role meta strings).
+    QA fix round (2026-09-23, lead-decided, mockup wins — most of those
+    sanctions REVOKED): (1) Burst hydration warning root-caused — the
+    island pre-renders in Node and Math.cos/sin are engine-specific at
+    the ULP, so raw `${float}` points strings could diverge from the
+    hydrating browser's — fixed with a module-memoized toFixed(2)
+    formatter (toFixed is ECMA-exact and no coordinate sits near a 2dp
+    boundary, so both sides emit identical strings; dist now carries
+    "65.00,0.00 81.38,…"). (2) Casing mechanism FLIPPED: shared
+    constants → NATURAL case; fancy uppercases via CSS (hero top bar,
+    work meta lines + prior h3/meta, RubberStamp face, skills h2 +
+    cloud with the "(probably)" span opted out, contact clock pill +
+    footer, writing ALL POSTS link, resume PDF note — Stamp and
+    MagneticButton already uppercased); minimal keeps CSS lowercase
+    ONLY where the mock truly renders lowercase. Restores "Sawo Labs ·
+    SDE II", "QBurst · SWE → intern", "Zomato · sales intern", WINS
+    kickers "API latency on critical paths"/"production incidents YoY",
+    "Stuff I'm good at". (3) Contact minimal: mono 700 24px "Let's
+    build something." (not the contact token), clock line loses the
+    green dot, links derived from structured SOCIALS {platform, handle,
+    url} → "github / theshakeabhi ↗" (fancy derives "@THESHAKEABHI ON
+    GITHUB" from the same data; email keeps no ↗), footer "↑ top" with
+    fancy "↑ back to top" from one TO_TOP pair. (4) Work minimal
+    sub-lines: plain muted mono-12 "role · tags · status" derived from
+    the new shared FANPRO/EXIMPE_TAGS data (which also feeds the fancy
+    chips); status word as the accent span; mockup truth kept — EximPe
+    carries NO status in minimal, "shipped & scaled" is fancy-only
+    (final ruling supersedes the fix-list's literal string). (5) Static
+    pages: html[data-minimal] rotation backstop added next to the
+    shadow backstop ([class*="rotate-"] → BOTH transform:none and
+    standalone rotate:none — Tailwind 4 rotate-* utilities set the
+    latter, transform alone would miss them); 404 red block + star →
+    data-flourish (gone in minimal); literal border utilities on the
+    404 home chip, BACK buttons and the privacy storage-key cards →
+    var(--border-default/--border-thick); corner chips keep their text
+    and quiet to mono-11 slate via the shared .corner-chip rule.
+    (6) Playground minimal: hue label gains the mock's "vote: {hue}°"
+    prefix (initial value stays fancy-parity per final ruling — shared
+    state, both start at 0), counter quip blank until the first click
+    (fancy keeps its opener), bouncy boi = bare 40px ink circle that IS
+    the button + "click him. he lives for this." quip — sub-frame and
+    BOING removed (fancy arena/BOING and the −/+1 counter buttons
+    untouched). (7) Glyphs: minimal top row exactly "ABHISHEK.SH" (the
+    fancy chip letter no longer leaks), "see the work ↓" vs fancy
+    "SEE THE WORK →", "all posts ↗" vs fancy "ALL POSTS →" — shared
+    label text, per-mode arrow glyph. (8) ids about/skills/playground/
+    cv added to those Slabs in BOTH mode branches (anchors contract).
+    (9) Minimal skills line wraps at entry boundaries — real spaces
+    around the hairline "·" separators + inline-block entries — so
+    nothing clips at 375 (deliberately better than the mock). AGENTS.md
+    invariant parenthetical updated to the natural-case + per-mode
+    text-transform mechanism (structured-data-derived per-mode
+    presentation stated explicitly). Gates this round: `npx astro
+check` 0 errors / 0 warnings (55 files), `npx -y yarn@1 lint` clean
+    (prettier applied via --fix), `npx astro build` 4 pages OK; dist
+    greps verify natural-case sources + fancy uppercase transforms,
+    the 404/privacy/terms border tokens, flourish attributes, rotate
+    utilities and the fixed-precision burst points.
 - **Self-check**: `npx -y yarn@1 build` — astro check 0 errors /
   0 warnings, 4 pages built. `npx -y yarn@1 lint` — clean (prettier
   applied via --fix). dist CSS contains the generated `.text-ink`,

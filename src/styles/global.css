@@ -349,6 +349,28 @@ html[data-minimal] *::after {
   box-shadow: none !important;
 }
 
+/* Rotation is banned wholesale in minimal — companion to the shadow
+   backstop above. Tailwind 4's rotate-* utilities set the standalone
+   `rotate` property (NOT transform), so neutralize both. The React tree
+   already drops rotation in its minimal branches; this catches the
+   static pages' rotate-[..] utilities (404 home chip + decorations). */
+html[data-minimal] [class*="rotate-"] {
+  transform: none !important;
+  rotate: none !important;
+}
+
+/* Static-page corner chips (404/privacy/terms). In minimal the React
+   sections replace Slab's ink corner label with the quiet mono
+   "NN / name" row; the static pages keep their chip text and calm it
+   to the same voice (unlayered rule, so it wins over the utilities). */
+html[data-minimal] .corner-chip {
+  background: transparent;
+  color: var(--color-slate);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
 /* Fancy-only flourishes (SideRibbon, fancy SectionDivider roots) carry
    data-flourish and are CSS-hidden as well as React-skipped, so the
    pre-hydration frame is already quiet when the pre-paint script set

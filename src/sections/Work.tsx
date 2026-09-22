@@ -6,10 +6,12 @@
 // (SAWO Labs / QBurst / Zomato) with metric stamps per bullet.
 // EximPe copy and metrics are FINAL (AGENT_TEAM_HANDOFF §P5).
 // Minimal mode (AGENTS.md §Two design modes): per-employer role blocks
-// (mono heading + date, role sub-line with the status as the ONE
-// sanctioned accent Stamp chip), shared bullets as plain "—" lists, WINS
+// (mono heading + date, plain muted sub-line "role · tags · status" with
+// the status word as the ONE sanctioned accent use — mockup truth: only
+// FanPro carries a status there), shared bullets as plain "—" lists, WINS
 // as a compact wrap grid, prior roles as stacked hairline rows. Both
-// branches read the SAME shared constants below.
+// branches read the SAME shared constants below (natural case; fancy
+// uppercases via CSS).
 import type { CSSProperties, ReactNode } from "react";
 import Slab from "../components/primitives/Slab";
 import MinimalColumn from "../components/primitives/MinimalColumn";
@@ -35,18 +37,44 @@ import {
   shadows,
 } from "../tokens";
 
-// Employer meta + status copy shared by BOTH design modes — fancy renders
-// the status through RubberStamp, minimal through the quiet Stamp chip.
-const FANPRO_STATUS = "IN PRODUCTION";
-const EXIMPE_STATUS = "SHIPPED & SCALED";
+// Employer meta + status + tag copy shared by BOTH design modes, in
+// NATURAL case: fancy uppercases via CSS (RubberStamp, Stamp, the meta
+// lines), minimal lowercases its meta/sub lines via CSS. The minimal
+// sub-line derives from the same structured data the fancy chips render.
+const FANPRO_STATUS = "in production";
+const EXIMPE_STATUS = "shipped & scaled";
 const FANPRO_META = {
-  role: "LEAD FRONTEND DEVELOPER",
-  date: "JAN '26 → NOW",
+  role: "Lead frontend developer",
+  date: "Jan '26 → now",
 } as const;
 const EXIMPE_META = {
-  role: "FRONTEND PRODUCT ENG LEAD",
-  date: "MAY '22 → APR '26",
+  role: "Frontend product eng lead",
+  date: "May '22 → Apr '26",
 } as const;
+
+interface EmployerTag {
+  text: string;
+  color: string;
+  rotate: number;
+  /** Tags the mockup's minimal sub-line carries ("ai media", …). */
+  sub?: boolean;
+}
+
+const FANPRO_TAGS: EmployerTag[] = [
+  { text: "Lead frontend", color: red, rotate: -3 },
+  { text: "Current", color: cyan, rotate: 2 },
+  { text: "AI media", color: ink, rotate: -1, sub: true },
+];
+
+const EXIMPE_TAGS: EmployerTag[] = [
+  { text: "Founding frontend", color: red, rotate: -3, sub: true },
+  { text: "4 years", color: cyan, rotate: 2 },
+  { text: "Fintech", color: ink, rotate: -1, sub: true },
+];
+
+/** Mockup .mrole-sub muted part: "role · tag · tag". */
+const subLine = (role: string, tags: EmployerTag[]) =>
+  [role, ...tags.filter((t) => t.sub).map((t) => t.text)].join(" · ");
 // Minimal-only names: the fancy titles are display-face JSX (FANPRO /
 // STUDIO AI line break, EXIM+PE color split) — the calm mode shows the
 // real casing instead.
@@ -120,13 +148,13 @@ interface PriorRole {
 
 const PRIOR_ROLES: PriorRole[] = [
   {
-    name: ["SAWO ", "LABS"],
+    name: ["Sawo ", "Labs"],
     rotate: -0.4,
     stamps: [
       { text: "SDE II", color: cyan, rotate: -2 },
-      { text: "9 MOS", color: ink, rotate: 1 },
+      { text: "9 mos", color: ink, rotate: 1 },
     ],
-    meta: "AUG '21 → APR '22 · BENGALURU · HYBRID",
+    meta: "Aug '21 → Apr '22 · Bengaluru · Hybrid",
     tile: "outline",
     bullets: [
       [
@@ -147,13 +175,14 @@ const PRIOR_ROLES: PriorRole[] = [
     ],
   },
   {
-    name: ["Q", "BURST"],
+    name: ["Q", "Burst"],
     rotate: 0.5,
     stamps: [
-      { text: "SWE → INTERN", color: red, rotate: -2 },
-      { text: "10 MOS", color: ink, rotate: 1 },
+      // Mock casing exactly: "SWE → intern" (lowercase 'intern').
+      { text: "SWE → intern", color: red, rotate: -2 },
+      { text: "10 mos", color: ink, rotate: 1 },
     ],
-    meta: "OCT '20 → JUL '21 · KOCHI · REMOTE",
+    meta: "Oct '20 → Jul '21 · Kochi · Remote",
     tile: "solid",
     bullets: [
       [
@@ -174,13 +203,13 @@ const PRIOR_ROLES: PriorRole[] = [
     ],
   },
   {
-    name: ["ZO", "MATO"],
+    name: ["Zo", "mato"],
     rotate: -0.6,
     stamps: [
-      { text: "SALES INTERN", color: ink, rotate: -2 },
-      { text: "2 MOS", color: cyan, rotate: 1 },
+      { text: "sales intern", color: ink, rotate: -2 },
+      { text: "2 mos", color: cyan, rotate: 1 },
     ],
-    meta: "JUL '19 → AUG '19 · KOCHI · ON-SITE",
+    meta: "Jul '19 → Aug '19 · Kochi · On-site",
     tile: "solid",
     bullets: [
       [
@@ -239,6 +268,17 @@ const minimalRoleDateStyle: CSSProperties = {
   letterSpacing: "0.08em",
   color: slate,
   textTransform: "lowercase",
+};
+
+// Mockup .mrole-sub: plain muted mono line under the role heading.
+const minimalRoleSubStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 12,
+  letterSpacing: "0.06em",
+  color: slate,
+  textTransform: "lowercase",
+  margin: "0 0 14px",
 };
 
 const minimalBulletItemStyle: CSSProperties = {
@@ -375,46 +415,19 @@ export default function Work() {
           </div>
 
           <MinimalRoleBlock name={FANPRO_MINIMAL_NAME} date={FANPRO_META.date}>
-            <p
-              style={{
-                fontFamily: fonts.mono,
-                fontWeight: 500,
-                fontSize: 12,
-                letterSpacing: "0.06em",
-                color: slate,
-                textTransform: "lowercase",
-                margin: "0 0 14px",
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "4px 10px",
-              }}
-            >
-              {FANPRO_META.role}
+            <p style={minimalRoleSubStyle}>
+              {subLine(FANPRO_META.role, FANPRO_TAGS)} ·{" "}
               {/* The ONE sanctioned --color-accent use in this section. */}
-              <Stamp color={accent}>{FANPRO_STATUS}</Stamp>
+              <span style={{ color: accent }}>{FANPRO_STATUS}</span>
             </p>
             <MinimalBullets bullets={FANPRO_BULLETS} />
           </MinimalRoleBlock>
 
           <MinimalRoleBlock name={EXIMPE_MINIMAL_NAME} date={EXIMPE_META.date}>
-            <p
-              style={{
-                fontFamily: fonts.mono,
-                fontWeight: 500,
-                fontSize: 12,
-                letterSpacing: "0.06em",
-                color: slate,
-                textTransform: "lowercase",
-                margin: "0 0 14px",
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "4px 10px",
-              }}
-            >
-              {EXIMPE_META.role}
-              <Stamp color={accent}>{EXIMPE_STATUS}</Stamp>
+            {/* Mockup truth: EximPe's minimal sub-line carries NO status —
+                "shipped & scaled" renders in fancy's RubberStamp alone. */}
+            <p style={minimalRoleSubStyle}>
+              {subLine(EXIMPE_META.role, EXIMPE_TAGS)}
             </p>
             <MinimalBullets bullets={EXIMPE_BULLETS} />
             <div
@@ -428,7 +441,8 @@ export default function Work() {
                 fontSize: 12,
                 letterSpacing: "0.04em",
                 color: slate,
-                textTransform: "lowercase",
+                // NO lowercase here — the kickers keep their natural case
+                // ("API latency…", "production incidents YoY") per mock.
               }}
             >
               {WINS.map((w, i) => (
@@ -445,7 +459,9 @@ export default function Work() {
               key={i}
               last={i === PRIOR_ROLES.length - 1}
               name={
-                <span style={{ textTransform: "lowercase" }}>
+                // Natural case straight from the constants (mock: "Sawo
+                // Labs · SDE II", "QBurst · SWE → intern") — no transform.
+                <span>
                   {role.name[0]}
                   {role.name[1]}
                   <span style={{ color: slate, fontWeight: 500 }}>
@@ -526,13 +542,11 @@ export default function Work() {
                 flexWrap: "wrap",
               }}
             >
-              <Stamp rotate={-3}>LEAD FRONTEND</Stamp>
-              <Stamp color={cyan} rotate={2}>
-                CURRENT
-              </Stamp>
-              <Stamp color={ink} rotate={-1}>
-                AI MEDIA
-              </Stamp>
+              {FANPRO_TAGS.map((t) => (
+                <Stamp key={t.text} color={t.color} rotate={t.rotate}>
+                  {t.text}
+                </Stamp>
+              ))}
             </div>
             <h3
               style={{
@@ -557,6 +571,8 @@ export default function Work() {
                 color: ink,
                 letterSpacing: "0.1em",
                 marginBottom: 22,
+                // Constants are natural-case; the fancy meta line is caps.
+                textTransform: "uppercase",
               }}
             >
               {FANPRO_META.role} · {FANPRO_META.date}
@@ -652,13 +668,11 @@ export default function Work() {
                 flexWrap: "wrap",
               }}
             >
-              <Stamp rotate={-3}>FOUNDING FRONTEND</Stamp>
-              <Stamp color={cyan} rotate={2}>
-                4 YEARS
-              </Stamp>
-              <Stamp color={ink} rotate={-1}>
-                FINTECH
-              </Stamp>
+              {EXIMPE_TAGS.map((t) => (
+                <Stamp key={t.text} color={t.color} rotate={t.rotate}>
+                  {t.text}
+                </Stamp>
+              ))}
             </div>
             <h3
               style={{
@@ -681,6 +695,8 @@ export default function Work() {
                 color: ink,
                 letterSpacing: "0.1em",
                 marginBottom: 22,
+                // Constants are natural-case; the fancy meta line is caps.
+                textTransform: "uppercase",
               }}
             >
               {EXIMPE_META.role} · {EXIMPE_META.date}
@@ -897,6 +913,8 @@ export default function Work() {
                     letterSpacing: "var(--text-card-title--letter-spacing)",
                     color: ink,
                     margin: "0 0 4px",
+                    // Natural-case name parts → display-face caps.
+                    textTransform: "uppercase",
                   }}
                 >
                   {role.name[0]}
@@ -910,6 +928,7 @@ export default function Work() {
                     color: ink,
                     letterSpacing: "0.1em",
                     marginBottom: 14,
+                    textTransform: "uppercase",
                   }}
                 >
                   {role.meta}

@@ -8,10 +8,12 @@
 // GitHub / LinkedIn / dev.to links (no X); "Book a 30-min chat" is a
 // mailto until a scheduler exists.
 // Minimal mode (AGENTS.md §Two design modes): paper slab (NOT red — red
-// collapses to ink), lowercase mono heading at the contact token size,
-// clock line with a static dot, shared body + link list. The SEND EMAIL /
-// BOOK CHAT buttons are dropped — the email link covers both (lead
-// decision); the footer keeps PRIVACY/TERMS + back-to-top.
+// collapses to ink), mono 700 24px heading ("Let's build something."),
+// plain mono clock line (no dot), links in the mockup's
+// "platform / handle ↗" shape derived from the same structured SOCIALS
+// data fancy derives "@HANDLE ON PLATFORM" from. The SEND EMAIL / BOOK
+// CHAT buttons are dropped — the email link covers both (lead decision);
+// the footer keeps PRIVACY/TERMS + "↑ top" (fancy: "↑ back to top").
 import type { CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
 import MinimalColumn from "../components/primitives/MinimalColumn";
@@ -38,31 +40,45 @@ import {
 const EMAIL = "theshakeabhi@gmail.com";
 const MAILTO = `mailto:${EMAIL}`;
 
+// ONE structured source for the social links; each mode derives its own
+// presentation (fancy "@HANDLE ON PLATFORM" + CSS uppercase, minimal
+// "platform / handle ↗" + CSS lowercase — AGENTS.md §Two design modes).
 const SOCIALS = [
-  { label: "@THESHAKEABHI ON GITHUB", href: "https://github.com/theshakeabhi" },
   {
-    label: "@THESHAKEABHI ON LINKEDIN",
-    href: "https://www.linkedin.com/in/theshakeabhi/",
+    platform: "GitHub",
+    handle: "theshakeabhi",
+    url: "https://github.com/theshakeabhi",
   },
-  { label: "@THESHAKEABHI ON DEV.TO", href: "https://dev.to/theshakeabhi" },
-];
+  {
+    platform: "LinkedIn",
+    handle: "theshakeabhi",
+    url: "https://www.linkedin.com/in/theshakeabhi/",
+  },
+  {
+    platform: "dev.to",
+    handle: "theshakeabhi",
+    url: "https://dev.to/theshakeabhi",
+  },
+] as const;
 
-// Copy shared by BOTH design modes (minimal lowercases via CSS; fancy
-// scrambles the heading words and appends the 🇮🇳 to the footer note).
-const CONTACT_WORDS = ["LET'S", "BUILD", "SOMETHING."] as const;
+// Copy shared by BOTH design modes, natural case — fancy uppercases via
+// CSS (and scrambles the heading words, and appends the 🇮🇳 to the footer
+// note); minimal lowercases its meta lines/links via CSS.
+const CONTACT_WORDS = ["Let's", "build", "something."] as const;
 const CONTACT_BODY =
   "Reach out for staff/lead roles, founding-team gigs, design-system rescues, or honest opinions on your frontend codebase.";
-const CLOCK_PRE = "IT IS";
-const CLOCK_POST = "IN BENGALURU";
-const RESPONDS = "RESPONDS IN < 24H";
-const CTA_EMAIL_LABEL = "✉ SEND ME AN EMAIL";
-const CTA_CHAT_LABEL = "📅 BOOK A 30-MIN CHAT";
-const FOOTER_NOTE = "© 2026 · BUILT WITH SPITE AND LOVE · BENGALURU";
+const CLOCK_PRE = "It is";
+const CLOCK_POST = "in Bengaluru";
+const RESPONDS = "Responds in < 24h";
+const CTA_EMAIL_LABEL = "✉ Send me an email";
+const CTA_CHAT_LABEL = "📅 Book a 30-min chat";
+const FOOTER_NOTE = "© 2026 · Built with spite and love · Bengaluru";
 const FOOT_LINKS = [
-  { label: "PRIVACY", href: "/privacy" },
-  { label: "TERMS", href: "/terms" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
 ] as const;
-const BACK_TO_TOP = "↑ BACK TO TOP";
+// One const pair: fancy renders the long form, minimal the mock's "↑ top".
+const TO_TOP = { long: "↑ Back to top", short: "↑ top" } as const;
 
 const linkStyle: CSSProperties = {
   fontFamily: fonts.display,
@@ -125,25 +141,23 @@ export default function Contact() {
           <div style={minimalLabelStyle}>
             <span>10 / contact</span>
           </div>
+          {/* Mockup .mh2 at 24px — natural case ("Let's build something."),
+              NOT the 36px contact token. */}
           <h2
             style={{
               fontFamily: fonts.mono,
               fontWeight: 700,
-              fontSize: text.contact,
-              lineHeight: "var(--text-contact--line-height)",
-              letterSpacing: "var(--text-contact--letter-spacing)",
+              fontSize: 24,
+              letterSpacing: "-0.01em",
               color: ink,
               margin: "0 0 22px",
-              textTransform: "lowercase",
             }}
           >
             {CONTACT_WORDS.join(" ")}
           </h2>
+          {/* Mockup .mclock: plain mono slate line, NO dot. */}
           <p
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
               fontFamily: fonts.mono,
               fontWeight: 500,
               fontSize: 12,
@@ -153,16 +167,6 @@ export default function Contact() {
               textTransform: "lowercase",
             }}
           >
-            <span
-              aria-hidden='true'
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: "50%",
-                background: success,
-                flexShrink: 0,
-              }}
-            />
             {CLOCK_PRE} {clock} {CLOCK_POST} · {RESPONDS}
           </p>
           <p
@@ -196,14 +200,14 @@ export default function Contact() {
             </a>
             {SOCIALS.map((s) => (
               <a
-                key={s.href}
-                href={s.href}
+                key={s.url}
+                href={s.url}
                 target='_blank'
                 rel='noreferrer'
                 className={MINIMAL_LINK_CLASSES}
                 style={minimalLinkStyle}
               >
-                {s.label}
+                {s.platform} / {s.handle} ↗
               </a>
             ))}
           </div>
@@ -256,7 +260,7 @@ export default function Contact() {
                 cursor: "pointer",
               }}
             >
-              {BACK_TO_TOP}
+              {TO_TOP.short}
             </button>
           </footer>
         </MinimalColumn>
@@ -320,6 +324,7 @@ export default function Contact() {
             fontWeight: 700,
             fontSize: 14,
             letterSpacing: "0.15em",
+            textTransform: "uppercase",
             border: `3px solid ${cream}`,
             boxShadow: `4px 4px 0 ${cream}`,
           }}
@@ -402,15 +407,15 @@ export default function Contact() {
             </Hover>
             {SOCIALS.map((s) => (
               <Hover
-                key={s.href}
+                key={s.url}
                 as='a'
-                href={s.href}
+                href={s.url}
                 target='_blank'
                 rel='noreferrer'
                 kind='link'
                 style={linkStyle}
               >
-                {s.label}
+                @{s.handle} on {s.platform}
               </Hover>
             ))}
           </div>
@@ -476,6 +481,7 @@ export default function Contact() {
           fontWeight: 700,
           fontSize: 12,
           letterSpacing: "0.15em",
+          textTransform: "uppercase",
           color: cream,
         }}
       >
@@ -512,7 +518,7 @@ export default function Contact() {
             color: "inherit",
           }}
         >
-          {BACK_TO_TOP}
+          {TO_TOP.long}
         </Hover>
       </footer>
     </Slab>

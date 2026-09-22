@@ -39,15 +39,18 @@ const updated = "September 17, 2026";
       class="relative mx-auto min-h-screen max-w-[880px]"
       style="padding: 110px var(--spacing-slab-x) 90px;"
     >
+      <!-- corner-chip: quiet mono text under html[data-minimal] (global.css) -->
       <div
-        class="font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
+        class="corner-chip font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
       >
         12 // TERMS
       </div>
 
+      <!-- Border consumes the mode-aware token: 3px ink → 1px hairline. -->
       <a
         href="/"
-        class="font-mono border-ink bg-cream text-ink shadow-card hover:bg-ink hover:text-cream inline-block border-[3px] px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em] no-underline"
+        class="font-mono bg-cream text-ink shadow-card hover:bg-ink hover:text-cream inline-block px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em] no-underline"
+        style="border: var(--border-default);"
       >
         ← BACK
       </a>

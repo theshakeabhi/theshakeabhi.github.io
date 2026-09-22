@@ -31,12 +31,13 @@ import {
 
 const LINKEDIN = "https://www.linkedin.com/in/theshakeabhi/";
 
-// Copy shared by BOTH design modes (minimal lowercases via CSS).
+// Copy shared by BOTH design modes, natural case — fancy uppercases via
+// CSS (MagneticButton face / the note line), minimal lowercases via CSS.
 const RESUME_COPY =
   "One page. PDF. No Comic Sans (here). Updated whenever I do something worth bragging about.";
-const PDF_NOTE = "PDF VERSION COMING SOON";
-const CTA_CV = "CV ON LINKEDIN ↗";
-const CTA_PROFILE = "VIEW PROFILE ↗";
+const PDF_NOTE = "PDF version coming soon";
+const CTA_CV = "CV on LinkedIn ↗";
+const CTA_PROFILE = "View profile ↗";
 
 const tapeRed = `color-mix(in srgb, ${red} 55%, transparent)`;
 
@@ -82,6 +83,7 @@ export default function Resume() {
     return (
       <Slab
         bg={cream}
+        id='cv'
         style={{ paddingTop: 52, paddingBottom: 64, borderTop: borders.thick }}
       >
         <MinimalColumn>
@@ -155,6 +157,7 @@ export default function Resume() {
     <Slab
       bg={creamWarm}
       label='09 // CV'
+      id='cv'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",
         borderTop: borders.thick,
@@ -222,6 +225,7 @@ export default function Resume() {
               fontSize: 12,
               color: ink,
               letterSpacing: "0.15em",
+              textTransform: "uppercase",
             }}
           >
             {PDF_NOTE}

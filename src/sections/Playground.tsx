@@ -40,6 +40,9 @@ const EXPERIMENTS = [
 const BTN_DEC = "−";
 const BTN_INC = "+ 1";
 const BTN_BOING = "BOING";
+// Mock quip for the bouncy boi (minimal renders it; fancy's arena+button
+// stay as shipped).
+const BOI_QUIP = "click him. he lives for this.";
 
 const minimalLabelStyle: CSSProperties = {
   display: "flex",
@@ -128,6 +131,7 @@ export default function Playground() {
     return (
       <Slab
         bg={cream}
+        id='playground'
         style={{
           paddingTop: 52,
           paddingBottom: 64,
@@ -138,12 +142,14 @@ export default function Playground() {
           <div style={minimalLabelStyle}>
             <span>07 / playground</span>
           </div>
+          {/* Mock's small muted note styling (.mbody.mmuted @14px) — the
+              TEXT stays the shared fancy copy (lead decision). */}
           <p
             style={{
               fontFamily: fonts.body,
               fontWeight: 400,
               fontSize: 14,
-              lineHeight: 1.6,
+              lineHeight: 1.65,
               color: slate,
               margin: "0 0 26px",
               maxWidth: "62ch",
@@ -185,7 +191,9 @@ export default function Playground() {
                   margin: "6px 0 10px",
                 }}
               >
-                {complaint}
+                {/* Mock: blank until the first click (fancy keeps its
+                    "…go on, click it." opener). */}
+                {counter === 0 ? "" : complaint}
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <MagneticButton
@@ -231,7 +239,9 @@ export default function Playground() {
                   marginBottom: 8,
                 }}
               >
-                {Math.round(hue)}°
+                {/* Mock label prefix; the initial VALUE mirrors fancy
+                    (shared state) — parity over the mock's 180. */}
+                vote: {Math.round(hue)}°
               </div>
               <input
                 type='range'
@@ -244,42 +254,46 @@ export default function Playground() {
               />
             </div>
 
-            {/* 03 — bouncy boi */}
+            {/* 03 — bouncy boi. Mock .mtoy: quip + bare ink circle that
+                is clicked DIRECTLY — no arena frame, no BOING button
+                (fancy keeps its arena + button). */}
             <div style={minimalCardStyle}>
               <h3 style={minimalCardTitleStyle}>
                 {EXPERIMENTS[2].num} · {EXPERIMENTS[2].lines.join(" ")}
               </h3>
               <div
                 style={{
-                  height: 100,
-                  position: "relative",
-                  border: borders.default,
-                  overflow: "hidden",
+                  fontFamily: fonts.mono,
+                  fontWeight: 400,
+                  fontSize: 12,
+                  color: slate,
+                  minHeight: 30,
+                  margin: "6px 0 10px",
                 }}
               >
-                <div
-                  aria-hidden='true'
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    bottom: 8,
-                    width: 40,
-                    height: 40,
-                    background: ink,
-                    borderRadius: "50%",
-                    transform: `translate(-50%, ${-bounce * 44}px) scale(${1 + bounce * 0.15}, ${1 - bounce * 0.2})`,
-                    // JS-driven motion checks reducedMotion (AGENTS.md).
-                    transition: reducedMotion
-                      ? "none"
-                      : "transform 0.4s cubic-bezier(.22,1.6,.36,1)",
-                  }}
-                />
+                {BOI_QUIP}
               </div>
-              <div style={{ marginTop: 12 }}>
-                <MagneticButton kind='cyan' onClick={boing}>
-                  {BTN_BOING}
-                </MagneticButton>
-              </div>
+              <button
+                type='button'
+                aria-label='Bouncy boi — click to bounce'
+                onClick={boing}
+                style={{
+                  display: "block",
+                  width: 40,
+                  height: 40,
+                  margin: "4px auto 0",
+                  padding: 0,
+                  background: ink,
+                  border: "none",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  transform: `translateY(${-bounce * 44}px) scale(${1 + bounce * 0.15}, ${1 - bounce * 0.2})`,
+                  // JS-driven motion checks reducedMotion (AGENTS.md).
+                  transition: reducedMotion
+                    ? "none"
+                    : "transform 0.4s cubic-bezier(.22,1.6,.36,1)",
+                }}
+              />
             </div>
           </div>
         </MinimalColumn>
@@ -291,6 +305,7 @@ export default function Playground() {
     <Slab
       bg={ink}
       label='07 // PLAYGROUND'
+      id='playground'
       style={{ color: cream, paddingTop: "var(--spacing-slab-top-deep)" }}
     >
       <div

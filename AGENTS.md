@@ -182,8 +182,11 @@ fixed top-right `MinimalToggle` or the PreferencesMenu row).
 - **THE INVARIANT: every new section, component, or copy change lands in
   BOTH modes in the same PR and is QA'd in both. Mode branches read the
   SAME shared content constants — copy is never duplicated per mode.**
-  (Minimal lowercases shared UPPERCASE copy via CSS `text-transform`, so
-  the constants stay single-source.)
+  (Constants are written in NATURAL case; each mode applies its own CSS
+  `text-transform` — fancy uppercases where its design needs caps,
+  minimal lowercases only the spots the mockup renders lowercase — and
+  per-mode presentation strings may be derived from the same structured
+  data, so the constants stay single-source.)
 - **Component contract when minimal** (branch guard AFTER all hooks — the
   SSR rules above still apply): pure decorations render null (Tape, Burst,
   Star, Squiggle, Scribble, Arrow, Eyes, RubberStamp, SideRibbon,

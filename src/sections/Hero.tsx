@@ -44,10 +44,10 @@ export interface HeroProps {
 // Anchor targets are the real section ids on the Slabs (Work id='work',
 // NowBoard id='now', Contact id='contact'; Writing id='writing' → P6).
 const NAV = [
-  { label: "WORK", href: "#work" },
-  { label: "NOW", href: "#now" },
-  { label: "WRITING", href: "#writing" },
-  { label: "CONTACT", href: "#contact" },
+  { label: "Work", href: "#work" },
+  { label: "Now", href: "#now" },
+  { label: "Writing", href: "#writing" },
+  { label: "Contact", href: "#contact" },
 ] as const;
 
 const MARQUEE_ITEMS = [
@@ -71,16 +71,19 @@ const MARQUEE_ITEMS = [
 const CV_URL = "https://www.linkedin.com/in/theshakeabhi/";
 
 // Copy shared by BOTH design modes — never duplicated (AGENTS.md §Two
-// design modes). Minimal lowercases via CSS textTransform so the
-// UPPERCASE constants stay single-source.
+// design modes). Constants are NATURAL case: fancy uppercases via CSS
+// textTransform (top bar, MagneticButton faces), minimal lowercases its
+// links via CSS. LOGO_TEXT is a wordmark — caps IS its natural case.
 const LOGO_TEXT = "ABHISHEK.SH";
-const AVAILABLE = "AVAILABLE FOR HIRE";
+const AVAILABLE = "Available for hire";
 const LEAD_PRE = "Senior frontend engineer who ships at ";
 const LEAD_EM = "founding-team speed";
 const LEAD_POST =
   ", mentors humans, and treats production incidents like a sport. Currently leading frontend at FanProStudio AI, shipping AI-media generation — AI influencers and on-brand UGC — from Bengaluru.";
-const CTA_WORK = "SEE THE WORK →";
-const CTA_CV = "CV ON LINKEDIN ↗";
+// Shared label text, per-mode arrow glyph (mock: fancy →, minimal ↓).
+const CTA_WORK_TEXT = "See the work";
+const CTA_WORK_ARROW = { fancy: "→", minimal: "↓" } as const;
+const CTA_CV = "CV on LinkedIn ↗";
 
 // Minimal-only type: the calm hero shows the real name + a role line
 // instead of the mega display face.
@@ -142,7 +145,9 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
                 cursor: "pointer",
               }}
             >
-              A {LOGO_TEXT}
+              {/* No chip letter here — the mock's minimal top row is
+                  exactly "ABHISHEK.SH". */}
+              {LOGO_TEXT}
             </button>
             {/* Mockup .mtop nav a: muted, NO underline, hover → accent
                 COLOR (both colors as classes — inline beats hover). */}
@@ -215,7 +220,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               className={MINIMAL_LINK_CLASSES}
               style={minimalLinkStyle}
             >
-              {CTA_WORK}
+              {CTA_WORK_TEXT} {CTA_WORK_ARROW.minimal}
             </a>
             <a
               href={CV_URL}
@@ -283,6 +288,8 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           fontWeight: 700,
           fontSize: 12,
           letterSpacing: "0.15em",
+          // Natural-case NAV/AVAILABLE constants → fancy caps via CSS.
+          textTransform: "uppercase",
           color: ink,
           marginBottom: 50,
         }}
@@ -523,7 +530,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
             }}
           >
             <MagneticButton kind='danger' onClick={goToWork}>
-              {CTA_WORK}
+              {CTA_WORK_TEXT} {CTA_WORK_ARROW.fancy}
             </MagneticButton>
             <MagneticButton kind='ghost' onClick={openCv}>
               {CTA_CV}

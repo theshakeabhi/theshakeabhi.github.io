@@ -76,7 +76,7 @@ export default function About() {
   // borderTop here: the preceding SectionDivider already draws the hairline.
   if (minimal) {
     return (
-      <Slab bg={cream} style={{ paddingTop: 52, paddingBottom: 64 }}>
+      <Slab bg={cream} id='about' style={{ paddingTop: 52, paddingBottom: 64 }}>
         <MinimalColumn>
           <div style={minimalLabelStyle}>
             <span>02 / about</span>
@@ -137,6 +137,7 @@ export default function About() {
     <Slab
       bg={cream}
       label='02 // ABOUT'
+      id='about'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",
         borderTop: borders.thick,

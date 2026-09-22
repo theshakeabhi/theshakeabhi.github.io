@@ -41,6 +41,9 @@ export default function RubberStamp({
         fontWeight: 900,
         fontSize: Math.round(size * 0.16),
         letterSpacing: "0.1em",
+        // Status constants are natural-case (shared with the minimal
+        // sub-lines) — the fancy stamp face uppercases them itself.
+        textTransform: "uppercase",
         opacity: 0.85,
         background: `repeating-linear-gradient(0deg, transparent 0 4px, color-mix(in srgb, ${cream} 40%, transparent) 4px 5px)`,
         ...style,

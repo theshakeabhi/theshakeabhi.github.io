@@ -30,8 +30,11 @@ import { writingPosts } from "../content/writing";
 
 const DEVTO_PROFILE = "https://dev.to/theshakeabhi";
 
-// Copy shared by BOTH design modes (minimal lowercases via CSS).
-const ALL_POSTS = "ALL POSTS →";
+// Shared label text, per-mode arrow glyph (mock: fancy →, minimal ↗ —
+// the minimal link opens dev.to in a new tab). Fancy uppercases via CSS,
+// minimal lowercases via CSS.
+const ALL_POSTS_TEXT = "All posts";
+const ALL_POSTS_ARROW = { fancy: "→", minimal: "↗" } as const;
 
 const dateStyle: CSSProperties = {
   fontFamily: fonts.mono,
@@ -142,7 +145,7 @@ export default function Writing() {
               className={MINIMAL_LINK_CLASSES}
               style={minimalLinkStyle}
             >
-              {ALL_POSTS}
+              {ALL_POSTS_TEXT} {ALL_POSTS_ARROW.minimal}
             </a>
           </div>
           <div style={{ borderTop: borders.default }}>
@@ -253,10 +256,11 @@ export default function Writing() {
             fontSize: 16,
             color: ink,
             letterSpacing: "0.1em",
+            textTransform: "uppercase",
             textDecoration: "none",
           }}
         >
-          {ALL_POSTS}
+          {ALL_POSTS_TEXT} {ALL_POSTS_ARROW.fancy}
         </Hover>
       </div>
 
