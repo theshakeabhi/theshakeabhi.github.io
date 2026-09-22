@@ -1252,3 +1252,62 @@ chronological master, and every source folder now carries its own scoped
 - **Self-check**: 17 agent-log.md files present outside
   node_modules/dist/.astro; markdown-only change, prettier via
   pre-commit hook; committed to feat/minimal-mode and pushed to PR #2.
+
+## Resume data refresh · 2026-09-23T01:33:39+05:30
+
+Branch `feat/resume-refresh` (off master cf2b563). All site content
+synced to the new master resume
+(`../abhishek-chandrasenan-resume-master.tex`); the real one-page PDF now
+ships at `public/cv.pdf`. Every copy edit went through the shared
+module-level constants, so full-fat and minimal both update from one
+edit; phone number kept OFF the site. Scoped detail in the per-folder
+logs (src/pages, src/portfolio, src/sections, src/content, public).
+
+- **Files touched**: `src/pages/index.astro` (title/description/og alt →
+  Software Engineer + 6-years summary), `src/sections/Hero.tsx` (lead,
+  role line, 6 yrs sticker, "Grab the CV ↓" → /cv.pdf),
+  `src/portfolio/Portfolio.tsx` (SIX YEARS OF SHIPPING),
+  `src/sections/About.tsx` (P1/P2 resume-true; stats swap),
+  `src/sections/Work.tsx` (FanPro Studio + Frontend Lead Mar→Sep '26 +
+  new bullets; EximPe Lead Frontend Engineer May '22→Mar '26 + new
+  bullets + KYC/transaction/bundle/Lighthouse WINS; Zomato deleted,
+  prior-roles grid 3→2-up, eyebrow 2020→2022),
+  `src/sections/Skills.tsx` (+Stripe/PostgreSQL/GraphQL/React Native),
+  `src/content/writing.ts` (posts 1+3 retitled to backed metrics),
+  `src/sections/NowBoard.tsx` (Updated Sep '26), `src/sections/Resume.tsx`
+  (real-PDF CTAs, "coming soon" note deleted, paper mock rows).
+- **Decisions/deviations**: Zomato removed entirely (not on the resume) —
+  supersedes the 2026-09-22 minimal-mode mock-casing rulings for the
+  Zomato row and QBurst's "SWE → intern" (now "Software Engineer");
+  unbacked stats dropped (−50% API latency, +30% revenue flows, mobile
+  onboarding %); prior-roles fancy grid switched `lg:grid-cols-3` →
+  `lg:grid-cols-2` (fixed 3-track grid + 2 cards = empty track; the
+  task's "auto-fit" assumption didn't hold); QBurst card splits its one
+  resume line into 2 bullets rather than padding with invented facts;
+  Sawo meta now "Bangalore · Remote" per resume. No git writes; the lead
+  commits.
+- **Self-check**: `npx astro check` 0 errors / 0 warnings (re-run after
+  lint); `npx -y yarn@1 lint` clean; `npx astro build` OK — 5 pages +
+  dist/cv.pdf. dist string-scan: "FanPro Studio"/"Software Engineer"/new
+  dates/stats/skills present, "Zomato"/"FanProStudio"/"coming
+  soon"/"SEVEN YEARS"/"API latency" absent from HTML and JS. Browser QA
+  of both modes not run this pass — recommended follow-up.
+
+## Resume data refresh — Zomato override · 2026-09-23T01:37:34+05:30
+
+USER OVERRIDE: the Zomato prior role STAYS despite its absence from the
+resume — supersedes the previous entry's "Zomato removed" decision
+(append-only correction; the earlier entry is left intact per protocol).
+
+- **Files touched**: `src/sections/Work.tsx` — Zomato entry restored
+  verbatim from git HEAD (read-only `git show`); eyebrow back to
+  2019 → 2022; stamp back to THREE WARM-UPS; prior-roles grid back to
+  `lg:grid-cols-3`. Sawo Labs and QBurst stay resume-corrected;
+  everything else in the refresh stands.
+- **Decisions/deviations**: Zomato kept by owner's explicit choice
+  despite absence from the resume; Sawo/QBurst still resume-corrected;
+  the 2-col grid judgment call is mooted with 3 cards again.
+- **Self-check**: check 0/0/0, lint clean, build OK; dist contains
+  Zomato/sales intern/2019 → 2022/THREE WARM-UPS again (HTML + JS),
+  refresh strings intact, no "2020 → 2022"/"TWO WARM-UPS" remnants.
+  Scoped detail in src/sections/agent-log.md.

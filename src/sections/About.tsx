@@ -28,25 +28,29 @@ import {
   shadows,
 } from "../tokens";
 
-// Copy + metrics are FINAL (AGENT_TEAM_HANDOFF §P5).
+// Copy + metrics follow the Sep '26 resume refresh — every stat below is
+// backed by the master resume (the −50% API latency stat was unbacked and
+// is gone).
 const STATS = [
   { n: "50K+", l: "MAUs shipped to", c: ink },
-  { n: "25→85%", l: "Mobile onboarding ✶", c: red },
-  { n: "−50%", l: "API latency cut", c: cyan },
-  { n: "−60%", l: "Prod incidents", c: ink },
+  { n: "25→85%", l: "Mobile KYC ✶", c: red },
+  { n: "−60%", l: "Prod incidents", c: cyan },
+  { n: "39→81", l: "Lighthouse perf", c: ink },
 ] as const;
 
 // Paragraph copy shared by BOTH design modes — fancy dresses the parts
-// (strong / yellow Hover highlight), minimal renders them plain.
+// (yellow Hover highlight on `link`, <strong> on `strong`), minimal
+// renders them plain. Keys are in SENTENCE ORDER: pre → link → mid →
+// strong → post.
 const ABOUT_P1 = {
-  pre: "These days I'm the ",
-  strong: "Lead Frontend Developer",
-  mid: " at ",
-  link: "FanProStudio AI",
-  post: ", building AI media generation — AI influencers and on-brand UGC — the way you'd build something you actually use yourself: opinionated, fast, and a little stubborn about quality. Before that, four years as the first frontend hire at EximPe building cross-border fintech, on top of three years of agency + product work cramming the fundamentals.",
+  pre: "Most recently I led ",
+  link: "FanPro Studio's",
+  mid: " AI media generation platform — frontend, APIs, payments, auth, and the release train — from an empty repository to public beta. Before that, four years as the ",
+  strong: "founding frontend hire",
+  post: " at EximPe, an RBI-licensed cross-border payment aggregator, from launch to 50K+ monthly active users — on top of two years across passwordless auth and product engineering.",
 } as const;
 const ABOUT_P2 =
-  "I lead the frontend, write the design system, take the 2am pages, and unironically enjoy the part where you finally find the bug.";
+  "I lead frontends, write design systems, take the 2am pages, and unironically enjoy the part where you finally find the bug.";
 
 const minimalLabelStyle: CSSProperties = {
   display: "flex",
@@ -83,9 +87,9 @@ export default function About() {
           </div>
           <p style={{ ...minimalBodyStyle, margin: "0 0 16px" }}>
             {ABOUT_P1.pre}
-            {ABOUT_P1.strong}
-            {ABOUT_P1.mid}
             {ABOUT_P1.link}
+            {ABOUT_P1.mid}
+            {ABOUT_P1.strong}
             {ABOUT_P1.post}
           </p>
           <p style={{ ...minimalBodyStyle, margin: 0 }}>{ABOUT_P2}</p>
@@ -252,8 +256,6 @@ export default function About() {
             }}
           >
             {ABOUT_P1.pre}
-            <strong>{ABOUT_P1.strong}</strong>
-            {ABOUT_P1.mid}
             <Hover
               as='span'
               kind='link'
@@ -261,6 +263,8 @@ export default function About() {
             >
               {ABOUT_P1.link}
             </Hover>
+            {ABOUT_P1.mid}
+            <strong>{ABOUT_P1.strong}</strong>
             {ABOUT_P1.post}
           </p>
           <p

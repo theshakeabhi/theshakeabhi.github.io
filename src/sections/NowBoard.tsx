@@ -151,7 +151,7 @@ const PINS: CSSProperties[] = [
 // Stamp copy shared by BOTH design modes (label-row right side in
 // minimal) — natural case; the fancy Stamp and the minimal label row
 // both uppercase via CSS.
-const UPDATED = "Updated May '26";
+const UPDATED = "Updated Sep '26";
 
 const ink25 = `color-mix(in srgb, ${ink} 25%, transparent)`;
 const gridLine = `color-mix(in srgb, ${ink} 6%, transparent)`;

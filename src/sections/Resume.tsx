@@ -1,12 +1,11 @@
 // P6 — Resume / CV section (portfolio-2.jsx): two-column layout with a
-// stylized one-page CV paper preview (380×480, rotate 2deg, washi tape)
-// and a LAST UPDATED stamp line.
+// stylized one-page CV paper preview (380×480, rotate 2deg, washi tape).
 //
-// USER DECISION: no PDF asset exists yet — both CV buttons open the
-// LinkedIn profile and say so honestly (no fake DOWNLOAD/.PDF labels,
-// no fabricated LAST UPDATED stamp).
+// Sep '26 resume refresh: the PDF is REAL now (public/cv.pdf) — the
+// primary CTA downloads it, the ghost CTA opens LinkedIn, and the old
+// "PDF version coming soon" note is gone.
 // Minimal mode (AGENTS.md §Two design modes): label row + shared copy +
-// two mono links + PDF note. No paper/tape/eyes.
+// two mono links. No paper/tape/eyes.
 import type { CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
 import MinimalColumn from "../components/primitives/MinimalColumn";
@@ -30,14 +29,14 @@ import {
 } from "../tokens";
 
 const LINKEDIN = "https://www.linkedin.com/in/theshakeabhi/";
+const PDF_URL = "/cv.pdf";
 
 // Copy shared by BOTH design modes, natural case — fancy uppercases via
-// CSS (MagneticButton face / the note line), minimal lowercases via CSS.
+// CSS (MagneticButton faces), minimal lowercases via CSS.
 const RESUME_COPY =
   "One page. PDF. No Comic Sans (here). Updated whenever I do something worth bragging about.";
-const PDF_NOTE = "PDF version coming soon";
-const CTA_CV = "CV on LinkedIn ↗";
-const CTA_PROFILE = "View profile ↗";
+const CTA_PDF = "Download the PDF ↓";
+const CTA_PROFILE = "LinkedIn profile ↗";
 
 const tapeRed = `color-mix(in srgb, ${red} 55%, transparent)`;
 
@@ -67,8 +66,8 @@ const MINIMAL_LINK_CLASSES =
   "text-ink decoration-hairline hover:decoration-accent";
 
 const PAPER_SECTIONS = [
-  "FANPROSTUDIO AI · LEAD · 2026→",
-  "EXIMPE · LEAD · 2022→26",
+  "FANPRO STUDIO · FRONTEND LEAD · '26",
+  "EXIMPE · LEAD FE · '22→'26",
   "SELECTED WINS",
   "STACK",
 ];
@@ -112,13 +111,13 @@ export default function Resume() {
             }}
           >
             <a
-              href={LINKEDIN}
+              href={PDF_URL}
               target='_blank'
               rel='noreferrer'
               className={MINIMAL_LINK_CLASSES}
               style={minimalLinkStyle}
             >
-              {CTA_CV}
+              {CTA_PDF}
             </a>
             <a
               href={LINKEDIN}
@@ -130,25 +129,14 @@ export default function Resume() {
               {CTA_PROFILE}
             </a>
           </div>
-          <p
-            style={{
-              // Mockup styles the note with .mrole: mono 13, ls .06em.
-              fontFamily: fonts.mono,
-              fontWeight: 500,
-              fontSize: 13,
-              letterSpacing: "0.06em",
-              color: slate,
-              margin: "18px 0 0",
-              textTransform: "lowercase",
-            }}
-          >
-            {PDF_NOTE}
-          </p>
         </MinimalColumn>
       </Slab>
     );
   }
 
+  const openPdf = () => {
+    window.open(PDF_URL, "_blank", "noopener,noreferrer");
+  };
   const openLinkedIn = () => {
     window.open(LINKEDIN, "_blank", "noopener,noreferrer");
   };
@@ -210,25 +198,12 @@ export default function Resume() {
               flexWrap: "wrap",
             }}
           >
-            <MagneticButton kind='primary' onClick={openLinkedIn}>
-              {CTA_CV}
+            <MagneticButton kind='primary' onClick={openPdf}>
+              {CTA_PDF}
             </MagneticButton>
             <MagneticButton kind='ghost' onClick={openLinkedIn}>
               {CTA_PROFILE}
             </MagneticButton>
-          </div>
-          <div
-            style={{
-              marginTop: 26,
-              fontFamily: fonts.mono,
-              fontWeight: 700,
-              fontSize: 12,
-              color: ink,
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-            }}
-          >
-            {PDF_NOTE}
           </div>
         </div>
 
@@ -277,7 +252,7 @@ export default function Resume() {
                 marginTop: 6,
               }}
             >
-              SENIOR FRONTEND ENGINEER
+              SOFTWARE ENGINEER
             </div>
             <div style={{ height: 2, background: ink, margin: "18px 0" }} />
             {PAPER_SECTIONS.map((s, i) => (

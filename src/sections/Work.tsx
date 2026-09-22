@@ -1,10 +1,10 @@
 // P5 — Work slab (portfolio-1.jsx 288–463, README §Section Highlights).
 // Two mega-cards (4px border, 14px slab shadow, slight opposite rotations):
-// FanProStudio AI (current — IN PRODUCTION rubber stamp, descriptive
-// bullets, no invented metrics) above EximPe (SHIPPED & SCALED stamp, KPI
-// tiles, 50K+ MAUs burst), followed by the three BEFORE-EXIMPE tilt cards
-// (SAWO Labs / QBurst / Zomato) with metric stamps per bullet.
-// EximPe copy and metrics are FINAL (AGENT_TEAM_HANDOFF §P5).
+// FanPro Studio (IN PRODUCTION rubber stamp, resume-true bullets) above
+// EximPe (SHIPPED & SCALED stamp, KPI tiles, 50K+ MAUs burst), followed by
+// the three BEFORE-EXIMPE tilt cards (Sawo Labs / QBurst / Zomato) with
+// metric stamps per bullet. Copy and metrics follow the Sep '26 resume
+// refresh (Zomato kept verbatim by owner's choice — see PRIOR_ROLES).
 // Minimal mode (AGENTS.md §Two design modes): per-employer role blocks
 // (mono heading + date, plain muted sub-line "role · tags · status" with
 // the status word as the ONE sanctioned accent use — mockup truth: only
@@ -44,12 +44,12 @@ import {
 const FANPRO_STATUS = "in production";
 const EXIMPE_STATUS = "shipped & scaled";
 const FANPRO_META = {
-  role: "Lead frontend developer",
-  date: "Jan '26 → now",
+  role: "Frontend Lead",
+  date: "Mar '26 → Sep '26",
 } as const;
 const EXIMPE_META = {
-  role: "Frontend product eng lead",
-  date: "May '22 → Apr '26",
+  role: "Lead Frontend Engineer",
+  date: "May '22 → Mar '26",
 } as const;
 
 interface EmployerTag {
@@ -60,16 +60,17 @@ interface EmployerTag {
   sub?: boolean;
 }
 
+// Role is a past one now — no "Current" chip (resume: Mar → Sep 2026).
 const FANPRO_TAGS: EmployerTag[] = [
-  { text: "Lead frontend", color: red, rotate: -3 },
-  { text: "Current", color: cyan, rotate: 2 },
-  { text: "AI media", color: ink, rotate: -1, sub: true },
+  { text: "Frontend lead", color: red, rotate: -3 },
+  { text: "AI media", color: cyan, rotate: 2, sub: true },
+  { text: "UAE · Remote", color: ink, rotate: -1, sub: true },
 ];
 
 const EXIMPE_TAGS: EmployerTag[] = [
   { text: "Founding frontend", color: red, rotate: -3, sub: true },
-  { text: "4 years", color: cyan, rotate: 2 },
-  { text: "Fintech", color: ink, rotate: -1, sub: true },
+  { text: "Fintech", color: cyan, rotate: 2, sub: true },
+  { text: "PA-CB", color: ink, rotate: -1 },
 ];
 
 /** Mockup .mrole-sub muted part: "role · tag · tag". */
@@ -78,59 +79,63 @@ const subLine = (role: string, tags: EmployerTag[]) =>
 // Minimal-only names: the fancy titles are display-face JSX (FANPRO /
 // STUDIO AI line break, EXIM+PE color split) — the calm mode shows the
 // real casing instead.
-const FANPRO_MINIMAL_NAME = "FanProStudio AI";
+const FANPRO_MINIMAL_NAME = "FanPro Studio";
 const EXIMPE_MINIMAL_NAME = "EximPe";
 
+// EximPe KPI tiles — every metric is on the master resume (−60% incidents
+// lives in the bullets; the old −50% API latency / +30% revenue-flow
+// tiles were unbacked and are gone).
 const WINS = [
-  { metric: "25% → 85%", kicker: "mobile onboarding completion", color: red },
-  { metric: "−50%", kicker: "API latency on critical paths", color: cyan },
-  { metric: "−60%", kicker: "production incidents YoY", color: ink },
-  { metric: "+30%", kicker: "speedup on revenue flows", color: red },
+  { metric: "25% → 85%", kicker: "mobile KYC completion", color: red },
+  { metric: "−30%", kicker: "transaction time", color: cyan },
+  { metric: "−40%", kicker: "JS bundle", color: ink },
+  { metric: "39 → 81", kicker: "Lighthouse performance", color: red },
 ] as const;
 
-// Descriptive only — no metrics until there are real ones to show.
+// Resume-true (Sep '26 refresh): empty repo → public beta, plus the
+// numbers the resume actually backs.
 const FANPRO_BULLETS: [string, string][] = [
   [
-    "Own the frontend for the generation studio — the surface where AI influencers and on-brand UGC get made: images, image edits, short videos, trend recreations.",
+    "Took the platform from an empty repository to public beta in four months — 4 generation modes, 20 generation types, onboarding, an asset library, and a creator marketplace. Next.js 16 + React + TypeScript.",
     red,
   ],
   [
-    "Build media-heavy interfaces that stay honest about state — queued, generating, failed, done — across image and video pipelines.",
+    "Built the generation backend: API routes and server actions that submit jobs to AI model providers, background jobs that track status, provider webhooks that store results.",
     cyan,
   ],
   [
-    "Ship prompt-to-preview flows that keep creators in the loop while the models do the heavy lifting.",
+    "Wired Stripe and WorkOS end to end — checkout, credit-granting webhooks, session handling — and social publishing to 11 platforms with OAuth, a content calendar, and a composer.",
     ink,
   ],
   [
-    "Run the design system so every new surface lands on-brand by default.",
+    "Set up Datadog monitoring, a 4-environment gated release train, and product analytics from scratch: funnels, generation conversion, referrals, ads attribution.",
     red,
   ],
   [
-    "Hold the review bar — quality, a11y, and performance are part of done, not a follow-up ticket.",
+    "Cut explore-page CLS from 0.66 to 0.003, traced an 8.3s LCP to a 14.8MB chunk and defined the fix, mentored 3 engineers, and built the team's AI-assisted dev workflow.",
     cyan,
   ],
 ];
 
 const EXIMPE_BULLETS: [string, string][] = [
   [
-    "Founding-level ownership of the FE architecture — customer apps, admin dashboards, internal tooling.",
+    "Founding team hire. Built and owned the customer, admin, and sales web apps from launch to 50K+ monthly active users, on Django services and Java banking APIs.",
     red,
   ],
   [
-    "Built and mentored a team of 2 engineers. Set the quality bar, review process, and release discipline.",
+    "Led the frontend team — code review, testing, and release standards that cut production incidents by 60% (Sentry).",
     cyan,
   ],
   [
-    "Primary IC on production fires — root-cause, fix, write the postmortem, ship the prevention.",
+    "Rebuilt core payment flows: transaction time down 30%, JS bundle down 40%, Lighthouse from 39 to 81.",
     ink,
   ],
   [
-    "Re-engineered onboarding + transaction journeys. Numbers got hilariously better.",
+    "Raised mobile KYC completion from 25% to 85% with funnel analytics and A/B-tested redesigns.",
     red,
   ],
   [
-    "Treated perf, reliability, and security as first-class — not a quarterly initiative.",
+    "Built an 80+ component Storybook design system used across all 3 apps; shipped RBI-aligned payment and KYC flows, fixed VAPT findings, added CSP/CSRF/XSS defenses.",
     cyan,
   ],
 ];
@@ -140,12 +145,15 @@ interface PriorRole {
   rotate: number;
   stamps: { text: string; color: string; rotate: number }[];
   meta: string;
-  /** 'outline' = display-face tile with 2px colored border (SAWO);
+  /** 'outline' = display-face tile with 2px colored border (Sawo);
    *  'solid' = mono tile with colored fill (QBurst / Zomato). */
   tile: "outline" | "solid";
   bullets: [string, string, string][]; // [metric, copy, color]
 }
 
+// Sawo Labs and QBurst are resume-corrected (Sep '26 refresh). Zomato is
+// NOT on the resume but stays by the owner's explicit choice — its entry
+// is verbatim pre-refresh content.
 const PRIOR_ROLES: PriorRole[] = [
   {
     name: ["Sawo ", "Labs"],
@@ -154,22 +162,22 @@ const PRIOR_ROLES: PriorRole[] = [
       { text: "SDE II", color: cyan, rotate: -2 },
       { text: "9 mos", color: ink, rotate: 1 },
     ],
-    meta: "Aug '21 → Apr '22 · Bengaluru · Hybrid",
+    meta: "Aug '21 → Apr '22 · Bangalore · Remote",
     tile: "outline",
     bullets: [
       [
-        "60%",
-        "cut bot abuse — shipped Google reCAPTCHA into the core SDK",
+        "500+",
+        "apps integrated the passwordless auth product — shipped features across frontend and backend",
         red,
       ],
       [
-        "20→75",
-        "Lighthouse on 11K daily-view surfaces; −35% load, +15% traffic",
+        "−60%",
+        "automated abuse on auth endpoints — rate limiting, CAPTCHA, device checks",
         cyan,
       ],
       [
-        "−70%",
-        "support queries by rewriting the docs; scaled a 6K+ dev community",
+        "DOCS",
+        "wrote the SDK docs + ran developer workshops; integration went from days to hours",
         ink,
       ],
     ],
@@ -178,27 +186,23 @@ const PRIOR_ROLES: PriorRole[] = [
     name: ["Q", "Burst"],
     rotate: 0.5,
     stamps: [
-      // Mock casing exactly: "SWE → intern" (lowercase 'intern').
-      { text: "SWE → intern", color: red, rotate: -2 },
+      // Resume framing: "Software Engineer" (the old "SWE → intern"
+      // mock casing is superseded by the Sep '26 resume refresh).
+      { text: "Software Engineer", color: red, rotate: -2 },
       { text: "10 mos", color: ink, rotate: 1 },
     ],
-    meta: "Oct '20 → Jul '21 · Kochi · Remote",
+    meta: "Oct '20 → Jul '21 · Kochi",
     tile: "solid",
     bullets: [
       [
         "SHIP",
-        "launched Splitter — a full-stack bill-settlement app, end-to-end",
+        "built an internal expense-splitting app end to end — React, Node, Express",
         red,
       ],
       [
         "API",
-        "scalable REST services on Express + MongoDB, multi-user, secure",
+        "REST API + data model for groups, expenses, and balances, plus the web client",
         cyan,
-      ],
-      [
-        "LEARN",
-        "aced production-level Django, React, and Node training as an intern",
-        ink,
       ],
     ],
   },
@@ -442,7 +446,7 @@ export default function Work() {
                 letterSpacing: "0.04em",
                 color: slate,
                 // NO lowercase here — the kickers keep their natural case
-                // ("API latency…", "production incidents YoY") per mock.
+                // ("mobile KYC completion", "JS bundle") per mock.
               }}
             >
               {WINS.map((w, i) => (
@@ -459,8 +463,9 @@ export default function Work() {
               key={i}
               last={i === PRIOR_ROLES.length - 1}
               name={
-                // Natural case straight from the constants (mock: "Sawo
-                // Labs · SDE II", "QBurst · SWE → intern") — no transform.
+                // Natural case straight from the constants ("Sawo Labs ·
+                // SDE II", "QBurst · Software Engineer", "Zomato · sales
+                // intern") — no transform.
                 <span>
                   {role.name[0]}
                   {role.name[1]}
@@ -513,7 +518,7 @@ export default function Work() {
         </Stamp>
       </div>
 
-      {/* Big project card — FanProStudio AI (current) */}
+      {/* Big project card — FanPro Studio */}
       <div
         style={{
           position: "relative",
@@ -561,7 +566,7 @@ export default function Work() {
             >
               FANPRO
               <br />
-              <span style={{ color: red }}>STUDIO&nbsp;AI</span>
+              <span style={{ color: red }}>STUDIO</span>
             </h3>
             <div
               style={{
