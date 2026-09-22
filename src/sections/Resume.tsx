@@ -106,7 +106,7 @@ export default function Resume() {
               display: "flex",
               flexWrap: "wrap",
               gap: 26,
-              marginTop: 24,
+              marginTop: 26,
             }}
           >
             <a
@@ -130,9 +130,10 @@ export default function Resume() {
           </div>
           <p
             style={{
+              // Mockup styles the note with .mrole: mono 13, ls .06em.
               fontFamily: fonts.mono,
               fontWeight: 500,
-              fontSize: 12,
+              fontSize: 13,
               letterSpacing: "0.06em",
               color: slate,
               margin: "18px 0 0",

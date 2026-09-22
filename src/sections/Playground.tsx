@@ -212,7 +212,8 @@ export default function Playground() {
               </h3>
               <div
                 style={{
-                  height: 54,
+                  // Mockup .mtoy .hue-prev: 40px, hairline border.
+                  height: 40,
                   border: borders.default,
                   // User-driven experiment color, not a design token.
                   background: `hsl(${hue}, 70%, 60%)`,
@@ -224,7 +225,8 @@ export default function Playground() {
                 style={{
                   fontFamily: fonts.mono,
                   fontWeight: 400,
-                  fontSize: 12,
+                  fontSize: 10.5,
+                  letterSpacing: "0.1em",
                   color: slate,
                   marginBottom: 8,
                 }}

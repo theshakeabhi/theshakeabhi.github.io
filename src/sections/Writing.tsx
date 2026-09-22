@@ -3,12 +3,15 @@
 // whole row inverts (bg→ink, text→cream) and the left padding shifts
 // 8→24px (README §Hover Underline / Inversion). The padding shift is
 // suppressed under reduced motion; the color inversion stays.
-// Minimal mode ships BRANCHLESS (already doc-shaped; the token skin does
-// the rest) except: the fancy corner chip becomes the standard mono label
-// row, and the row hover softens — no inversion / padding shift, the
-// hovered title underlines in --color-accent instead.
+// Minimal mode (AGENTS.md §Two design modes): the mockup's compact list —
+// label row with the all-posts link on its right side, then 3-col
+// hairline rows (date+tag · title · read time); the hovered/focused row
+// title underlines in --color-accent. Both branches read the SAME
+// writingPosts content module (minimal lowercases via CSS and derives
+// "2026.03.14 · tag" from the shared date string at render).
 import { useState, type CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Hover from "../components/pointer/Hover";
 import ScrambleHover from "../components/text/ScrambleHover";
 import { useMediaQuery } from "../lib/useMediaQuery";
@@ -26,6 +29,9 @@ import {
 import { writingPosts } from "../content/writing";
 
 const DEVTO_PROFILE = "https://dev.to/theshakeabhi";
+
+// Copy shared by BOTH design modes (minimal lowercases via CSS).
+const ALL_POSTS = "ALL POSTS →";
 
 const dateStyle: CSSProperties = {
   fontFamily: fonts.mono,
@@ -73,26 +79,142 @@ const minimalLabelStyle: CSSProperties = {
   marginBottom: 26,
 };
 
+// Canonical minimal link (mockup .mlink) — decoration colors come from
+// the classes; never the `textDecoration` shorthand.
+const MINIMAL_LINK_CLASSES =
+  "text-ink decoration-hairline hover:decoration-accent";
+const minimalLinkStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 13.5,
+  textDecorationLine: "underline",
+  textDecorationThickness: 1,
+  textUnderlineOffset: 4,
+  textTransform: "lowercase",
+};
+
+// Mockup .mwr row cells.
+const minimalDateStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 400,
+  fontSize: 11.5,
+  letterSpacing: "0.04em",
+  color: slate,
+  textTransform: "lowercase",
+};
+
+const minimalTitleStyle: CSSProperties = {
+  fontFamily: fonts.body,
+  fontWeight: 500,
+  fontSize: 15,
+};
+
+const minimalMinsStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 400,
+  fontSize: 11,
+  letterSpacing: "0.06em",
+  color: slate,
+  textTransform: "lowercase",
+};
+
 export default function Writing() {
   const compact = useMediaQuery("(max-width: 767px)");
   const { reducedMotion, minimal } = usePrefs();
   const [hot, setHot] = useState<number | null>(null);
 
+  // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
+  // borderTop KEPT from fancy; same id keeps the #writing anchor.
+  if (minimal) {
+    return (
+      <Slab
+        bg={cream}
+        id='writing'
+        style={{ paddingTop: 52, paddingBottom: 64, borderTop: borders.thick }}
+      >
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>06 / writing</span>
+            <a
+              href={DEVTO_PROFILE}
+              target='_blank'
+              rel='noreferrer'
+              className={MINIMAL_LINK_CLASSES}
+              style={minimalLinkStyle}
+            >
+              {ALL_POSTS}
+            </a>
+          </div>
+          <div style={{ borderTop: borders.default }}>
+            {writingPosts.map((p, i) => {
+              const active = hot === i;
+              return (
+                <a
+                  key={i}
+                  href={p.href ?? DEVTO_PROFILE}
+                  target='_blank'
+                  rel='noreferrer'
+                  onPointerEnter={() => setHot(i)}
+                  onPointerLeave={() => setHot(null)}
+                  onFocus={() => setHot(i)}
+                  onBlur={() => setHot(null)}
+                  style={{
+                    display: "grid",
+                    // Mockup narrow behavior: date+tag line above the
+                    // title (via the existing compact query, not a
+                    // container query).
+                    gridTemplateColumns: compact ? "1fr auto" : "86px 1fr auto",
+                    gap: 14,
+                    alignItems: "baseline",
+                    padding: "13px 2px",
+                    borderBottom: borders.default,
+                    textDecoration: "none",
+                    color: ink,
+                  }}
+                >
+                  <span
+                    style={{
+                      ...minimalDateStyle,
+                      ...(compact ? { gridColumn: "1 / -1" } : null),
+                    }}
+                  >
+                    {p.date.replace(/ · /g, ".")} · {p.tag}
+                  </span>
+                  <span
+                    style={
+                      active
+                        ? {
+                            ...minimalTitleStyle,
+                            textDecorationLine: "underline",
+                            textDecorationColor: accent,
+                            textDecorationThickness: 1,
+                            textUnderlineOffset: 4,
+                          }
+                        : minimalTitleStyle
+                    }
+                  >
+                    {p.title}
+                  </span>
+                  <span style={minimalMinsStyle}>{p.readTime}</span>
+                </a>
+              );
+            })}
+          </div>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
+
   return (
     <Slab
       bg={cream}
-      label={minimal ? undefined : "06 // WRITING"}
+      label='06 // WRITING'
       id='writing'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",
         borderTop: borders.thick,
       }}
     >
-      {minimal && (
-        <div style={minimalLabelStyle}>
-          <span>06 / writing</span>
-        </div>
-      )}
       <div
         style={{
           display: "flex",
@@ -134,29 +256,14 @@ export default function Writing() {
             textDecoration: "none",
           }}
         >
-          ALL POSTS →
+          {ALL_POSTS}
         </Hover>
       </div>
 
       <div style={{ borderTop: borders.default }}>
         {writingPosts.map((p, i) => {
           const active = hot === i;
-          // Minimal softens the hover: no inversion, no padding shift —
-          // the hovered/focused row title underlines in accent instead
-          // (decoration color inline here because the whole row is the
-          // link, not the title span).
-          const shift = active && !reducedMotion && !minimal;
-          const invert = active && !minimal;
-          const rowTitleStyle: CSSProperties =
-            minimal && active
-              ? {
-                  ...titleStyle,
-                  textDecorationLine: "underline",
-                  textDecorationColor: accent,
-                  textDecorationThickness: 1,
-                  textUnderlineOffset: 4,
-                }
-              : titleStyle;
+          const shift = active && !reducedMotion;
           return (
             <Hover
               key={i}
@@ -185,8 +292,8 @@ export default function Writing() {
                     }),
                 padding: shift ? "24px 8px 24px 24px" : "24px 8px",
                 borderBottom: borders.default,
-                background: invert ? ink : "transparent",
-                color: invert ? cream : ink,
+                background: active ? ink : "transparent",
+                color: active ? cream : ink,
                 textDecoration: "none",
                 transition: "background .15s, padding-left .15s, color .15s",
               }}
@@ -202,13 +309,13 @@ export default function Writing() {
                       {p.readTime} →
                     </span>
                   </span>
-                  <span style={rowTitleStyle}>{p.title}</span>
+                  <span style={titleStyle}>{p.title}</span>
                 </>
               ) : (
                 <>
                   <span style={dateStyle}>{p.date}</span>
                   <span style={tagStyle}>{p.tag}</span>
-                  <span style={rowTitleStyle}>{p.title}</span>
+                  <span style={titleStyle}>{p.title}</span>
                   <span style={minsStyle}>{p.readTime} →</span>
                 </>
               )}

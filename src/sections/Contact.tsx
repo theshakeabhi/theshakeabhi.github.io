@@ -133,7 +133,7 @@ export default function Contact() {
               lineHeight: "var(--text-contact--line-height)",
               letterSpacing: "var(--text-contact--letter-spacing)",
               color: ink,
-              margin: "0 0 18px",
+              margin: "0 0 22px",
               textTransform: "lowercase",
             }}
           >

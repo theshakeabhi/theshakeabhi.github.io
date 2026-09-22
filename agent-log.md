@@ -1147,6 +1147,30 @@ Resume, Contact` — src/sections/{NowBoard,Playground,Testimonials,
   - Fancy Contact's email link now renders the shared lowercase EMAIL
     constant with `textTransform: uppercase` added to linkStyle — visual
     output unchanged, copy single-sourced.
+  - Pixel-truth pass after user feedback ("exactly as it was in the
+    artifact"; mockup promoted from guidance to truth for the minimal
+    branches): hero availability line moved BELOW the CTAs (mockup
+    `.mavail`, static dot), hero nav links → muted / no underline with
+    accent COLOR on hover (mockup `.mtop nav a`) instead of underlined ink
+    links, About stat rows 12px 2px, Playground hue preview 40px + 10.5px
+    degree label, Resume link row marginTop 26 + 13px PDF note, Contact
+    heading margin-bottom 22. Lead-approved follow-up: Writing got the
+    FULL minimal branch after all (supersedes the plan's "branchless") —
+    mockup `.mwr` anatomy: label row with the shared ALL_POSTS link on
+    its right, hairline rows grid `86px 1fr auto` (13px 2px) with the
+    date+tag cell derived from the shared strings ("2026.03.14 · perf"
+    via `date.replace(/ · /g, ".")` + CSS lowercase), Grotesk 15/500
+    title with the accent underline on hover/focus, mono 11 read time
+    (no arrow); stacks date-line-above-title under the existing compact
+    query (not a container query); the earlier fancy-side hover-softening
+    and label conditionals were reverted as dead code, so the fancy path
+    is byte-identical to its pre-minimal state again. Known remaining
+    deltas vs the mockup, all lead-sanctioned: work status renders as the
+    accent Stamp chip (mockup: plain red text), bouncy boi keeps the real
+    site's arena + BOING interaction model (mockup clicks the ball
+    directly), and shared-copy constants beat mockup-only wordings
+    ("see the work →" / "all posts →" arrows, social link labels,
+    "↑ back to top", full prior-role meta strings).
 - **Self-check**: `npx -y yarn@1 build` — astro check 0 errors /
   0 warnings, 4 pages built. `npx -y yarn@1 lint` — clean (prettier
   applied via --fix). dist CSS contains the generated `.text-ink`,

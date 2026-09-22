@@ -144,38 +144,23 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
             >
               A {LOGO_TEXT}
             </button>
+            {/* Mockup .mtop nav a: muted, NO underline, hover → accent
+                COLOR (both colors as classes — inline beats hover). */}
             <nav aria-label='Primary' style={{ display: "flex", gap: 20 }}>
               {NAV.map(({ label, href }) => (
                 <a
                   key={label}
                   href={href}
-                  className={MINIMAL_LINK_CLASSES}
-                  style={{ ...minimalLinkStyle, fontSize: 12 }}
+                  className='text-slate hover:text-accent'
+                  style={{
+                    textDecoration: "none",
+                    textTransform: "lowercase",
+                  }}
                 >
                   {label}
                 </a>
               ))}
             </nav>
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                color: slate,
-                textTransform: "lowercase",
-              }}
-            >
-              <span
-                aria-hidden='true'
-                style={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: "50%",
-                  background: success,
-                }}
-              />
-              {AVAILABLE}
-            </span>
           </div>
 
           <h1
@@ -242,6 +227,33 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               {CTA_CV}
             </a>
           </div>
+          {/* Mockup .mavail: the availability line sits BELOW the CTAs
+              with a STATIC dot — no pulse ring/animation. */}
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 12,
+              letterSpacing: "0.08em",
+              color: slate,
+              textTransform: "lowercase",
+              marginTop: 30,
+            }}
+          >
+            <span
+              aria-hidden='true'
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: success,
+              }}
+            />
+            {AVAILABLE}
+          </span>
         </MinimalColumn>
       </Slab>
     );

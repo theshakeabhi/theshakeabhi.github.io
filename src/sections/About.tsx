@@ -98,7 +98,8 @@ export default function About() {
                   alignItems: "baseline",
                   gap: 18,
                   borderBottom: borders.default,
-                  padding: "13px 2px",
+                  // Mockup .mstat rows are 12px, not the generic 13px.
+                  padding: "12px 2px",
                 }}
               >
                 <span
