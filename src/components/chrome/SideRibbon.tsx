@@ -22,13 +22,16 @@ export default function SideRibbon({
   color = red,
   fg = cream,
 }: SideRibbonProps) {
-  const { reducedMotion } = usePrefs();
+  const { reducedMotion, minimal } = usePrefs();
   const compact = useMediaQuery("(max-width: 767px)");
-  if (compact) return null;
+  // Minimal mode: pure flourish — render nothing. data-flourish below also
+  // CSS-hides the pre-rendered ribbon before hydration flips this branch.
+  if (compact || minimal) return null;
 
   return (
     <div
       aria-hidden='true'
+      data-flourish=''
       style={{
         position: "fixed",
         right: 0,
