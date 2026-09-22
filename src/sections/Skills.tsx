@@ -1,5 +1,5 @@
 // P5 — Skills slab (portfolio-1.jsx 239–288, README §Section Highlights).
-// Inverted ink slab: headline + intro, then ~18 skill keywords as a
+// Inverted ink slab: headline + intro, then ~22 skill keywords as a
 // typographic word-cloud in mixed sizes (36–96px) with small rotations and
 // hover scramble/color transitions. Keyword sizes follow the fluid-type
 // formula (design-px / 1440 × 100vw, capped at spec).
@@ -53,6 +53,11 @@ const STACK: {
   { t: "Communication", size: 46, tone: "cyan", rot: 1 },
   { t: "Release discipline", size: 40, tone: "ink", rot: -2 },
   { t: "Animation", size: 54, tone: "red", rot: 3 },
+  // Sep '26 resume refresh — non-core additions (t2/t3 cloud sizes).
+  { t: "Stripe", size: 46, tone: "cyan", rot: 2 },
+  { t: "PostgreSQL", size: 44, tone: "ink", rot: -2 },
+  { t: "GraphQL", size: 38, tone: "red", rot: 1 },
+  { t: "React Native", size: 40, tone: "ink", rot: -3 },
 ];
 
 // Title copy shared by BOTH design modes — natural case per mock

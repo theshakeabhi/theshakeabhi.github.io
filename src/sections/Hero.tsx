@@ -67,8 +67,8 @@ const MARQUEE_ITEMS = [
   "✦",
 ] as const;
 
-// User decision: no CV PDF yet — the ghost CTA links to LinkedIn instead.
-const CV_URL = "https://www.linkedin.com/in/theshakeabhi/";
+// The real one-page CV ships at public/cv.pdf (resume refresh, Sep '26).
+const CV_URL = "/cv.pdf";
 
 // Copy shared by BOTH design modes — never duplicated (AGENTS.md §Two
 // design modes). Constants are NATURAL case: fancy uppercases via CSS
@@ -76,19 +76,19 @@ const CV_URL = "https://www.linkedin.com/in/theshakeabhi/";
 // links via CSS. LOGO_TEXT is a wordmark — caps IS its natural case.
 const LOGO_TEXT = "ABHISHEK.SH";
 const AVAILABLE = "Available for hire";
-const LEAD_PRE = "Senior frontend engineer who ships at ";
+const LEAD_PRE = "Software engineer who ships at ";
 const LEAD_EM = "founding-team speed";
 const LEAD_POST =
-  ", mentors humans, and treats production incidents like a sport. Currently leading frontend at FanProStudio AI, shipping AI-media generation — AI influencers and on-brand UGC — from Bengaluru.";
+  ", mentors humans, and treats production incidents like a sport. Most recently Frontend Lead at FanPro Studio — an AI media generation platform taken from an empty repo to public beta — based in Bengaluru.";
 // Shared label text, per-mode arrow glyph (mock: fancy →, minimal ↓).
 const CTA_WORK_TEXT = "See the work";
 const CTA_WORK_ARROW = { fancy: "→", minimal: "↓" } as const;
-const CTA_CV = "CV on LinkedIn ↗";
+const CTA_CV = "Grab the CV ↓";
 
 // Minimal-only type: the calm hero shows the real name + a role line
 // instead of the mega display face.
 const NAME = "Abhishek Chandrasenan";
-const ROLE_LINE = "senior frontend engineer · bengaluru · IST";
+const ROLE_LINE = "software engineer · bengaluru · IST";
 
 // Canonical minimal link (mockup-derived): decoration colors come from the
 // classes (inline style beats hover classes, so BOTH base + hover colors
@@ -374,7 +374,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           }}
         >
           <Stamp color={cyan} rotate={0}>
-            ★ Senior · 7 yrs
+            ★ Senior · 6 yrs
           </Stamp>
         </div>
         <div style={{ position: "absolute", top: 200, right: 130 }}>

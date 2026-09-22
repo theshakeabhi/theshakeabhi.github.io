@@ -101,7 +101,7 @@ export default function Portfolio() {
               "↓",
               "WHO IS THIS GUY",
               "↓",
-              "SEVEN YEARS OF SHIPPING",
+              "SIX YEARS OF SHIPPING",
               "↓",
               "KEEP SCROLLING",
             ]}
