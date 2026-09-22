@@ -5,7 +5,14 @@
 // tiles, 50K+ MAUs burst), followed by the three BEFORE-EXIMPE tilt cards
 // (SAWO Labs / QBurst / Zomato) with metric stamps per bullet.
 // EximPe copy and metrics are FINAL (AGENT_TEAM_HANDOFF §P5).
+// Minimal mode (AGENTS.md §Two design modes): per-employer role blocks
+// (mono heading + date, role sub-line with the status as the ONE
+// sanctioned accent Stamp chip), shared bullets as plain "—" lists, WINS
+// as a compact wrap grid, prior roles as stacked hairline rows. Both
+// branches read the SAME shared constants below.
+import type { CSSProperties, ReactNode } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Stamp from "../components/primitives/Stamp";
 import Burst from "../components/primitives/Burst";
 import PlaceholderImg from "../components/primitives/PlaceholderImg";
@@ -13,17 +20,38 @@ import MagneticButton from "../components/interactive/MagneticButton";
 import RubberStamp from "../components/interactive/RubberStamp";
 import Tilt from "../components/interactive/Tilt";
 import ScrambleHover from "../components/text/ScrambleHover";
+import { usePrefs } from "../lib/prefs";
 import {
   cream,
   ink,
   red,
   cyan,
   yellow,
+  slate,
+  accent,
   fonts,
   text,
   borders,
   shadows,
 } from "../tokens";
+
+// Employer meta + status copy shared by BOTH design modes — fancy renders
+// the status through RubberStamp, minimal through the quiet Stamp chip.
+const FANPRO_STATUS = "IN PRODUCTION";
+const EXIMPE_STATUS = "SHIPPED & SCALED";
+const FANPRO_META = {
+  role: "LEAD FRONTEND DEVELOPER",
+  date: "JAN '26 → NOW",
+} as const;
+const EXIMPE_META = {
+  role: "FRONTEND PRODUCT ENG LEAD",
+  date: "MAY '22 → APR '26",
+} as const;
+// Minimal-only names: the fancy titles are display-face JSX (FANPRO /
+// STUDIO AI line break, EXIM+PE color split) — the calm mode shows the
+// real casing instead.
+const FANPRO_MINIMAL_NAME = "FanProStudio AI";
+const EXIMPE_MINIMAL_NAME = "EximPe";
 
 const WINS = [
   { metric: "25% → 85%", kicker: "mobile onboarding completion", color: red },
@@ -174,6 +202,109 @@ const PRIOR_ROLES: PriorRole[] = [
   },
 ];
 
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
+
+const minimalRoleHeadStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "space-between",
+  alignItems: "baseline",
+  gap: "6px 20px",
+  marginBottom: 4,
+};
+
+const minimalRoleNameStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 700,
+  fontSize: 15.5,
+  letterSpacing: "0.01em",
+  color: ink,
+  margin: 0,
+};
+
+const minimalRoleDateStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11.5,
+  letterSpacing: "0.08em",
+  color: slate,
+  textTransform: "lowercase",
+};
+
+const minimalBulletItemStyle: CSSProperties = {
+  position: "relative",
+  paddingLeft: 18,
+  fontFamily: fonts.body,
+  fontWeight: 400,
+  fontSize: 15,
+  lineHeight: 1.55,
+  color: ink,
+  maxWidth: "62ch",
+};
+
+function MinimalRoleBlock({
+  name,
+  date,
+  children,
+  last,
+}: {
+  name: ReactNode;
+  date: string;
+  children?: ReactNode;
+  last?: boolean;
+}) {
+  return (
+    <div
+      style={{
+        padding: "22px 0 26px",
+        borderBottom: last ? undefined : borders.default,
+      }}
+    >
+      <div style={minimalRoleHeadStyle}>
+        <h3 style={minimalRoleNameStyle}>{name}</h3>
+        <span style={minimalRoleDateStyle}>{date}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function MinimalBullets({ bullets }: { bullets: [string, string][] }) {
+  return (
+    <ul
+      style={{
+        listStyle: "none",
+        padding: 0,
+        margin: 0,
+        display: "grid",
+        gap: 9,
+      }}
+    >
+      {bullets.map(([copy], i) => (
+        <li key={i} style={minimalBulletItemStyle}>
+          <span
+            aria-hidden='true'
+            style={{ position: "absolute", left: 0, color: slate }}
+          >
+            —
+          </span>
+          {copy}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function MetricTile({
   metric,
   color,
@@ -226,6 +357,111 @@ function MetricTile({
 }
 
 export default function Work() {
+  const { minimal } = usePrefs();
+
+  // Minimal branch — guard AFTER hooks (AGENTS.md §Two design modes).
+  // borderTop KEPT from fancy (no divider precedes Work; the token
+  // collapses to the hairline). Same id keeps the #work anchor.
+  if (minimal) {
+    return (
+      <Slab
+        bg={cream}
+        id='work'
+        style={{ paddingTop: 52, paddingBottom: 64, borderTop: borders.thick }}
+      >
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>04 / selected work</span>
+          </div>
+
+          <MinimalRoleBlock name={FANPRO_MINIMAL_NAME} date={FANPRO_META.date}>
+            <p
+              style={{
+                fontFamily: fonts.mono,
+                fontWeight: 500,
+                fontSize: 12,
+                letterSpacing: "0.06em",
+                color: slate,
+                textTransform: "lowercase",
+                margin: "0 0 14px",
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "4px 10px",
+              }}
+            >
+              {FANPRO_META.role}
+              {/* The ONE sanctioned --color-accent use in this section. */}
+              <Stamp color={accent}>{FANPRO_STATUS}</Stamp>
+            </p>
+            <MinimalBullets bullets={FANPRO_BULLETS} />
+          </MinimalRoleBlock>
+
+          <MinimalRoleBlock name={EXIMPE_MINIMAL_NAME} date={EXIMPE_META.date}>
+            <p
+              style={{
+                fontFamily: fonts.mono,
+                fontWeight: 500,
+                fontSize: 12,
+                letterSpacing: "0.06em",
+                color: slate,
+                textTransform: "lowercase",
+                margin: "0 0 14px",
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "4px 10px",
+              }}
+            >
+              {EXIMPE_META.role}
+              <Stamp color={accent}>{EXIMPE_STATUS}</Stamp>
+            </p>
+            <MinimalBullets bullets={EXIMPE_BULLETS} />
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px 22px",
+                marginTop: 14,
+                fontFamily: fonts.mono,
+                fontWeight: 400,
+                fontSize: 12,
+                letterSpacing: "0.04em",
+                color: slate,
+                textTransform: "lowercase",
+              }}
+            >
+              {WINS.map((w, i) => (
+                <span key={i}>
+                  <b style={{ color: ink, fontWeight: 700 }}>{w.metric}</b>{" "}
+                  {w.kicker}
+                </span>
+              ))}
+            </div>
+          </MinimalRoleBlock>
+
+          {PRIOR_ROLES.map((role, i) => (
+            <MinimalRoleBlock
+              key={i}
+              last={i === PRIOR_ROLES.length - 1}
+              name={
+                <span style={{ textTransform: "lowercase" }}>
+                  {role.name[0]}
+                  {role.name[1]}
+                  <span style={{ color: slate, fontWeight: 500 }}>
+                    {" "}
+                    · {role.stamps[0].text}
+                  </span>
+                </span>
+              }
+              date={role.meta}
+            />
+          ))}
+        </MinimalColumn>
+      </Slab>
+    );
+  }
+
   return (
     <Slab
       bg={cream}
@@ -274,7 +510,7 @@ export default function Work() {
         }}
       >
         <RubberStamp
-          text='IN PRODUCTION'
+          text={FANPRO_STATUS}
           color={red}
           rotate={-14}
           size={200}
@@ -323,7 +559,7 @@ export default function Work() {
                 marginBottom: 22,
               }}
             >
-              LEAD FRONTEND DEVELOPER · JAN '26 → NOW
+              {FANPRO_META.role} · {FANPRO_META.date}
             </div>
             <ul
               style={{
@@ -400,7 +636,7 @@ export default function Work() {
         }}
       >
         <RubberStamp
-          text='SHIPPED & SCALED'
+          text={EXIMPE_STATUS}
           color={red}
           rotate={-14}
           size={200}
@@ -447,7 +683,7 @@ export default function Work() {
                 marginBottom: 22,
               }}
             >
-              FRONTEND PRODUCT ENG LEAD · MAY '22 → APR '26
+              {EXIMPE_META.role} · {EXIMPE_META.date}
             </div>
             <ul
               style={{

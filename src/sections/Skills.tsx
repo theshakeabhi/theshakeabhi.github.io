@@ -3,41 +3,70 @@
 // typographic word-cloud in mixed sizes (36–96px) with small rotations and
 // hover scramble/color transitions. Keyword sizes follow the fluid-type
 // formula (design-px / 1440 × 100vw, capped at spec).
+// Minimal mode (AGENTS.md §Two design modes): the SAME array as a wrapped
+// mono list — `core` entries render bold (explicit flags, NOT inferred
+// from cloud size: ANIMATION 54 > A11Y 50 but only A11Y is core).
+import { Fragment, type CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import ScrambleHover from "../components/text/ScrambleHover";
+import { usePrefs } from "../lib/prefs";
 import {
   cream,
   ink,
   red,
   cyan,
   yellow,
+  slate,
   slateLight,
+  hairline,
   fonts,
   text,
 } from "../tokens";
 
 type Tone = "ink" | "red" | "cyan";
 
-const STACK: { t: string; size: number; tone: Tone; rot: number }[] = [
-  { t: "REACT", size: 72, tone: "ink", rot: -3 },
-  { t: "TYPESCRIPT", size: 56, tone: "red", rot: 2 },
-  { t: "DESIGN SYSTEMS", size: 48, tone: "ink", rot: -1 },
-  { t: "CLAUDE", size: 86, tone: "cyan", rot: 4 },
+const STACK: {
+  t: string;
+  size: number;
+  tone: Tone;
+  rot: number;
+  core?: boolean;
+}[] = [
+  { t: "REACT", size: 72, tone: "ink", rot: -3, core: true },
+  { t: "TYPESCRIPT", size: 56, tone: "red", rot: 2, core: true },
+  { t: "DESIGN SYSTEMS", size: 48, tone: "ink", rot: -1, core: true },
+  { t: "CLAUDE", size: 86, tone: "cyan", rot: 4, core: true },
   { t: "NEXT.JS", size: 44, tone: "ink", rot: -2 },
   { t: "NODE", size: 38, tone: "ink", rot: 3 },
-  { t: "MENTORSHIP", size: 52, tone: "red", rot: -3 },
+  { t: "MENTORSHIP", size: 52, tone: "red", rot: -3, core: true },
   { t: "CODE REVIEW", size: 36, tone: "ink", rot: 1 },
   { t: "INCIDENT RESPONSE", size: 44, tone: "ink", rot: -1 },
   { t: "OBSERVABILITY", size: 40, tone: "cyan", rot: 2 },
-  { t: "PERF", size: 96, tone: "red", rot: -4 },
+  { t: "PERF", size: 96, tone: "red", rot: -4, core: true },
   { t: "DELEGATION", size: 42, tone: "ink", rot: 2 },
-  { t: "A11Y", size: 50, tone: "ink", rot: -2 },
+  { t: "A11Y", size: 50, tone: "ink", rot: -2, core: true },
   { t: "ROOT-CAUSE", size: 44, tone: "ink", rot: 3 },
   { t: "MIGRATIONS", size: 38, tone: "ink", rot: -1 },
   { t: "COMMUNICATION", size: 46, tone: "cyan", rot: 1 },
   { t: "RELEASE DISCIPLINE", size: 40, tone: "ink", rot: -2 },
   { t: "ANIMATION", size: 54, tone: "red", rot: 3 },
 ];
+
+// Title copy shared by BOTH design modes (minimal lowercases via CSS).
+const SKILLS_TITLE = "STUFF I'M GOOD AT";
+
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
 
 // On the ink slab, ink-toned keywords render cream (prototype mapping).
 const TONE_COLOR: Record<Tone, string> = { ink: cream, red, cyan };
@@ -46,6 +75,75 @@ const fluid = (px: number) =>
   `clamp(${Math.round(px * 0.55)}px, ${(px / 14.4).toFixed(2)}vw, ${px}px)`;
 
 export default function Skills() {
+  const { minimal } = usePrefs();
+
+  // Minimal branch — guard AFTER hooks (AGENTS.md §Two design modes).
+  // Paper slab (the fancy ink bg must not survive), no borderTop: the
+  // preceding SectionDivider already draws the hairline.
+  if (minimal) {
+    return (
+      <Slab bg={cream} style={{ paddingTop: 52, paddingBottom: 64 }}>
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>03 / stack</span>
+          </div>
+          <h2
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 700,
+              fontSize: 19,
+              letterSpacing: "-0.01em",
+              color: ink,
+              margin: "0 0 22px",
+              textTransform: "lowercase",
+            }}
+          >
+            {SKILLS_TITLE}
+          </h2>
+          <p
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 400,
+              fontSize: 14,
+              lineHeight: 2.1,
+              letterSpacing: "0.01em",
+              color: ink,
+              margin: 0,
+              maxWidth: "60ch",
+              textTransform: "lowercase",
+            }}
+          >
+            {STACK.map((s, i) => (
+              <Fragment key={s.t}>
+                {i > 0 && (
+                  <span
+                    aria-hidden='true'
+                    style={{ color: hairline, padding: "0 7px" }}
+                  >
+                    ·
+                  </span>
+                )}
+                {s.core ? <b style={{ fontWeight: 700 }}>{s.t}</b> : s.t}
+              </Fragment>
+            ))}
+          </p>
+          <span
+            style={{
+              display: "block",
+              fontFamily: fonts.mono,
+              fontWeight: 400,
+              fontSize: 12,
+              color: slate,
+              marginTop: 14,
+            }}
+          >
+            (probably — the bold ones are non-negotiable)
+          </span>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
+
   return (
     <Slab
       bg={ink}
@@ -63,7 +161,7 @@ export default function Skills() {
           margin: 0,
         }}
       >
-        <ScrambleHover text="STUFF I'M GOOD AT" />{" "}
+        <ScrambleHover text={SKILLS_TITLE} />{" "}
         <span style={{ color: yellow }}>(probably)</span>
       </h2>
       <p
