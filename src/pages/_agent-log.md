@@ -25,3 +25,16 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Self-check**: `npx astro check` 0/0/0, `npx -y yarn@1 lint` clean,
   `npx astro build` OK; dist/index.html carries the new title ×3
   (title/og/twitter) and the new alt text.
+
+## Renamed to \_agent-log.md — log was a public route · 2026-09-23T01:52:00+05:30
+
+- **Files touched**: this file — `agent-log.md` → `_agent-log.md`. Bare
+  `.md` files in `src/pages/` are routed by Astro, so the log shipped as
+  the public page `/agent-log` (the 5th page in `astro build`). The
+  underscore prefix excludes it from routing.
+- **Decisions/deviations**: `public/agent-log.md` had the same class of
+  leak (public/ ships verbatim) and was removed — its entries migrated to
+  the repo-root master under `[public/]` tags. AGENTS.md §Protocols now
+  documents both special folders.
+- **Self-check**: build back to 4 pages; no `/agent-log` route and no
+  `agent-log.md` anywhere in dist; `cv.pdf` still ships.

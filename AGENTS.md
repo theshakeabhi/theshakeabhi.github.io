@@ -246,14 +246,20 @@ fixed top-right `MinimalToggle` or the PreferencesMenu row).
 - **`HANDOFF_NOTES.md`** — retired (drained into the log, commit
   `bfbc0cb`); the audit trail is `agent-log.md`.
 - **Agent logs are per-folder.** Every source directory (src and each
-  subfolder, public, .github, .husky) carries its own append-only
+  subfolder, .github, .husky) carries its own append-only
   `agent-log.md`. When an agent finishes, it appends a scoped entry to
   EACH touched folder's log AND one summary entry to the repo-root
   `agent-log.md` (the chronological master). Same house format
   everywhere: `## <Topic> · <ISO timestamp>` with files touched,
   decisions/deviations, and self-check results. Never edit an existing
   entry. Creating a new folder means seeding its `agent-log.md` (header
-  - first entry) in the same change.
+  and first entry) in the same change. TWO SPECIAL FOLDERS — logs must
+  never ship into the built site (they did once; QA advisory A1):
+  `src/pages/` names its log `_agent-log.md` (Astro routes bare `.md`
+  files in pages/; the underscore prefix excludes it from routing), and
+  `public/` carries NO in-folder log at all (everything in public/ is
+  copied verbatim into the build) — record public/ changes in the
+  repo-root master tagged `[public/]`.
 - **No git writes by agents** — no `git add`/`commit`/`push`; the lead
   commits.
 - **Only P0 touches `package.json`** (and the lockfile). Need a dependency?

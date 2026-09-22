@@ -1311,3 +1311,36 @@ resume — supersedes the previous entry's "Zomato removed" decision
   Zomato/sales intern/2019 → 2022/THREE WARM-UPS again (HTML + JS),
   refresh strings intact, no "2020 → 2022"/"TWO WARM-UPS" remnants.
   Scoped detail in src/sections/agent-log.md.
+
+## Agent logs leaked into the built site — fixed · 2026-09-23T01:52:00+05:30
+
+QA advisory A1: two of the per-folder logs seeded on 2026-09-23 landed in
+Astro's special directories and shipped to production — `src/pages/agent-log.md`
+became the public route `/agent-log` (the mysterious 5th page in `astro build`)
+and `public/agent-log.md` was copied verbatim to `/agent-log.md`.
+
+- **Files touched**: `src/pages/agent-log.md` → renamed
+  `src/pages/_agent-log.md` (Astro excludes underscore-prefixed files from
+  routing); `public/agent-log.md` deleted — its two entries are preserved
+  below under `[public/]`; AGENTS.md §Protocols gains the two
+  special-folder exceptions.
+- **Decisions/deviations**: `public/` ships every file verbatim, so it can
+  never host an in-folder log — its audit entries live HERE, tagged
+  `[public/]`. `src/pages/` keeps a scoped log via the underscore name.
+- **Self-check**: `astro build` back to 4 pages; no `/agent-log` route and
+  no `agent-log.md` in dist; `cv.pdf` still ships.
+
+### [public/] Log seeded · 2026-09-23T01:12:10+05:30 (migrated)
+
+Per-folder agent logs introduced repo-wide (branch feat/minimal-mode).
+History before this date lives earlier in this file.
+
+### [public/] Resume data refresh · 2026-09-23T01:33:39+05:30 (migrated)
+
+- **Files touched**: none by the refresh agent — `cv.pdf` (the real
+  one-page resume, 101,719 bytes) was placed here by the lead and is now
+  load-bearing: Hero CTA2 ("Grab the CV ↓") and both Resume CTAs/links
+  point at `/cv.pdf`; the "PDF version coming soon" note is gone.
+- **Decisions/deviations**: build copies it into dist/ (verified present).
+- **Self-check**: `npx astro build` ships dist/cv.pdf; bundle references
+  `/cv.pdf` ×2.
