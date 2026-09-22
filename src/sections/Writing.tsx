@@ -3,13 +3,26 @@
 // whole row inverts (bg→ink, text→cream) and the left padding shifts
 // 8→24px (README §Hover Underline / Inversion). The padding shift is
 // suppressed under reduced motion; the color inversion stays.
+// Minimal mode ships BRANCHLESS (already doc-shaped; the token skin does
+// the rest) except: the fancy corner chip becomes the standard mono label
+// row, and the row hover softens — no inversion / padding shift, the
+// hovered title underlines in --color-accent instead.
 import { useState, type CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
 import Hover from "../components/pointer/Hover";
 import ScrambleHover from "../components/text/ScrambleHover";
 import { useMediaQuery } from "../lib/useMediaQuery";
 import { usePrefs } from "../lib/prefs";
-import { cream, ink, red, borders, fonts, text } from "../tokens";
+import {
+  cream,
+  ink,
+  red,
+  slate,
+  accent,
+  borders,
+  fonts,
+  text,
+} from "../tokens";
 import { writingPosts } from "../content/writing";
 
 const DEVTO_PROFILE = "https://dev.to/theshakeabhi";
@@ -48,21 +61,38 @@ const minsStyle: CSSProperties = {
   justifySelf: "end",
 };
 
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
+
 export default function Writing() {
   const compact = useMediaQuery("(max-width: 767px)");
-  const { reducedMotion } = usePrefs();
+  const { reducedMotion, minimal } = usePrefs();
   const [hot, setHot] = useState<number | null>(null);
 
   return (
     <Slab
       bg={cream}
-      label='06 // WRITING'
+      label={minimal ? undefined : "06 // WRITING"}
       id='writing'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",
         borderTop: borders.thick,
       }}
     >
+      {minimal && (
+        <div style={minimalLabelStyle}>
+          <span>06 / writing</span>
+        </div>
+      )}
       <div
         style={{
           display: "flex",
@@ -111,7 +141,22 @@ export default function Writing() {
       <div style={{ borderTop: borders.default }}>
         {writingPosts.map((p, i) => {
           const active = hot === i;
-          const shift = active && !reducedMotion;
+          // Minimal softens the hover: no inversion, no padding shift —
+          // the hovered/focused row title underlines in accent instead
+          // (decoration color inline here because the whole row is the
+          // link, not the title span).
+          const shift = active && !reducedMotion && !minimal;
+          const invert = active && !minimal;
+          const rowTitleStyle: CSSProperties =
+            minimal && active
+              ? {
+                  ...titleStyle,
+                  textDecorationLine: "underline",
+                  textDecorationColor: accent,
+                  textDecorationThickness: 1,
+                  textUnderlineOffset: 4,
+                }
+              : titleStyle;
           return (
             <Hover
               key={i}
@@ -140,8 +185,8 @@ export default function Writing() {
                     }),
                 padding: shift ? "24px 8px 24px 24px" : "24px 8px",
                 borderBottom: borders.default,
-                background: active ? ink : "transparent",
-                color: active ? cream : ink,
+                background: invert ? ink : "transparent",
+                color: invert ? cream : ink,
                 textDecoration: "none",
                 transition: "background .15s, padding-left .15s, color .15s",
               }}
@@ -157,13 +202,13 @@ export default function Writing() {
                       {p.readTime} →
                     </span>
                   </span>
-                  <span style={titleStyle}>{p.title}</span>
+                  <span style={rowTitleStyle}>{p.title}</span>
                 </>
               ) : (
                 <>
                   <span style={dateStyle}>{p.date}</span>
                   <span style={tagStyle}>{p.tag}</span>
-                  <span style={titleStyle}>{p.title}</span>
+                  <span style={rowTitleStyle}>{p.title}</span>
                   <span style={minsStyle}>{p.readTime} →</span>
                 </>
               )}

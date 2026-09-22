@@ -5,17 +5,23 @@
 // USER DECISION: no PDF asset exists yet — both CV buttons open the
 // LinkedIn profile and say so honestly (no fake DOWNLOAD/.PDF labels,
 // no fabricated LAST UPDATED stamp).
+// Minimal mode (AGENTS.md §Two design modes): label row + shared copy +
+// two mono links + PDF note. No paper/tape/eyes.
+import type { CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Tape from "../components/interactive/Tape";
 import Eyes from "../components/interactive/Eyes";
 import MagneticButton from "../components/interactive/MagneticButton";
 import ScrambleHover from "../components/text/ScrambleHover";
 import { useMediaQuery } from "../lib/useMediaQuery";
+import { usePrefs } from "../lib/prefs";
 import {
   cream,
   creamWarm,
   ink,
   red,
+  slate,
   slateLight,
   borders,
   fonts,
@@ -25,7 +31,39 @@ import {
 
 const LINKEDIN = "https://www.linkedin.com/in/theshakeabhi/";
 
+// Copy shared by BOTH design modes (minimal lowercases via CSS).
+const RESUME_COPY =
+  "One page. PDF. No Comic Sans (here). Updated whenever I do something worth bragging about.";
+const PDF_NOTE = "PDF VERSION COMING SOON";
+const CTA_CV = "CV ON LINKEDIN ↗";
+const CTA_PROFILE = "VIEW PROFILE ↗";
+
 const tapeRed = `color-mix(in srgb, ${red} 55%, transparent)`;
+
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
+
+const minimalLinkStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 13.5,
+  textDecorationLine: "underline",
+  textDecorationThickness: 1,
+  textUnderlineOffset: 4,
+  textTransform: "lowercase",
+};
+
+const MINIMAL_LINK_CLASSES =
+  "text-ink decoration-hairline hover:decoration-accent";
 
 const PAPER_SECTIONS = [
   "FANPROSTUDIO AI · LEAD · 2026→",
@@ -36,6 +74,77 @@ const PAPER_SECTIONS = [
 
 export default function Resume() {
   const stacked = useMediaQuery("(max-width: 1023px)");
+  const { minimal } = usePrefs();
+
+  // Minimal branch — guard AFTER hooks (AGENTS.md §Two design modes).
+  // borderTop KEPT from fancy (no divider precedes Resume).
+  if (minimal) {
+    return (
+      <Slab
+        bg={cream}
+        style={{ paddingTop: 52, paddingBottom: 64, borderTop: borders.thick }}
+      >
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>09 / cv</span>
+          </div>
+          <p
+            style={{
+              fontFamily: fonts.body,
+              fontWeight: 400,
+              fontSize: 16.5,
+              lineHeight: 1.65,
+              color: ink,
+              margin: 0,
+              maxWidth: "62ch",
+            }}
+          >
+            {RESUME_COPY}
+          </p>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 26,
+              marginTop: 24,
+            }}
+          >
+            <a
+              href={LINKEDIN}
+              target='_blank'
+              rel='noreferrer'
+              className={MINIMAL_LINK_CLASSES}
+              style={minimalLinkStyle}
+            >
+              {CTA_CV}
+            </a>
+            <a
+              href={LINKEDIN}
+              target='_blank'
+              rel='noreferrer'
+              className={MINIMAL_LINK_CLASSES}
+              style={minimalLinkStyle}
+            >
+              {CTA_PROFILE}
+            </a>
+          </div>
+          <p
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 12,
+              letterSpacing: "0.06em",
+              color: slate,
+              margin: "18px 0 0",
+              textTransform: "lowercase",
+            }}
+          >
+            {PDF_NOTE}
+          </p>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
 
   const openLinkedIn = () => {
     window.open(LINKEDIN, "_blank", "noopener,noreferrer");
@@ -87,8 +196,7 @@ export default function Resume() {
               maxWidth: 540,
             }}
           >
-            One page. PDF. No Comic Sans (here). Updated whenever I do something
-            worth bragging about.
+            {RESUME_COPY}
           </p>
           <div
             style={{
@@ -99,10 +207,10 @@ export default function Resume() {
             }}
           >
             <MagneticButton kind='primary' onClick={openLinkedIn}>
-              CV ON LINKEDIN ↗
+              {CTA_CV}
             </MagneticButton>
             <MagneticButton kind='ghost' onClick={openLinkedIn}>
-              VIEW PROFILE ↗
+              {CTA_PROFILE}
             </MagneticButton>
           </div>
           <div
@@ -115,7 +223,7 @@ export default function Resume() {
               letterSpacing: "0.15em",
             }}
           >
-            PDF VERSION COMING SOON
+            {PDF_NOTE}
           </div>
         </div>
 

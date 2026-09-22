@@ -7,8 +7,14 @@
 // USER DECISIONS: email is theshakeabhi@gmail.com; the social row is real
 // GitHub / LinkedIn / dev.to links (no X); "Book a 30-min chat" is a
 // mailto until a scheduler exists.
+// Minimal mode (AGENTS.md §Two design modes): paper slab (NOT red — red
+// collapses to ink), lowercase mono heading at the contact token size,
+// clock line with a static dot, shared body + link list. The SEND EMAIL /
+// BOOK CHAT buttons are dropped — the email link covers both (lead
+// decision); the footer keeps PRIVACY/TERMS + back-to-top.
 import type { CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
+import MinimalColumn from "../components/primitives/MinimalColumn";
 import Stamp from "../components/primitives/Stamp";
 import Eyes from "../components/interactive/Eyes";
 import MagneticButton from "../components/interactive/MagneticButton";
@@ -22,6 +28,7 @@ import {
   ink,
   red,
   success,
+  slate,
   borders,
   fonts,
   spacing,
@@ -40,6 +47,23 @@ const SOCIALS = [
   { label: "@THESHAKEABHI ON DEV.TO", href: "https://dev.to/theshakeabhi" },
 ];
 
+// Copy shared by BOTH design modes (minimal lowercases via CSS; fancy
+// scrambles the heading words and appends the 🇮🇳 to the footer note).
+const CONTACT_WORDS = ["LET'S", "BUILD", "SOMETHING."] as const;
+const CONTACT_BODY =
+  "Reach out for staff/lead roles, founding-team gigs, design-system rescues, or honest opinions on your frontend codebase.";
+const CLOCK_PRE = "IT IS";
+const CLOCK_POST = "IN BENGALURU";
+const RESPONDS = "RESPONDS IN < 24H";
+const CTA_EMAIL_LABEL = "✉ SEND ME AN EMAIL";
+const CTA_CHAT_LABEL = "📅 BOOK A 30-MIN CHAT";
+const FOOTER_NOTE = "© 2026 · BUILT WITH SPITE AND LOVE · BENGALURU";
+const FOOT_LINKS = [
+  { label: "PRIVACY", href: "/privacy" },
+  { label: "TERMS", href: "/terms" },
+] as const;
+const BACK_TO_TOP = "↑ BACK TO TOP";
+
 const linkStyle: CSSProperties = {
   fontFamily: fonts.display,
   fontWeight: 900,
@@ -48,18 +72,197 @@ const linkStyle: CSSProperties = {
   textDecoration: "underline",
   textDecorationThickness: 4,
   textUnderlineOffset: 6,
+  textTransform: "uppercase",
   overflowWrap: "anywhere",
 };
+
+const minimalLabelStyle: CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.14em",
+  color: slate,
+  textTransform: "uppercase",
+  marginBottom: 26,
+};
+
+const minimalLinkStyle: CSSProperties = {
+  fontFamily: fonts.mono,
+  fontWeight: 500,
+  fontSize: 13.5,
+  textDecorationLine: "underline",
+  textDecorationThickness: 1,
+  textUnderlineOffset: 4,
+  textTransform: "lowercase",
+  overflowWrap: "anywhere",
+};
+
+const MINIMAL_LINK_CLASSES =
+  "text-ink decoration-hairline hover:decoration-accent";
 
 export default function Contact() {
   const clock = useLocalTime("Asia/Kolkata");
   const compact = useMediaQuery("(max-width: 767px)");
   const stacked = useMediaQuery("(max-width: 1023px)");
-  const { reducedMotion } = usePrefs();
+  const { reducedMotion, minimal } = usePrefs();
 
   const backToTop = () => {
     window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
   };
+
+  // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
+  // borderTop KEPT from fancy; same id keeps the #contact anchor.
+  if (minimal) {
+    return (
+      <Slab
+        bg={cream}
+        id='contact'
+        style={{ paddingTop: 52, paddingBottom: 64, borderTop: borders.thick }}
+      >
+        <MinimalColumn>
+          <div style={minimalLabelStyle}>
+            <span>10 / contact</span>
+          </div>
+          <h2
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 700,
+              fontSize: text.contact,
+              lineHeight: "var(--text-contact--line-height)",
+              letterSpacing: "var(--text-contact--letter-spacing)",
+              color: ink,
+              margin: "0 0 18px",
+              textTransform: "lowercase",
+            }}
+          >
+            {CONTACT_WORDS.join(" ")}
+          </h2>
+          <p
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 12,
+              letterSpacing: "0.08em",
+              color: slate,
+              margin: "0 0 26px",
+              textTransform: "lowercase",
+            }}
+          >
+            <span
+              aria-hidden='true'
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: success,
+                flexShrink: 0,
+              }}
+            />
+            {CLOCK_PRE} {clock} {CLOCK_POST} · {RESPONDS}
+          </p>
+          <p
+            style={{
+              fontFamily: fonts.body,
+              fontWeight: 400,
+              fontSize: 16.5,
+              lineHeight: 1.65,
+              color: ink,
+              margin: 0,
+              maxWidth: "62ch",
+              textWrap: "pretty",
+            }}
+          >
+            {CONTACT_BODY}
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gap: 11,
+              margin: "24px 0 10px",
+              justifyItems: "start",
+            }}
+          >
+            <a
+              href={MAILTO}
+              className={MINIMAL_LINK_CLASSES}
+              style={minimalLinkStyle}
+            >
+              {EMAIL}
+            </a>
+            {SOCIALS.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                target='_blank'
+                rel='noreferrer'
+                className={MINIMAL_LINK_CLASSES}
+                style={minimalLinkStyle}
+              >
+                {s.label}
+              </a>
+            ))}
+          </div>
+          <footer
+            style={{
+              borderTop: borders.default,
+              marginTop: 60,
+              paddingTop: 20,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "8px 24px",
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 11,
+              letterSpacing: "0.08em",
+              color: slate,
+              textTransform: "lowercase",
+            }}
+          >
+            <div>{FOOTER_NOTE}</div>
+            <div style={{ display: "flex", gap: 16 }}>
+              {FOOT_LINKS.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className='text-slate decoration-hairline hover:decoration-accent'
+                  style={{
+                    textDecorationLine: "underline",
+                    textDecorationThickness: 1,
+                    textUnderlineOffset: 4,
+                  }}
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
+            <button
+              type='button'
+              onClick={backToTop}
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                font: "inherit",
+                letterSpacing: "inherit",
+                color: "inherit",
+                textTransform: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              {BACK_TO_TOP}
+            </button>
+          </footer>
+        </MinimalColumn>
+      </Slab>
+    );
+  }
 
   return (
     <Slab
@@ -131,7 +334,7 @@ export default function Contact() {
               animation: reducedMotion ? "none" : "pulse 2s infinite",
             }}
           />
-          IT IS {clock} IN BENGALURU
+          {CLOCK_PRE} {clock} {CLOCK_POST}
         </div>
       </div>
       <h2
@@ -146,9 +349,9 @@ export default function Contact() {
           color: cream,
         }}
       >
-        <ScrambleHover text="LET'S" />
+        <ScrambleHover text={CONTACT_WORDS[0]} />
         <br />
-        <ScrambleHover text='BUILD' />
+        <ScrambleHover text={CONTACT_WORDS[1]} />
         <br />
         <span
           style={{
@@ -159,7 +362,7 @@ export default function Contact() {
             transform: "rotate(-2deg)",
           }}
         >
-          <ScrambleHover text='SOMETHING.' />
+          <ScrambleHover text={CONTACT_WORDS[2]} />
         </span>
       </h2>
       <div
@@ -183,8 +386,7 @@ export default function Contact() {
               textWrap: "pretty",
             }}
           >
-            Reach out for staff/lead roles, founding-team gigs, design-system
-            rescues, or honest opinions on your frontend codebase.
+            {CONTACT_BODY}
           </p>
           <div
             style={{
@@ -196,7 +398,7 @@ export default function Contact() {
             }}
           >
             <Hover as='a' href={MAILTO} kind='link' style={linkStyle}>
-              THESHAKEABHI@GMAIL.COM
+              {EMAIL}
             </Hover>
             {SOCIALS.map((s) => (
               <Hover
@@ -233,7 +435,7 @@ export default function Contact() {
               fontSize: 22,
             }}
           >
-            ✉ SEND ME AN EMAIL
+            {CTA_EMAIL_LABEL}
           </MagneticButton>
           <MagneticButton
             kind='primary'
@@ -242,7 +444,7 @@ export default function Contact() {
             }}
             style={{ padding: "18px 28px", fontSize: 18 }}
           >
-            📅 BOOK A 30-MIN CHAT
+            {CTA_CHAT_LABEL}
           </MagneticButton>
           <Stamp
             color={cream}
@@ -254,7 +456,7 @@ export default function Contact() {
               marginTop: 6,
             }}
           >
-            RESPONDS IN &lt; 24H
+            {RESPONDS}
           </Stamp>
         </div>
       </div>
@@ -277,34 +479,24 @@ export default function Contact() {
           color: cream,
         }}
       >
-        <div>© 2026 · BUILT WITH SPITE AND LOVE · BENGALURU 🇮🇳</div>
+        <div>{FOOTER_NOTE} 🇮🇳</div>
         <div style={{ display: "flex", gap: 16 }}>
-          <Hover
-            as='a'
-            href='/privacy'
-            kind='link'
-            style={{
-              color: "inherit",
-              textDecoration: "underline",
-              textDecorationThickness: 2,
-              textUnderlineOffset: 4,
-            }}
-          >
-            PRIVACY
-          </Hover>
-          <Hover
-            as='a'
-            href='/terms'
-            kind='link'
-            style={{
-              color: "inherit",
-              textDecoration: "underline",
-              textDecorationThickness: 2,
-              textUnderlineOffset: 4,
-            }}
-          >
-            TERMS
-          </Hover>
+          {FOOT_LINKS.map((l) => (
+            <Hover
+              key={l.href}
+              as='a'
+              href={l.href}
+              kind='link'
+              style={{
+                color: "inherit",
+                textDecoration: "underline",
+                textDecorationThickness: 2,
+                textUnderlineOffset: 4,
+              }}
+            >
+              {l.label}
+            </Hover>
+          ))}
         </div>
         <Hover
           as='button'
@@ -320,7 +512,7 @@ export default function Contact() {
             color: "inherit",
           }}
         >
-          ↑ BACK TO TOP
+          {BACK_TO_TOP}
         </Hover>
       </footer>
     </Slab>
