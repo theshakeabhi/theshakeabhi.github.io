@@ -1,0 +1,76 @@
+---
+// P8 — /404: GitHub Pages serves dist/404.html automatically for any
+// missing path. House-style slab: mega headline, corner stamp, way home.
+import "../styles/global.css";
+
+const title = "404 — Abhishek Chandrasenan";
+const description =
+  "This page does not exist. The portfolio of Abhishek Chandrasenan does — head back home.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body class="bg-cream text-ink font-body">
+    <main
+      class="relative flex min-h-screen flex-col items-start justify-center overflow-hidden"
+      style="padding: 110px var(--spacing-slab-x) 90px;"
+    >
+      <div
+        class="font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
+      >
+        404 // NOT FOUND
+      </div>
+
+      <!-- Red accent block + burst, hidden from AT (decorative) -->
+      <div
+        aria-hidden="true"
+        class="bg-red border-ink shadow-slab absolute hidden border-4 md:block"
+        style="width: 220px; height: 220px; right: 12%; top: 16%; transform: rotate(9deg);"
+      >
+      </div>
+      <svg
+        aria-hidden="true"
+        class="absolute hidden md:block"
+        style="right: 24%; bottom: 18%; transform: rotate(-12deg);"
+        width="110"
+        height="110"
+        viewBox="0 0 100 100"
+      >
+        <polygon
+          points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
+          style="fill: var(--color-yellow); stroke: var(--color-ink); stroke-width: 3;"
+        ></polygon>
+      </svg>
+
+      <p
+        class="font-mono text-ink m-0 mb-4 text-[14px] font-extrabold tracking-[0.2em]"
+      >
+        ERROR // PAGE MISSING
+      </p>
+      <h1 class="font-display text-mega relative m-0 uppercase">
+        Lost<span class="text-red">?</span>
+      </h1>
+      <p class="text-lead mt-8 mb-10 max-w-[560px] font-medium">
+        This page doesn't exist. Maybe it never did. Maybe it got dragged
+        somewhere and the position didn't persist. Either way — the good stuff
+        is back on the homepage.
+      </p>
+      <a
+        href="/"
+        class="font-mono bg-ink text-cream border-ink shadow-card hover:bg-red inline-block border-[3px] px-7 py-4 text-[14px] font-extrabold tracking-[0.1em] no-underline"
+        style="transform: rotate(-1deg);"
+      >
+        ← TAKE ME HOME
+      </a>
+    </main>
+  </body>
+</html>

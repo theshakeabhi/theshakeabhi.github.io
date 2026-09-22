@@ -1,0 +1,113 @@
+---
+// P8 — /terms: short brutalist terms page. Static Astro, token utilities.
+import "../styles/global.css";
+
+const site = "https://theshakeabhi.github.io";
+const title = "Terms — Abhishek Chandrasenan";
+const description =
+  "Terms of use for this personal portfolio: content and code ownership, no warranties, and a note on external links.";
+const updated = "September 17, 2026";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={`${site}/terms/`} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  </head>
+  <body class="bg-cream text-ink font-body">
+    <main
+      class="relative mx-auto min-h-screen max-w-[880px]"
+      style="padding: 110px var(--spacing-slab-x) 90px;"
+    >
+      <div
+        class="font-mono text-cream bg-ink absolute top-0 left-0 px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em]"
+      >
+        12 // TERMS
+      </div>
+
+      <a
+        href="/"
+        class="font-mono border-ink bg-cream text-ink shadow-card hover:bg-ink hover:text-cream inline-block border-[3px] px-[18px] py-[10px] text-[12px] font-bold tracking-[0.15em] no-underline"
+      >
+        ← BACK
+      </a>
+
+      <h1 class="font-display text-section mt-10 mb-4 uppercase">
+        Ground<br /><span class="text-red">rules.</span>
+      </h1>
+      <p
+        class="font-mono text-[13px] font-bold tracking-[0.15em] uppercase"
+        style="margin-bottom: 56px;"
+      >
+        Last updated — {updated}
+      </p>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-ink mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          01 — WHAT THIS IS
+        </h2>
+        <p class="text-body m-0 font-medium">
+          This is the personal portfolio of Abhishek Chandrasenan. It exists to
+          show work, writing and experiments. It is not a product, a service or
+          professional advice — using it costs nothing and signs you up for
+          nothing.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-ink mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          02 — CONTENT &amp; CODE
+        </h2>
+        <p class="text-body m-0 font-medium">
+          The words, design and imagery here are © Abhishek Chandrasenan.
+          Please don't republish them as your own. The source code of the site
+          lives in a public GitHub repository — where a license file is
+          present, that license governs the code; the written content and
+          design are not covered by it.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2
+          class="font-mono text-ink mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          03 — NO WARRANTIES
+        </h2>
+        <p class="text-body m-0 font-medium">
+          Everything here is provided as-is, with no warranties of any kind —
+          express or implied. Numbers and claims reflect my best recollection
+          at the time of writing and can go stale. I'm not liable for anything
+          arising from your use of this site (it's a portfolio; the stakes are
+          low).
+        </p>
+      </section>
+
+      <section>
+        <h2
+          class="font-mono text-ink mb-3 text-[14px] font-extrabold tracking-[0.15em]"
+        >
+          04 — EXTERNAL LINKS
+        </h2>
+        <p class="text-body m-0 font-medium">
+          Links to other sites (GitHub, LinkedIn, articles and the like) point
+          at things I don't control. Their content, availability and privacy
+          practices are their own. See the&#32;<a
+            href="/privacy"
+            class="decoration-red font-semibold underline decoration-[3px] underline-offset-4"
+            >privacy policy</a
+          > for how this site itself behaves.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

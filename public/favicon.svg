@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- P8 — red "A" logo mark (hero logo chip, red variant).
+       Standalone asset: colors are literal by necessity (a favicon cannot
+       read CSS custom properties). They mirror src/styles/global.css:
+       #dc2626 = color-red, #1e293b = color-ink, #f5f1e8 = color-cream.
+       The "A" is a hand-drawn blocky path (no font dependency). -->
+  <rect x="8" y="8" width="54" height="54" fill="#1e293b"/>
+  <rect x="4" y="4" width="50" height="50" fill="#dc2626" stroke="#1e293b" stroke-width="4"/>
+  <path fill="#f5f1e8" fill-rule="evenodd" d="M21 10H37L50 48H38L35 39H23L20 48H8Z M29 16L33.5 30H24.5Z"/>
+</svg>
