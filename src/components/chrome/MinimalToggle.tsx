@@ -1,5 +1,7 @@
-// Minimal-mode switch — the top-right chrome that flips the second design
-// mode (AGENTS.md §Two design modes). Mounted in Portfolio.tsx with the
+// Design-mode switch — the top-right chrome that flips between the two
+// design modes (AGENTS.md §Two design modes). Minimal is the default, so
+// the switch is labelled FUNKY and reads ON when the full-fat mode is
+// active (aria-checked = !minimal); it still writes the `minimal` pref. Mounted in Portfolio.tsx with the
 // fixed chrome OUTSIDE PointerProvider (trap 1); like PreferencesMenu it
 // keeps the OS cursor. Fancy face mirrors the ⚙ TWEAKS button (cream, 3px
 // ink border, hard shadow, mono 900); under html[data-minimal] the border
@@ -18,7 +20,7 @@ export default function MinimalToggle() {
     <button
       type='button'
       role='switch'
-      aria-checked={minimal}
+      aria-checked={!minimal}
       onClick={() => setPref("minimal", !minimal)}
       style={{
         position: "fixed",
@@ -42,7 +44,7 @@ export default function MinimalToggle() {
         cursor: "pointer",
       }}
     >
-      <span>MINIMAL</span>
+      <span>FUNKY</span>
       {/* SwitchRow-pattern track + square knob. The track stays cream in
           BOTH states so the accent on-knob reads against it. */}
       <span
@@ -60,10 +62,10 @@ export default function MinimalToggle() {
           style={{
             position: "absolute",
             top: 2,
-            left: minimal ? 20 : 2,
+            left: minimal ? 2 : 20,
             width: 12,
             height: 12,
-            background: minimal ? accent : ink,
+            background: minimal ? ink : accent,
             transition: "left .15s, background .15s",
           }}
         />

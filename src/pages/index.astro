@@ -14,7 +14,7 @@ const ogImageAlt =
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-minimal>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,27 +24,30 @@ const ogImageAlt =
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <!-- --color-cream; a meta tag cannot reference CSS custom properties -->
-    <meta name="theme-color" content="#f5f1e8" />
+    <!-- minimal --color-cream (paper); a meta tag cannot reference CSS
+         custom properties -->
+    <meta name="theme-color" content="#fbfbf9" />
 
-    <!-- Pre-paint minimal-mode skin: reads the SAME localStorage
-         "portfolio.tweaks" key owned by src/lib/prefs.tsx and sets
-         data-minimal on <html> before first paint, so a stored pref
-         never flashes the full-fat colors/type. prefs.tsx keeps the
-         attribute (and theme-color) in sync after hydration. -->
+    <!-- Minimal is the default design mode: data-minimal ships on <html>
+         and the island pre-renders minimal. This pre-paint script reads
+         the SAME localStorage "portfolio.tweaks" key owned by
+         src/lib/prefs.tsx and drops data-minimal before first paint when
+         the visitor chose funky, so a stored pref never flashes the
+         minimal colors/type. prefs.tsx keeps the attribute (and
+         theme-color) in sync after hydration. -->
     <script is:inline>
       try {
         var __tweaks = JSON.parse(
           localStorage.getItem("portfolio.tweaks") || "{}"
         );
-        if (__tweaks && __tweaks.minimal === true) {
-          document.documentElement.setAttribute("data-minimal", "");
-          /* minimal --color-cream (paper); meta can't read CSS vars */
+        if (__tweaks && __tweaks.minimal === false) {
+          document.documentElement.removeAttribute("data-minimal");
+          /* full-fat --color-cream; meta can't read CSS vars */
           var __tc = document.querySelector('meta[name="theme-color"]');
-          if (__tc) __tc.setAttribute("content", "#fbfbf9");
+          if (__tc) __tc.setAttribute("content", "#f5f1e8");
         }
       } catch (_e) {
-        /* storage unavailable — stay full-fat */
+        /* storage unavailable — stay minimal */
       }
     </script>
 

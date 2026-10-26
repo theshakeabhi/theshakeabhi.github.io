@@ -165,10 +165,13 @@ The design is 1440px-native and re-flows (no viewport-scale hack):
 
 The site ships TWO complete design modes behind one persisted pref
 (`usePrefs().minimal`, localStorage `"portfolio.tweaks"`, flipped by the
-fixed top-right `MinimalToggle` or the PreferencesMenu row).
+fixed top-right `MinimalToggle` or the PreferencesMenu row). **Minimal is
+the default**; full-fat ("funky") is opt-in — the toggle and the menu row
+are both labelled FUNKY and read ON when `minimal === false`.
 
-- **Mechanism**: an `is:inline` head script in each page sets
-  `data-minimal` on `<html>` BEFORE first paint from the stored pref;
+- **Mechanism**: every page ships `<html data-minimal>`; an `is:inline`
+  head script removes it BEFORE first paint when the stored pref is
+  `minimal: false`;
   `PrefsProvider` keeps the attribute (and the `theme-color` meta) in sync
   after hydration. The `html[data-minimal]` block in global.css re-declares
   the token VALUES (colors → paper/ink/warm grey, display/hand fonts →
@@ -176,8 +179,8 @@ fixed top-right `MinimalToggle` or the PreferencesMenu row).
   hairlines); components branch on `usePrefs().minimal`. Fancy-only
   flourish roots (SideRibbon, fancy SectionDivider) carry `data-flourish`
   and are CSS-hidden under `[data-minimal]`, so the pre-hydration frame is
-  already quiet. The island pre-renders full-fat, so a stored minimal pref
-  causes ONE accepted structural reflow right after hydration
+  already quiet. The island pre-renders minimal (`DEFAULTS.minimal =
+true`), so a stored funky pref causes ONE accepted structural reflow right after hydration
   (`AnchorRescroll` re-anchors any `location.hash` on the next frame).
 - **THE INVARIANT: every new section, component, or copy change lands in
   BOTH modes in the same PR and is QA'd in both. Mode branches read the

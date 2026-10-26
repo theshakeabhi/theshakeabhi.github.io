@@ -12,3 +12,13 @@ See AGENTS.md §Protocols.
 Per-folder agent logs introduced repo-wide (branch feat/minimal-mode).
 All history before this date — the P0–P8 brutalist port and the
 minimal-mode feature — lives in the repo-root `agent-log.md`.
+
+## Minimal becomes the default design mode · 2026-10-27T01:27:46+05:30
+
+- **Files touched**: `prefs.tsx` — `DEFAULTS.minimal` false → true; the
+  first-run attribute-sync comment now describes the funky flash it guards.
+- **Decisions/deviations**: pref key/name unchanged (`minimal`, frozen
+  contract); only the default flipped. Stored `minimal: false` keeps a
+  visitor on funky; no stored value now means minimal.
+- **Self-check**: build/check/lint clean; SSR + first client render agree
+  (no hydration warnings in a headless run).

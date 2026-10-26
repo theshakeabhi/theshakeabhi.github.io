@@ -14,11 +14,13 @@ import { cream, ink, slate, fonts, shadows, borders } from "../../tokens";
 
 const PANEL_ID = "preferences-panel";
 
-const TOGGLES: { key: PrefKey; label: string }[] = [
+// `invert` rows show the opposite of the stored pref: minimal is the
+// default, so the row reads "Funky mode" (on = full-fat), like MinimalToggle.
+const TOGGLES: { key: PrefKey; label: string; invert?: boolean }[] = [
   { key: "sfx", label: "Sound effects" },
   { key: "cursor", label: "Custom cursor" },
   { key: "magnetic", label: "Magnetic buttons" },
-  { key: "minimal", label: "Minimal mode" },
+  { key: "minimal", label: "Funky mode", invert: true },
 ];
 
 // Easter-egg hints — copy from the prototype's TweaksPanel (app.jsx).
@@ -155,11 +157,11 @@ export default function PreferencesMenu() {
         >
           VIBE
         </div>
-        {TOGGLES.map(({ key, label }) => (
+        {TOGGLES.map(({ key, label, invert }) => (
           <SwitchRow
             key={key}
             label={label}
-            checked={prefs[key]}
+            checked={invert ? !prefs[key] : prefs[key]}
             onToggle={() => prefs.setPref(key, !prefs[key])}
           />
         ))}
@@ -177,7 +179,7 @@ export default function PreferencesMenu() {
               color: slate,
             }}
           >
-            SFX / CURSOR / MAGNETIC apply to the full-fat theme.
+            SFX / CURSOR / MAGNETIC apply to funky mode.
           </div>
         ) : (
           <>

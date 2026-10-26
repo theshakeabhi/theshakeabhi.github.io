@@ -38,3 +38,14 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
   documents both special folders.
 - **Self-check**: build back to 4 pages; no `/agent-log` route and no
   `agent-log.md` anywhere in dist; `cv.pdf` still ships.
+
+## Minimal becomes the default design mode · 2026-10-27T01:27:46+05:30
+
+- **Files touched**: `index.astro`, `404.astro`, `privacy.astro`,
+  `terms.astro` — `<html>` ships `data-minimal`; the pre-paint script
+  now REMOVES it when `portfolio.tweaks` has `minimal: false` (was: add
+  on `true`). index's static theme-color is now minimal paper (#fbfbf9),
+  swapped to full-fat cream (#f5f1e8) by the script for funky visitors.
+- **Decisions/deviations**: storage failure / no JS now falls back to
+  minimal, matching the pre-rendered island.
+- **Self-check**: all four built pages carry `<html lang="en" data-minimal>`.

@@ -38,7 +38,9 @@ const DEFAULTS: Prefs = {
   sfx: true,
   cursor: true,
   magnetic: true,
-  minimal: false,
+  // Minimal is the default design mode; funky (full-fat) is opt-in via
+  // MinimalToggle / PreferencesMenu. Pre-paint head scripts agree.
+  minimal: true,
   reducedMotion: false,
   coarsePointer: false,
 };
@@ -115,7 +117,7 @@ export function PrefsProvider({ children }: { children?: ReactNode }) {
   // storage key; the first run below happens while state is still DEFAULTS
   // (the storage sync above hasn't applied yet), so it must leave the
   // attribute exactly as the pre-paint script set it — otherwise a stored
-  // minimal=true would flash fancy tokens for a frame.
+  // minimal=false (funky) would flash minimal tokens for a frame.
   const minimalSynced = useRef(false);
   useEffect(() => {
     if (!minimalSynced.current) {
