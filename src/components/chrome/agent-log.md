@@ -12,3 +12,15 @@ See AGENTS.md §Protocols.
 Per-folder agent logs introduced repo-wide (branch feat/minimal-mode).
 All history before this date — the P0–P8 brutalist port and the
 minimal-mode feature — lives in the repo-root `agent-log.md`.
+
+## Toggle relabelled FUNKY (minimal is default) · 2026-10-27T01:27:46+05:30
+
+- **Files touched**: `MinimalToggle.tsx` — label MINIMAL → FUNKY,
+  `aria-checked={!minimal}`, knob right + accent when funky.
+  `PreferencesMenu.tsx` — "Minimal mode" row → "Funky mode" via a new
+  `invert` flag on TOGGLES; minimal-mode note now says "apply to funky mode".
+- **Decisions/deviations**: both switches still write the `minimal` pref;
+  only presentation inverted, so the frozen prefs contract is untouched.
+- **Self-check**: headless 1440 run — fresh visit minimal, FUNKY click →
+  full-fat (+ flourishes, theme-color cream), persists over reload, flips
+  back; zero console errors/warnings.

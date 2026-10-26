@@ -10,7 +10,7 @@ const updated = "September 17, 2026";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-minimal>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,18 +19,20 @@ const updated = "September 17, 2026";
     <link rel="canonical" href={`${site}/terms/`} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <!-- Pre-paint minimal-mode skin — same localStorage "portfolio.tweaks"
-         key owned by src/lib/prefs.tsx (see index.astro). -->
+    <!-- Minimal is the default (data-minimal ships on <html>); this
+         pre-paint script drops it when the SAME localStorage
+         "portfolio.tweaks" key (owned by src/lib/prefs.tsx, see
+         index.astro) records an explicit funky choice. -->
     <script is:inline>
       try {
         var __tweaks = JSON.parse(
           localStorage.getItem("portfolio.tweaks") || "{}"
         );
-        if (__tweaks && __tweaks.minimal === true) {
-          document.documentElement.setAttribute("data-minimal", "");
+        if (__tweaks && __tweaks.minimal === false) {
+          document.documentElement.removeAttribute("data-minimal");
         }
       } catch (_e) {
-        /* storage unavailable — stay full-fat */
+        /* storage unavailable — stay minimal */
       }
     </script>
   </head>

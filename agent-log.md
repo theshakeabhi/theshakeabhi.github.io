@@ -1353,3 +1353,17 @@ History before this date lives earlier in this file.
   `withastro/action`, so a root-level CNAME never reached the artifact;
   `public/` is copied verbatim into `dist/`.
 - **Self-check**: `astro build` ships `dist/CNAME`.
+
+## Minimal becomes the default design mode · 2026-10-27T01:27:46+05:30
+
+- **Files touched**: `src/lib/prefs.tsx`, `src/pages/{index,404,privacy,terms}.astro`,
+  `src/components/chrome/{MinimalToggle,PreferencesMenu}.tsx`, `AGENTS.md`
+  (§Two design modes), per-folder logs for src/lib, src/pages,
+  src/components/chrome.
+- **Decisions/deviations**: flipped the default only — pref key stays
+  `minimal` (frozen contract), so existing stored choices are honoured.
+  The island now pre-renders minimal; a stored funky pref takes the one
+  post-hydration reflow instead. Top-right toggle and the Tweaks row are
+  labelled FUNKY (on = full-fat).
+- **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean; headless
+  QA in both modes, reload persistence, no console errors.
