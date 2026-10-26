@@ -1344,3 +1344,12 @@ History before this date lives earlier in this file.
 - **Decisions/deviations**: build copies it into dist/ (verified present).
 - **Self-check**: `npx astro build` ships dist/cv.pdf; bundle references
   `/cv.pdf` ×2.
+
+### [public/] CNAME moved into public/ · 2026-10-27T01:21:05+05:30
+
+- **Files touched**: `CNAME` (repo root) → `public/CNAME` (content
+  unchanged: `shakeabhi.com`).
+- **Decisions/deviations**: the Pages deploy publishes `dist/` via
+  `withastro/action`, so a root-level CNAME never reached the artifact;
+  `public/` is copied verbatim into `dist/`.
+- **Self-check**: `astro build` ships `dist/CNAME`.
