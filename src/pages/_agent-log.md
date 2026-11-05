@@ -76,3 +76,8 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 ## Boot cover on repeat loads (quiet) · 2026-11-05T18:20:00+05:30
 
 - Repeat loads in a session now get the cream cover without the bar (data-boot-quiet) so the minimal-first frame never shows. Files: index.astro, prefs.tsx, global.css.
+
+## Analytics: GoatCounter on every page · 2026-11-05T21:00:00+05:30
+
+- **Files touched**: `index.astro`, `404.astro`, `privacy.astro`, `terms.astro` (`<Analytics />` in head); `privacy.astro` §02 now discloses GoatCounter + tracked click events; §04 / meta description no longer claim "no other tracking".
+- **Self-check**: `yarn build` clean.

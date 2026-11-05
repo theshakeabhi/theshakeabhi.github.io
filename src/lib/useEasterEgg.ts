@@ -14,7 +14,8 @@
 //   const egg = useEasterEgg();
 //   <RaveOverlay on={egg.rave} onClose={egg.dismiss} />
 //   <Hero onLogoClick={egg.onLogoClick} clicks={egg.clicks} />
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { track } from "./analytics";
 
 const KONAMI = [
   "arrowup",
@@ -45,11 +46,17 @@ export interface EasterEgg {
 export function useEasterEgg(): EasterEgg {
   const [rave, setRave] = useState(false);
   const [clicks, setClicks] = useState(0);
+  const trigger = useRef<"logo" | "konami">("logo");
+
+  useEffect(() => {
+    if (rave) track("easter_egg", { trigger: trigger.current });
+  }, [rave]);
 
   const onLogoClick = useCallback(() => {
     setClicks((c) => {
       const n = c + 1;
       if (n >= LOGO_CLICKS_TO_RAVE) {
+        trigger.current = "logo";
         setRave(true);
         return 0; // reset after rave triggers
       }
@@ -63,6 +70,7 @@ export function useEasterEgg(): EasterEgg {
       buf = [...buf, e.key.toLowerCase()].slice(-KONAMI.length);
       if (buf.join(",") === KONAMI.join(",")) {
         buf = []; // reset after rave triggers
+        trigger.current = "konami";
         setRave(true);
       }
     };
