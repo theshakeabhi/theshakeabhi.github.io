@@ -24,3 +24,8 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Files touched**: `Vinyl.tsx` (new) — live Last.fm record: label + caption show the latest scrobble (fallback "On rotation: techno · hard tech · schranz · indie"); spins (≈33⅓) with the tonearm down only while now-playing; label type scales via container `cqw`; grab-and-spin IN PLACE (rotation tracks pointer angle around the centre), auto-spin pauses while held. `vinylScratch.ts` (new) — noise→bandpass + saw→lowpass scratch synth driven by angular speed; AudioContext only from pointerdown (trap 5); gated on `usePrefs().sfx`; deliberately NOT added to the frozen Sfx contract. `ShakeMe.tsx` (new) — yellow tilted sticker button: sfx.yay + onShake + 26-piece confetti burst (`confetti-pop`), hover jitter; reduced motion → sound only.
 - **Decisions/deviations**: owner picks (vinyl + shake me; vinyl rotate-only, not movable). All fancy-only (null in minimal, guard after hooks). Hard shadows only; tokens only.
 - **Self-check**: CDP mouse-drag test — disc rotates in place, no console errors/warnings; screenshots 1024/1280/1440; build + eslint clean.
+
+## Vinyl caption centred · 2026-11-05T16:10:00+05:30
+
+- **Files touched**: `Vinyl.tsx` — caption block `textAlign: center`, eyebrow row `justifyContent: center` (owner: centre "On rotation / Techno · hard tech · schranz · indie" under the disc).
+- **Self-check**: 1440/1024 screenshots; build + eslint clean.

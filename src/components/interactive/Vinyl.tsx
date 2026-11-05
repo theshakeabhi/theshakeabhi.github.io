@@ -281,9 +281,18 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
           textTransform: "uppercase",
           color: ink,
           lineHeight: 1.45,
+          // Centred under the disc (owner call).
+          textAlign: "center",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+          }}
+        >
           <span
             aria-hidden='true'
             style={{
