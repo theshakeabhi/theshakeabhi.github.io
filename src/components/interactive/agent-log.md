@@ -29,3 +29,9 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 
 - **Files touched**: `Vinyl.tsx` — caption block `textAlign: center`, eyebrow row `justifyContent: center` (owner: centre "On rotation / Techno · hard tech · schranz · indie" under the disc).
 - **Self-check**: 1440/1024 screenshots; build + eslint clean.
+
+## Vinyl genres: + house, acid tech · 2026-11-05T16:15:00+05:30
+
+- **Files touched**: `Vinyl.tsx` — ON_ROTATION is now built from a list (Techno · house · acid tech · hard tech · schranz · indie) with NBSPs inside each genre, so the centred caption only wraps between genres.
+- **Decisions/deviations**: owner request; the Now-board Listening fallback copy is unchanged.
+- **Self-check**: 1024/1440 screenshots; build + eslint clean.

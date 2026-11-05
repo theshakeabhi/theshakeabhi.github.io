@@ -20,7 +20,18 @@ import { useLastfmTrack } from "../../lib/useLastfmTrack";
 import { cream, ink, red, accent, borders, fonts, shadows } from "../../tokens";
 
 // Shown until/unless Last.fm returns a track (matches the Now-board copy).
-const ON_ROTATION = "Techno · hard tech · schranz · indie";
+// Genres joined with " · "; non-breaking spaces inside a genre so the
+// caption only wraps between genres ("hard tech" never splits).
+const ON_ROTATION = [
+  "Techno",
+  "house",
+  "acid tech",
+  "hard tech",
+  "schranz",
+  "indie",
+]
+  .map((g) => g.replace(/ /g, "\u00a0"))
+  .join(" · ");
 const SPIN = "spin 1.8s linear infinite"; // ≈ 33⅓ rpm
 
 const grooves = `repeating-radial-gradient(circle at 50% 50%, ${ink} 0 2px, color-mix(in srgb, ${ink} 78%, ${cream}) 2px 3px)`;
