@@ -26,8 +26,6 @@ import About from "../sections/About";
 import Skills from "../sections/Skills";
 import Work from "../sections/Work";
 import NowBoard from "../sections/NowBoard";
-import Writing from "../sections/Writing";
-import Playground from "../sections/Playground";
 import Testimonials from "../sections/Testimonials";
 import Resume from "../sections/Resume";
 import Contact from "../sections/Contact";
@@ -138,8 +136,6 @@ export default function Portfolio() {
             fg={cream}
           />
           <NowBoard />
-          <Writing />
-          <Playground />
           {/* No permissioned quotes yet — skip the section AND its divider
             while the content file is empty (HANDOFF_NOTES P6 → P7). */}
           {testimonials.length > 0 ? (

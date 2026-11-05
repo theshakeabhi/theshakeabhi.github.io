@@ -1367,3 +1367,21 @@ History before this date lives earlier in this file.
   labelled FUNKY (on = full-fat).
 - **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean; headless
   QA in both modes, reload persistence, no console errors.
+
+## Remove Writing + Playground sections · 2026-11-05T10:59:30+05:30
+
+- **Files touched**: `.nvmrc` (new, `22.23.4` — Astro 7's undici needs Node ≥ 22.19), `AGENTS.md` (P6 ownership row), `src/sections/{Writing,Playground}.tsx` + `src/content/writing.ts` deleted, `src/portfolio/Portfolio.tsx`, `src/sections/{Hero,Resume,Contact}.tsx`, `src/pages/index.astro`; per-folder logs for src/sections, src/content, src/portfolio, src/pages.
+- **Decisions/deviations**: owner request. Sections now run 01–07 (CV 06, Contact 07); Testimonials left at 08 while unmounted.
+- **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean on Node 22.23.4.
+
+## Now board copy + Tweaks hidden in minimal · 2026-11-05T11:04:00+05:30
+
+- **Files touched**: `src/sections/NowBoard.tsx`, `src/components/chrome/PreferencesMenu.tsx`, `AGENTS.md` (§Two design modes note); per-folder logs for src/sections, src/components/chrome.
+- **Decisions/deviations**: owner requests. Now board is 5 notes; Listening copy is untouched until the owner picks a Spotify approach. Tweaks button renders only in funky mode.
+- **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean.
+
+## Live Listening via Last.fm · 2026-11-05T11:21:00+05:30
+
+- **Files touched**: `src/lib/useLastfmTrack.ts` (new), `src/sections/NowBoard.tsx`, `src/pages/privacy.astro`; per-folder logs for src/lib, src/sections, src/pages.
+- **Decisions/deviations**: Last.fm chosen over a Spotify serverless proxy (no backend on Pages). Inert until `LASTFM_API_KEY` is filled in.
+- **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean.

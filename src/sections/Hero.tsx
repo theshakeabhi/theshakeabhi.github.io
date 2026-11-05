@@ -42,11 +42,10 @@ export interface HeroProps {
 }
 
 // Anchor targets are the real section ids on the Slabs (Work id='work',
-// NowBoard id='now', Contact id='contact'; Writing id='writing' → P6).
+// NowBoard id='now', Contact id='contact').
 const NAV = [
   { label: "Work", href: "#work" },
   { label: "Now", href: "#now" },
-  { label: "Writing", href: "#writing" },
   { label: "Contact", href: "#contact" },
 ] as const;
 

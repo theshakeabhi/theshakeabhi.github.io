@@ -25,3 +25,8 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
   "onboarding" phrasings were not.
 - **Self-check**: gates green; dist shows both new titles, zero "API
   latency"/"onboarding completion" strings anywhere in dist.
+
+## Remove Writing + Playground sections · 2026-11-05T10:59:30+05:30
+
+- **Files touched**: deleted `writing.ts` (placeholder posts; only consumer was the removed Writing section).
+- **Self-check**: build OK, no dangling imports.
