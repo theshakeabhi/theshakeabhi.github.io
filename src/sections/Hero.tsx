@@ -31,6 +31,7 @@ import {
   fonts,
   text,
   borders,
+  shadows,
   spacing,
 } from "../tokens";
 
@@ -85,6 +86,9 @@ const HERO_INTRO = "Hi, I'm Abhishek Chandrasenan. Online, I go by";
 const NICK_FIRST = "Shake";
 const NICK_LAST = "Abhi";
 const NICK_EGG = "Mon";
+// TEMP (owner A/B, Nov '26): which < lg vinyl layout ships. 1 = tablet
+// beside the lead + phone strip, 2 = full record centred under the CTAs.
+const MOBILE_VINYL: 1 | 2 = 1;
 const VINYL_SIZE = "clamp(170px, calc(34vw - 200px), 290px)";
 const NICK_EGG_NOTE = "(what everyone actually calls me)";
 
@@ -615,37 +619,69 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
         </h1>
 
         <div style={{ marginTop: 36 }}>
-          <p
-            // lg+: stop short of the absolute right column so the copy can
-            // never run under it — wider gap at xl+, where the ~560px CTA
-            // row sits in that (vertically centred) column.
-            className='max-w-[680px] lg:max-w-[min(680px,calc(100%_-_320px))] xl:max-w-[min(680px,calc(100%_-_630px))]'
-            style={{
-              fontFamily: fonts.body,
-              fontWeight: 500,
-              fontSize: text.lead,
-              lineHeight: "var(--text-lead--line-height)",
-              color: ink,
-              margin: 0,
-            }}
-          >
-            {LEAD_PRE}
-            <em
+          {/* Option 1 · tablet (md–lg): lead + vinyl side by side. */}
+          <div className={MOBILE_VINYL === 1 ? "" : undefined}>
+            <p
+              // lg+: stop short of the absolute right column so the copy can
+              // never run under it — wider gap at xl+, where the ~560px CTA
+              // row sits in that (vertically centred) column.
+              className='max-w-[680px] lg:max-w-[min(680px,calc(100%_-_320px))] xl:max-w-[min(680px,calc(100%_-_630px))]'
               style={{
-                background: yellow,
-                padding: "0 6px",
-                fontStyle: "normal",
+                fontFamily: fonts.body,
+                fontWeight: 500,
+                fontSize: text.lead,
+                lineHeight: "var(--text-lead--line-height)",
+                color: ink,
+                margin: 0,
               }}
             >
-              {LEAD_EM}
-            </em>
-            {LEAD_POST}
-          </p>
+              {LEAD_PRE}
+              <em
+                style={{
+                  background: yellow,
+                  padding: "0 6px",
+                  fontStyle: "normal",
+                }}
+              >
+                {LEAD_EM}
+              </em>
+              {LEAD_POST}
+            </p>
+            {MOBILE_VINYL === 1 && (
+              <div className='hidden'>
+                <Vinyl size={200} />
+              </div>
+            )}
+          </div>
           {/* < xl fallback for the CTA row (see the right column). */}
           {/* Centred on mobile/tablet; left-aligned under the lead at lg–xl. */}
           {ctaRow("flex justify-center lg:justify-start xl:hidden", {
             marginTop: 32,
           })}
+          {/* Option 1 · phones: compact player strip under the CTAs. */}
+          {MOBILE_VINYL === 1 && (
+            <div
+              className='lg:hidden'
+              style={{
+                marginTop: 34,
+                padding: "14px 16px",
+                border: borders.default,
+                background: cream,
+                boxShadow: shadows.card,
+              }}
+            >
+              <Vinyl size={88} strip />
+            </div>
+          )}
+          {/* Option 2 · phones + tablet: full record centred under CTAs. */}
+          {MOBILE_VINYL === 2 && (
+            <div
+              className='flex justify-center lg:hidden'
+              style={{ marginTop: 44 }}
+            >
+              <Vinyl size={220} />
+            </div>
+          )}
         </div>
       </div>
 

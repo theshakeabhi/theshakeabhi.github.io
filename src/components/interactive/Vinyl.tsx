@@ -55,7 +55,14 @@ const SIDE_A = "Side A · an acid loop, synthesised in your browser";
 
 const grooves = `repeating-radial-gradient(circle at 50% 50%, ${ink} 0 2px, color-mix(in srgb, ${ink} 78%, ${cream}) 2px 3px)`;
 
-export default function Vinyl({ size = 290 }: { size?: number | string }) {
+export default function Vinyl({
+  size = 290,
+  strip = false,
+}: {
+  size?: number | string;
+  /** Compact phone layout: small disc left, caption + button right. */
+  strip?: boolean;
+}) {
   const { minimal, reducedMotion, sfx: soundOn, setPref } = usePrefs();
   const { setHot } = usePointer();
   const [scrub, setScrub] = useState(0);
@@ -102,6 +109,10 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
     const io =
       el && "IntersectionObserver" in window
         ? new IntersectionObserver(([en]) => {
+            // The hero mounts one Vinyl per breakpoint and CSS hides the
+            // others — a display:none copy reports "not intersecting" and
+            // must not stop the music the visible copy is playing.
+            if (!el.getClientRects().length) return;
             if (en && !en.isIntersecting) stopLoop();
           })
         : null;
@@ -190,177 +201,192 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
   const eyebrow = loopOn ? "Now spinning" : "On rotation";
 
   return (
-    // inline-size container: the label type scales with the disc (cqw).
     <div
       ref={wrap}
-      style={{
-        width: size,
-        containerType: "inline-size",
-        position: "relative",
-      }}
+      style={
+        strip
+          ? {
+              display: "flex",
+              alignItems: "center",
+              gap: 18,
+              position: "relative",
+            }
+          : { width: size, position: "relative" }
+      }
     >
+      {/* inline-size container: the label type scales with the disc (cqw). */}
       <div
-        aria-hidden='true'
-        onPointerDown={onDown}
-        onPointerMove={onMove}
-        onPointerUp={onUp}
-        onPointerCancel={onUp}
         style={{
+          width: size,
+          flexShrink: 0,
+          containerType: "inline-size",
           position: "relative",
-          width: "100%",
-          aspectRatio: "1 / 1",
-          cursor: dragging ? "grabbing" : "grab",
-          touchAction: "none",
-          userSelect: "none",
         }}
       >
-        {/* Scrub layer (drag-driven rotation) around the auto-spin disc. */}
         <div
+          aria-hidden='true'
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+          onPointerCancel={onUp}
           style={{
-            position: "absolute",
-            inset: 0,
-            borderRadius: "50%",
-            transform: `rotate(${scrub}deg)`,
+            position: "relative",
+            width: "100%",
+            aspectRatio: "1 / 1",
+            cursor: dragging ? "grabbing" : "grab",
+            touchAction: "none",
+            userSelect: "none",
           }}
         >
-          {/* Disc + label rotate together. */}
+          {/* Scrub layer (drag-driven rotation) around the auto-spin disc. */}
           <div
             style={{
               position: "absolute",
               inset: 0,
               borderRadius: "50%",
-              background: grooves,
-              border: borders.default,
-              boxShadow: shadows.card,
-              animation: animate ? SPIN : "none",
-              animationPlayState: playing && !dragging ? "running" : "paused",
+              transform: `rotate(${scrub}deg)`,
             }}
           >
+            {/* Disc + label rotate together. */}
             <div
               style={{
                 position: "absolute",
-                inset: "31%",
+                inset: 0,
                 borderRadius: "50%",
-                background: red,
+                background: grooves,
                 border: borders.default,
-                display: "grid",
-                placeItems: "center",
-                color: cream,
-                textAlign: "center",
-                overflow: "hidden",
+                boxShadow: shadows.card,
+                animation: animate ? SPIN : "none",
+                animationPlayState: playing && !dragging ? "running" : "paused",
               }}
             >
               <div
                 style={{
-                  fontFamily: fonts.display,
-                  fontSize: "3.2cqw",
-                  lineHeight: 1,
-                  letterSpacing: "0.02em",
-                  textTransform: "uppercase",
-                  maxWidth: "78%",
                   position: "absolute",
-                  top: "18%",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "78%",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                }}
-              >
-                shakeabhi
-              </div>
-              {/* Spindle hole */}
-              <span
-                style={{
-                  width: "14%",
-                  aspectRatio: "1 / 1",
+                  inset: "31%",
                   borderRadius: "50%",
-                  background: cream,
-                  border: `2px solid ${ink}`,
-                }}
-              />
-              <div
-                style={{
-                  fontFamily: fonts.mono,
-                  fontWeight: 700,
-                  fontSize: "2.8cqw",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  position: "absolute",
-                  bottom: "20%",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "74%",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
+                  background: red,
+                  border: borders.default,
+                  display: "grid",
+                  placeItems: "center",
+                  color: cream,
+                  textAlign: "center",
                   overflow: "hidden",
                 }}
               >
-                side a · 33⅓
+                <div
+                  style={{
+                    fontFamily: fonts.display,
+                    fontSize: "3.2cqw",
+                    lineHeight: 1,
+                    letterSpacing: "0.02em",
+                    textTransform: "uppercase",
+                    maxWidth: "78%",
+                    position: "absolute",
+                    top: "18%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "78%",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                  }}
+                >
+                  shakeabhi
+                </div>
+                {/* Spindle hole */}
+                <span
+                  style={{
+                    width: "14%",
+                    aspectRatio: "1 / 1",
+                    borderRadius: "50%",
+                    background: cream,
+                    border: `2px solid ${ink}`,
+                  }}
+                />
+                <div
+                  style={{
+                    fontFamily: fonts.mono,
+                    fontWeight: 700,
+                    fontSize: "2.8cqw",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    position: "absolute",
+                    bottom: "20%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "74%",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                  }}
+                >
+                  side a · 33⅓
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Tonearm: pivot top-right; swings onto the record while playing. */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-4%",
-            right: "-4%",
-            width: "16%",
-            height: "62%",
-            transformOrigin: "50% 8%",
-            transform: `rotate(${playing ? 24 : 4}deg)`,
-            transition: animate
-              ? "transform .6s cubic-bezier(.2,.8,.2,1)"
-              : "none",
-          }}
-        >
-          <span
+          {/* Tonearm: pivot top-right; swings onto the record while playing. */}
+          <div
             style={{
               position: "absolute",
-              top: 0,
-              left: "50%",
-              width: 26,
-              height: 26,
-              marginLeft: -13,
-              borderRadius: "50%",
-              background: cream,
-              border: borders.default,
+              top: "-4%",
+              right: "-4%",
+              width: "16%",
+              height: "62%",
+              transformOrigin: "50% 8%",
+              transform: `rotate(${playing ? 24 : 4}deg)`,
+              transition: animate
+                ? "transform .6s cubic-bezier(.2,.8,.2,1)"
+                : "none",
             }}
-          />
-          <span
-            style={{
-              position: "absolute",
-              top: 12,
-              bottom: 14,
-              left: "50%",
-              width: 7,
-              marginLeft: -3.5,
-              background: ink,
-            }}
-          />
-          <span
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: "50%",
-              width: 16,
-              height: 22,
-              marginLeft: -8,
-              background: ink,
-              transform: "rotate(-18deg)",
-            }}
-          />
+          >
+            <span
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "50%",
+                width: 26,
+                height: 26,
+                marginLeft: -13,
+                borderRadius: "50%",
+                background: cream,
+                border: borders.default,
+              }}
+            />
+            <span
+              style={{
+                position: "absolute",
+                top: 12,
+                bottom: 14,
+                left: "50%",
+                width: 7,
+                marginLeft: -3.5,
+                background: ink,
+              }}
+            />
+            <span
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: "50%",
+                width: 16,
+                height: 22,
+                marginLeft: -8,
+                background: ink,
+                transform: "rotate(-18deg)",
+              }}
+            />
+          </div>
         </div>
       </div>
 
       {/* Caption — the real info (the label above is aria-hidden). */}
       <div
         style={{
-          marginTop: 16,
+          marginTop: strip ? 0 : 16,
+          minWidth: 0,
           fontFamily: fonts.mono,
           fontWeight: 700,
           fontSize: 12,
@@ -368,15 +394,15 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
           textTransform: "uppercase",
           color: ink,
           lineHeight: 1.45,
-          // Centred under the disc (owner call).
-          textAlign: "center",
+          // Centred under the disc (owner call); left beside it in strip.
+          textAlign: strip ? "left" : "center",
         }}
       >
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: strip ? "flex-start" : "center",
             gap: 8,
           }}
         >
