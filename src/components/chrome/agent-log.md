@@ -49,3 +49,7 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 ## Tweaks hint: Side A · 2026-11-05T16:40:00+05:30
 
 - **Files touched**: `PreferencesMenu.tsx` — vinyl hint now "Click the vinyl to drop the needle on Side A — then grab it and scratch the loop."
+
+## Cookie banner copy: cookieless counting · 2026-11-05T21:00:00+05:30
+
+- `CookieConsent.tsx`: copy updated — visits counted anonymously without cookies (GoatCounter); GA stays off unless accepted. No logic change.

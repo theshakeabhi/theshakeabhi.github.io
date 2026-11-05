@@ -2,11 +2,12 @@
 // P8 — /privacy: plain-language privacy policy in the house brutalist
 // style. Static Astro page, no React island; token utilities only.
 import "../styles/global.css";
+import Analytics from "../components/Analytics.astro";
 
 const site = "https://theshakeabhi.github.io";
 const title = "Privacy — Abhishek Chandrasenan";
 const description =
-  "Privacy policy: a static portfolio on GitHub Pages, Google Analytics only after consent, device-only localStorage and no other tracking.";
+  "Privacy policy: a static portfolio on GitHub Pages, cookieless GoatCounter visit counts, Google Analytics only after consent, and device-only localStorage.";
 const updated = "November 5, 2026";
 ---
 
@@ -36,6 +37,7 @@ const updated = "November 5, 2026";
         /* storage unavailable — stay minimal */
       }
     </script>
+    <Analytics />
   </head>
   <body class="bg-cream text-ink font-body">
     <main
@@ -92,10 +94,24 @@ const updated = "November 5, 2026";
         <h2
           class="font-mono text-ink mb-3 text-[14px] font-extrabold tracking-[0.15em]"
         >
-          02 — ANALYTICS (ONLY IF YOU SAY YES)
+          02 — ANALYTICS
         </h2>
         <p class="text-body m-0 mb-4 font-medium">
-          I use Google Analytics 4 (property&#32;<code
+          <strong>Cookieless visit counts, for everyone.</strong> I use&#32;<a
+            href="https://www.goatcounter.com/help/privacy"
+            rel="noopener noreferrer"
+            class="decoration-red font-semibold underline decoration-[3px] underline-offset-4"
+            >GoatCounter</a
+          > to count page views and a few clicks (résumé downloads, the email
+          link, links out to other sites, switching on funky mode, finding the
+          easter egg). It sets no cookies, stores nothing on your device and
+          does not track you across sites or visits. It sees the page, the
+          referring site, your browser/OS, screen size and country (derived
+          from your IP, which is not stored).
+        </p>
+        <p class="text-body m-0 mb-4 font-medium">
+          <strong>Google Analytics, only if you say yes.</strong>
+          I also use Google Analytics 4 (property&#32;<code
             class="font-mono text-[0.85em] font-bold">G-X8L7GJY3D8</code>)
           to see roughly how many people visit and which sections they read.
           The Google Analytics script does not even load unless you press
@@ -106,7 +122,8 @@ const updated = "November 5, 2026";
         <p class="text-body m-0 font-medium">
           If you accept, Google Analytics collects approximate location
           (city-level, from IP), device and browser type, pages viewed and
-          time on page. I see aggregated statistics only — nothing that
+          time on page, plus the same click events listed above. I see
+          aggregated statistics only — nothing that
           identifies you personally. You can change your mind by clearing this
           site's data in your browser, which brings the banner back.
         </p>
@@ -169,7 +186,8 @@ const updated = "November 5, 2026";
         </h2>
         <p class="text-body m-0 font-medium">
           No advertising, no ad cookies, no fingerprinting, no social-media
-          pixels, no selling or sharing of data, no other tracking of any kind.
+          pixels, no selling or sharing of data, no tracking beyond the two
+          analytics tools above.
           The sound effects are synthesized in your browser — nothing is
           fetched, and nothing about you is recorded when they play.
         </p>
