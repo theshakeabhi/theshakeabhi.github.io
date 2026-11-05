@@ -19,7 +19,6 @@ import ScrambleHover from "../components/text/ScrambleHover";
 import { usePointer } from "../components/pointer/PointerProvider";
 import { useMediaQuery } from "../lib/useMediaQuery";
 import { usePrefs } from "../lib/prefs";
-import { useLastfmTrack, type LastfmTrack } from "../lib/useLastfmTrack";
 import {
   cream,
   creamWarm,
@@ -158,14 +157,6 @@ const noteBodyStyle: CSSProperties = {
   lineHeight: 1.1,
 };
 
-// Live Listening note (n4): Last.fm's latest scrobble once it loads after
-// mount; until then (and on SSR / any failure) the static n4 copy shows.
-function withLiveListening(notes: NowNote[], live: LastfmTrack | null) {
-  if (!live) return notes;
-  const body = `${live.nowPlaying ? "On repeat right now" : "Last played"}: "${live.name}" by ${live.artist}.`;
-  return notes.map((n) => (n.id === "n4" ? { ...n, body } : n));
-}
-
 function NoteContent({ label, body }: { label: string; body: string }) {
   return (
     <>
@@ -182,7 +173,7 @@ export default function NowBoard() {
   const compact = useMediaQuery("(max-width: 1023px)");
   const { minimal } = usePrefs();
   const [boardKey, setBoardKey] = useState(0);
-  const notes = withLiveListening(NOTES, useLastfmTrack());
+  const notes = NOTES;
 
   // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
   // No borderTop: the preceding SectionDivider already draws the hairline.

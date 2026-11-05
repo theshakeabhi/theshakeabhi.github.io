@@ -261,3 +261,8 @@ entry rather than an edit.
 - **Files touched**: `About.tsx` (portrait box `w-fit` so the FOUNDING ENERGY burst + eyes hang off the photo, not off a full-width stacked column; the phone-only right override dropped), `NowBoard.tsx` (static list below lg instead of md — the cork board overlapped notes at 768 — as a 1-col / sm:2-col grid; list sub-line follows), `Contact.tsx` (SOMETHING. pill capped to the content column at EVERY width — it also clipped at 768/1024; both CTAs share one max-content column so they match widths), `Hero.tsx` / `NowBoard.tsx` / `Contact.tsx` right-anchored decor → `spacing.gutterRight`.
 - **Decisions/deviations**: AGENTS.md says the cork board becomes a list < 768; it now does so < 1024 (owner-driven, iPad). Desktop SOMETHING. no longer bleeds past the content edge (it was clipped by the ribbon there too).
 - **Self-check**: DOM overflow audit (text boxes past the viewport, marquees excluded) empty at 393/768/1024/1440 fancy + 768 minimal; screenshots of every section at 768; build + eslint clean.
+
+## Last.fm removed (Now board + Hero comment) · 2026-11-05T16:55:00+05:30
+
+- **Files touched**: `NowBoard.tsx` — `withLiveListening` and the hook call removed; the Listening note is the static copy again. `Hero.tsx` — comment only.
+- **Self-check**: build + eslint clean.

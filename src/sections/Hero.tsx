@@ -437,7 +437,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
         </div>
       </div>
 
-      {/* Right column (owner picks, Nov '26): live Last.fm vinyl, then (xl+)
+      {/* Right column (owner picks, Nov '26): Side A vinyl, then (xl+)
           the CTA row with SHAKE ME in the middle (eyes removed for now). lg+ only;
           NOT aria-hidden — caption + buttons are real content. Right-
           aligned so the wide CTA row grows leftwards, never under the

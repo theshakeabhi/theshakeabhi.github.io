@@ -59,3 +59,8 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 
 - **Files touched**: `privacy.astro` — §04 discloses the browser-side Last.fm lookup (IP visible to Last.fm, no cookies); meta description + "Last updated" (November 5, 2026) bumped.
 - **Self-check**: build OK.
+
+## Privacy: Last.fm disclosure removed · 2026-11-05T16:55:00+05:30
+
+- **Files touched**: `privacy.astro` — §04 Last.fm paragraph and the meta-description mention removed (the site makes no third-party request besides opt-in GA again).
+- **Self-check**: build OK.

@@ -38,3 +38,9 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 
 - **Files touched**: `useLastfmTrack.ts` — module-level 30s shared promise so NowBoard + Hero vinyl poll Last.fm once; per-instance AbortController dropped (the shared fetch outlives any one caller).
 - **Self-check**: build + eslint clean.
+
+## Last.fm removed · 2026-11-05T16:55:00+05:30
+
+- **Files touched**: `useLastfmTrack.ts` deleted (owner deleted the Last.fm account).
+- **Decisions/deviations**: the shipped read-only API key goes with it; nothing else in src/lib depended on it.
+- **Self-check**: no `audioscrobbler` / key in dist; build + eslint clean.

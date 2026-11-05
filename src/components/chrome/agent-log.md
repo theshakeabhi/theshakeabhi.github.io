@@ -45,3 +45,7 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 
 - **Files touched**: `PreferencesMenu.tsx` — HINTS gains "Grab the vinyl in the hero and spin it — scratch it (sound on for the full effect)."
 - **Self-check**: build + eslint clean.
+
+## Tweaks hint: Side A · 2026-11-05T16:40:00+05:30
+
+- **Files touched**: `PreferencesMenu.tsx` — vinyl hint now "Click the vinyl to drop the needle on Side A — then grab it and scratch the loop."

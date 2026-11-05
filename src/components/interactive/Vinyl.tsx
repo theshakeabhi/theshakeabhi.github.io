@@ -1,25 +1,38 @@
-// Hero vinyl (owner pick, Nov '26): a record whose label + caption show the
-// owner's latest Last.fm scrobble (Spotify → Last.fm, src/lib/useLastfmTrack).
-// Spins with the tonearm down while a track is playing RIGHT NOW; parked
-// (still disc, arm lifted) for "last spun" or when Last.fm has nothing.
+// Hero vinyl (owner pick, Nov '26): a record with the owner's genres as
+// its caption. Parked (still disc, arm lifted) until Side A plays.
+// (A Last.fm now-playing feed lived here until the owner deleted the
+// account, Nov '26 — removed with src/lib/useLastfmTrack.ts.)
 //
 // Fancy-only flourish like the rest of the hero sticker layer — renders
-// null in minimal (guard AFTER hooks). SSR-safe: the hook is null on the
-// server and first paint, so the static fallback (genres) pre-renders.
+// null in minimal (guard AFTER hooks). SSR-safe: loop state starts false,
+// so server and first paint render the parked record.
 // Reduced motion: no spin, no arm transition (global CSS also freezes it).
 // Scratchable (owner ask): grab the disc and spin it in place — rotation
 // tracks the pointer's angle around the centre, and angular speed drives a
 // record-scratch synth (vinylScratch.ts, gated on the sfx pref;
 // AudioContext only from the pointerdown gesture — trap 5).
+// Side A (owner ask, Nov '26): click / tap the record or the PLAY SIDE A
+// button to drop the needle on a live-synthesised acid loop (acidLoop.ts).
+// While it plays, spinning the record IS the platter: drag speed sets
+// tempo + pitch, holding still stalls it, release eases back to speed.
+// Stops (with a power-off wind-down when asked) on click, on scroll-away,
+// on tab hide, when sound is switched off, and in minimal mode.
 import { useEffect, useRef, useState, type PointerEvent } from "react";
+import {
+  isLoopOn,
+  onLoopChange,
+  setLoopRate,
+  settleLoopRate,
+  startLoop,
+  stopLoop,
+} from "./acidLoop";
 import Hover from "../pointer/Hover";
 import { usePointer } from "../pointer/PointerProvider";
 import { startScratch, stopScratch, updateScratch } from "./vinylScratch";
 import { usePrefs } from "../../lib/prefs";
-import { useLastfmTrack } from "../../lib/useLastfmTrack";
 import { cream, ink, red, accent, borders, fonts, shadows } from "../../tokens";
 
-// Shown until/unless Last.fm returns a track (matches the Now-board copy).
+// The owner's genres (caption while the record is parked).
 // Genres joined with " · "; non-breaking spaces inside a genre so the
 // caption only wraps between genres ("hard tech" never splits).
 const ON_ROTATION = [
@@ -33,13 +46,18 @@ const ON_ROTATION = [
   .map((g) => g.replace(/ /g, "\u00a0"))
   .join(" · ");
 const SPIN = "spin 1.8s linear infinite"; // ≈ 33⅓ rpm
+// Platter speed at rate 1: 360° per 1.8s.
+const NORMAL_DEG_PER_MS = 360 / 1800;
+// A press that barely turns the record (and is quick) is a click.
+const CLICK_MAX_DEG = 6;
+const CLICK_MAX_MS = 350;
+const SIDE_A = "Side A · an acid loop, synthesised in your browser";
 
 const grooves = `repeating-radial-gradient(circle at 50% 50%, ${ink} 0 2px, color-mix(in srgb, ${ink} 78%, ${cream}) 2px 3px)`;
 
 export default function Vinyl({ size = 290 }: { size?: number | string }) {
-  const { minimal, reducedMotion, sfx: soundOn } = usePrefs();
+  const { minimal, reducedMotion, sfx: soundOn, setPref } = usePrefs();
   const { setHot } = usePointer();
-  const track = useLastfmTrack();
   const [scrub, setScrub] = useState(0);
   const [dragging, setDragging] = useState(false);
   // Turntable scratch: rotation follows the pointer's ANGLE around the
@@ -49,18 +67,63 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
     cy: number;
     la: number;
     lt: number;
+    t0: number;
+    turned: number;
   } | null>(null);
   const idle = useRef<number | null>(null);
+  const wrap = useRef<HTMLDivElement>(null);
+  // Mirrors the module-level loop state (false on SSR + first paint).
+  const [loopOn, setLoopOn] = useState(false);
+
+  useEffect(() => {
+    setLoopOn(isLoopOn());
+    return onLoopChange(setLoopOn);
+  }, []);
 
   useEffect(
     () => () => {
       if (idle.current !== null) window.clearTimeout(idle.current);
       stopScratch();
+      stopLoop();
     },
     []
   );
 
+  // Sound switched off or minimal mode → silence immediately.
+  useEffect(() => {
+    if (!soundOn || minimal) stopLoop();
+  }, [soundOn, minimal]);
+
+  // Never leave music playing where nobody can see the record: stop when
+  // the vinyl scrolls out of view or the tab is hidden.
+  useEffect(() => {
+    if (!loopOn) return;
+    const el = wrap.current;
+    const io =
+      el && "IntersectionObserver" in window
+        ? new IntersectionObserver(([en]) => {
+            if (en && !en.isIntersecting) stopLoop();
+          })
+        : null;
+    if (io && el) io.observe(el);
+    const onVis = () => {
+      if (document.hidden) stopLoop();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      io?.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [loopOn]);
+
   if (minimal) return null;
+
+  const play = () => {
+    // Pressing play IS asking for sound — flip the pref on if it was off.
+    if (!soundOn) setPref("sfx", true);
+    startLoop();
+  };
+  const toggle = () => (loopOn ? stopLoop(true) : play());
 
   const angleAt = (x: number, y: number, cx: number, cy: number) =>
     (Math.atan2(y - cy, x - cx) * 180) / Math.PI;
@@ -75,6 +138,8 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
       cy,
       la: angleAt(e.clientX, e.clientY, cx, cy),
       lt: performance.now(),
+      t0: performance.now(),
+      turned: 0,
     };
     setDragging(true);
     setHot("drag");
@@ -90,33 +155,44 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
     const step = ((a - d.la + 540) % 360) - 180;
     d.la = a;
     d.lt = now;
+    d.turned += Math.abs(step);
     setScrub((r) => r + step);
     // ~1°/ms is a hard flick → map onto the synth's px/ms-ish range.
     updateScratch((step / dt) * 1.6);
-    // Held still → the needle goes quiet.
+    // Side A: the hand IS the platter. Forward = speed ∝ spin; backwards
+    // can't play a synth in reverse, so it drags slow and dull instead.
+    const omega = step / dt;
+    setLoopRate(omega >= 0 ? omega / NORMAL_DEG_PER_MS : 0.25);
+    // Held still → the needle goes quiet and the loop stalls.
     if (idle.current !== null) window.clearTimeout(idle.current);
-    idle.current = window.setTimeout(() => updateScratch(0), 60);
+    idle.current = window.setTimeout(() => {
+      updateScratch(0);
+      setLoopRate(0);
+    }, 60);
   };
   const onUp = () => {
-    if (!drag.current) return;
+    const d = drag.current;
+    if (!d) return;
     drag.current = null;
     setDragging(false);
     setHot(null);
     if (idle.current !== null) window.clearTimeout(idle.current);
     stopScratch();
+    const click =
+      d.turned < CLICK_MAX_DEG && performance.now() - d.t0 < CLICK_MAX_MS;
+    if (click) toggle();
+    else settleLoopRate(); // let go → motor brings it back to speed
   };
 
-  const playing = !!track?.nowPlaying;
+  // Disc spins + arm drops while Side A plays.
+  const playing = loopOn;
   const animate = !reducedMotion;
-  const eyebrow = !track
-    ? "On rotation"
-    : playing
-      ? "Now spinning"
-      : "Last spun";
+  const eyebrow = loopOn ? "Now spinning" : "On rotation";
 
   return (
     // inline-size container: the label type scales with the disc (cqw).
     <div
+      ref={wrap}
       style={{
         width: size,
         containerType: "inline-size",
@@ -192,7 +268,7 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
                   overflow: "hidden",
                 }}
               >
-                {track ? track.name : "shakeabhi"}
+                shakeabhi
               </div>
               {/* Spindle hole */}
               <span
@@ -221,7 +297,7 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
                   overflow: "hidden",
                 }}
               >
-                {track ? track.artist : "side a · 33⅓"}
+                side a · 33⅓
               </div>
             </div>
           </div>
@@ -316,31 +392,35 @@ export default function Vinyl({ size = 290 }: { size?: number | string }) {
           />
           {eyebrow}
         </div>
-        {track ? (
-          <Hover
-            as='a'
-            kind='link'
-            href={track.url}
-            target='_blank'
-            rel='noopener noreferrer'
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              marginTop: 4,
-              color: ink,
-              textDecorationLine: "underline",
-              textDecorationColor: red,
-              textDecorationThickness: 3,
-              textUnderlineOffset: 4,
-            }}
-          >
-            “{track.name}” — {track.artist}
-          </Hover>
+        {loopOn ? (
+          <div style={{ marginTop: 4, color: ink }}>{SIDE_A}</div>
         ) : (
           <div style={{ marginTop: 4, color: ink }}>{ON_ROTATION}</div>
         )}
+        {/* Keyboard / screen-reader / tap path to the same toggle. */}
+        <Hover
+          as='button'
+          type='button'
+          kind='link'
+          onClick={toggle}
+          aria-pressed={loopOn}
+          style={{
+            marginTop: 10,
+            background: loopOn ? ink : cream,
+            color: loopOn ? cream : ink,
+            border: borders.default,
+            boxShadow: shadows.pressed,
+            padding: "6px 12px",
+            fontFamily: fonts.mono,
+            fontWeight: 900,
+            fontSize: 11,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+          }}
+        >
+          {loopOn ? "■ Stop" : "▶ Play side A"}
+        </Hover>
       </div>
     </div>
   );
