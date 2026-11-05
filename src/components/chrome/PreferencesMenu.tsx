@@ -26,6 +26,8 @@ const TOGGLES: { key: PrefKey; label: string; invert?: boolean }[] = [
 // Easter-egg hints — copy from the prototype's TweaksPanel (app.jsx).
 const HINTS = [
   "Click the A logo in the hero five times.",
+  "Click the red name in the hero to see what everyone actually calls me.",
+  "Grab the vinyl in the hero and spin it — scratch it (sound on for the full effect).",
   "Konami: ↑↑↓↓←→←→ B A.",
   "Drag the sticky notes — they remember their spots.",
   "Double-click any pair of eyes to spin them.",

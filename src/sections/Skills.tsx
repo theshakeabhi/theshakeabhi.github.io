@@ -16,7 +16,6 @@ import {
   ink,
   red,
   cyan,
-  yellow,
   slate,
   slateLight,
   hairline,
@@ -145,18 +144,6 @@ export default function Skills() {
               </Fragment>
             ))}
           </p>
-          <span
-            style={{
-              display: "block",
-              fontFamily: fonts.mono,
-              fontWeight: 400,
-              fontSize: 12,
-              color: slate,
-              marginTop: 14,
-            }}
-          >
-            (probably — the bold ones are non-negotiable)
-          </span>
         </MinimalColumn>
       </Slab>
     );
@@ -182,9 +169,7 @@ export default function Skills() {
           textTransform: "uppercase",
         }}
       >
-        <ScrambleHover text={SKILLS_TITLE} />{" "}
-        {/* Mock .acc2: the aside stays lowercase inside the caps h2. */}
-        <span style={{ color: yellow, textTransform: "none" }}>(probably)</span>
+        <ScrambleHover text={SKILLS_TITLE} />
       </h2>
       <p
         style={{

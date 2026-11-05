@@ -24,7 +24,9 @@ export default function MinimalToggle() {
       onClick={() => setPref("minimal", !minimal)}
       style={{
         position: "fixed",
-        top: 28,
+        // Funky: tucked up under the 14px ScrollProgress strip so it clears
+        // the hero nav row (owner call, Nov '26). Minimal keeps 28.
+        top: minimal ? 28 : 18,
         // 36px SideRibbon + gutter (PreferencesMenu precedent), constant
         // at every width — the toggle never overlaps the ribbon.
         right: 52,

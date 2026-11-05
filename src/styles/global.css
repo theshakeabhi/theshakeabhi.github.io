@@ -122,6 +122,25 @@
 :root {
   --border-default: 3px solid var(--color-ink);
   --border-thick: 4px solid var(--color-ink);
+  /* Content max-width (owner ask, Nov '26): slabs stay full-bleed, but
+     their content stops at 1280px (the 1440 design minus 2×80 gutters)
+     and centres on wider screens. The % resolves against the slab's
+     width where it is USED (padding / absolute right/left), so this is
+     the side gutter for slab padding and edge-anchored decorations. */
+  --content-max: 1280px;
+  --spacing-gutter: max(
+    var(--spacing-slab-x),
+    calc((100% - var(--content-max)) / 2)
+  );
+  /* Width the fixed right-edge SideRibbon takes from the viewport (owner
+     iPad pass: right gutter looked thinner than the left). 0 where the
+     ribbon isn't rendered — < 768px and in minimal mode. */
+  --ribbon-w: 0px;
+}
+@media (min-width: 768px) {
+  html:not([data-minimal]) {
+    --ribbon-w: 36px;
+  }
 }
 
 /* ── Keyframes — copied from Portfolio.html ─────────────────── */
@@ -183,6 +202,44 @@
   }
   75% {
     transform: translate(-1px, -1px) rotate(-0.3deg);
+  }
+}
+
+/* Hero "SHAKE ME" sticker: a big decaying shake of the whole hero slab. */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  10% {
+    transform: translate(-16px, 6px) rotate(-1.2deg);
+  }
+  25% {
+    transform: translate(14px, -8px) rotate(1deg);
+  }
+  40% {
+    transform: translate(-10px, 4px) rotate(-0.7deg);
+  }
+  55% {
+    transform: translate(8px, -3px) rotate(0.5deg);
+  }
+  70% {
+    transform: translate(-4px, 2px) rotate(-0.2deg);
+  }
+  85% {
+    transform: translate(2px, -1px) rotate(0.1deg);
+  }
+}
+
+/* Confetti burst piece: flies to (--dx, --dy) while spinning out. */
+@keyframes confetti-pop {
+  0% {
+    transform: translate(0, 0) rotate(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.6);
+    opacity: 0;
   }
 }
 

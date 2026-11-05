@@ -9,7 +9,6 @@ import Slab from "../components/primitives/Slab";
 import MinimalColumn from "../components/primitives/MinimalColumn";
 import Star from "../components/primitives/Star";
 import Burst from "../components/primitives/Burst";
-import PlaceholderImg from "../components/primitives/PlaceholderImg";
 import Hover from "../components/pointer/Hover";
 import Eyes from "../components/interactive/Eyes";
 import Tape from "../components/interactive/Tape";
@@ -72,6 +71,15 @@ const minimalBodyStyle: CSSProperties = {
   color: ink,
   maxWidth: "62ch",
 };
+
+// Owner portrait (Nov '26) — cropped 600×760 (2× the 300×380 fancy slot)
+// in public/. Fancy-only: the owner keeps minimal photo-free.
+const PORTRAIT = {
+  src: "/portrait.jpg",
+  alt: "Abhishek in a navy hoodie and sunglasses, among tall eucalyptus trees.",
+  w: 600,
+  h: 760,
+} as const;
 
 export default function About() {
   const { minimal } = usePrefs();
@@ -149,13 +157,25 @@ export default function About() {
     >
       <div className='grid grid-cols-1 items-start gap-12 lg:grid-cols-[320px_1fr] lg:gap-20'>
         {/* Portrait + tape + burst */}
-        <div className='relative max-lg:mb-10'>
-          <PlaceholderImg
-            w={300}
-            h={380}
-            label='Portrait'
-            tone='dark'
-            style={{ transform: "rotate(-3deg)" }}
+        {/* w-fit: when stacked (< lg) the box would otherwise span the
+            column, pushing the burst/eyes past the screen edge. */}
+        <div className='relative w-fit max-lg:mb-10'>
+          <img
+            src={PORTRAIT.src}
+            alt={PORTRAIT.alt}
+            width={PORTRAIT.w}
+            height={PORTRAIT.h}
+            loading='lazy'
+            decoding='async'
+            style={{
+              display: "block",
+              width: 300,
+              height: 380,
+              objectFit: "cover",
+              border: borders.default,
+              background: ink,
+              transform: "rotate(-3deg)",
+            }}
           />
           <Tape x={-10} y={-14} w={120} rotate={-14} />
           <Tape
@@ -167,10 +187,12 @@ export default function About() {
           />
           <div
             aria-hidden='true'
+            // −50px overhang off the photo (box is w-fit, so this stays on
+            // screen at every width).
+            className='right-[-50px]'
             style={{
               position: "absolute",
               bottom: -40,
-              right: -50,
               width: 130,
               height: 130,
             }}

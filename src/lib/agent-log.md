@@ -33,3 +33,8 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 
 - **Files touched**: `useLastfmTrack.ts` — `LASTFM_API_KEY` filled with the owner's read-only key (shared secret deliberately NOT stored anywhere).
 - **Self-check**: live call returns 200 with `access-control-allow-origin: *`; account has 0 scrobbles so far, so the static fallback shows until Spotify scrobbling starts. Build + eslint clean.
+
+## Shared Last.fm request · 2026-11-05T13:05:00+05:30
+
+- **Files touched**: `useLastfmTrack.ts` — module-level 30s shared promise so NowBoard + Hero vinyl poll Last.fm once; per-instance AbortController dropped (the shared fetch outlives any one caller).
+- **Self-check**: build + eslint clean.

@@ -122,6 +122,12 @@ const PINS: CSSProperties[] = [
 // minimal) — natural case; the fancy Stamp and the minimal label row
 // both uppercase via CSS.
 const UPDATED = "Updated Nov '26";
+// Sub-line: the cork board is draggable; the < 768px list is not, so it
+// gets its own line (owner report, Nov '26).
+const NOW_SUB_DRAG =
+  "Drag the notes. Rearrange the chaos. They remember where you put them.";
+const NOW_SUB_LIST =
+  "What's on my desk, in my headphones and in my cup right now.";
 
 const ink25 = `color-mix(in srgb, ${ink} 25%, transparent)`;
 const gridLine = `color-mix(in srgb, ${ink} 6%, transparent)`;
@@ -171,7 +177,9 @@ function NoteContent({ label, body }: { label: string; body: string }) {
 
 export default function NowBoard() {
   const { sfx } = usePointer();
-  const compact = useMediaQuery("(max-width: 767px)");
+  // < lg: static note list (the 1280-design cork board crams 5 notes into
+  // 768px and they overlap — owner iPad mini pass, Nov '26).
+  const compact = useMediaQuery("(max-width: 1023px)");
   const { minimal } = usePrefs();
   const [boardKey, setBoardKey] = useState(0);
   const notes = withLiveListening(NOTES, useLastfmTrack());
@@ -258,7 +266,7 @@ export default function NowBoard() {
     >
       {!compact && (
         <div
-          style={{ position: "absolute", top: 90, right: spacing.slabX }}
+          style={{ position: "absolute", top: 90, right: spacing.gutterRight }}
           aria-hidden='true'
         >
           <Eyes size={54} gap={12} />
@@ -300,8 +308,7 @@ export default function NowBoard() {
               maxWidth: 600,
             }}
           >
-            Drag the notes. Rearrange the chaos. They remember where you put
-            them.
+            {compact ? NOW_SUB_LIST : NOW_SUB_DRAG}
           </p>
         </div>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
@@ -321,11 +328,11 @@ export default function NowBoard() {
       </div>
 
       {compact ? (
-        // <768px: vertical list of static notes (drag off).
+        // < lg: static notes (drag off) — one column on phones, two from
+        // 640px (iPad mini).
         <div
+          className='grid grid-cols-1 sm:grid-cols-2'
           style={{
-            display: "flex",
-            flexDirection: "column",
             gap: 22,
             marginTop: 40,
           }}

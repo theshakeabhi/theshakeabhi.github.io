@@ -66,13 +66,13 @@ const SOCIALS = [
 // note); minimal lowercases its meta lines/links via CSS.
 const CONTACT_WORDS = ["Let's", "build", "something."] as const;
 const CONTACT_BODY =
-  "Reach out for staff/lead roles, founding-team gigs, design-system rescues, or honest opinions on your frontend codebase.";
+  "Reach out for staff/lead roles, founding-team gigs, any kind of development work (I'm a full-blown builder now), or honest opinions on your codebase.";
 const CLOCK_PRE = "It is";
 const CLOCK_POST = "in Bengaluru";
 const RESPONDS = "Responds in < 24h";
 const CTA_EMAIL_LABEL = "✉ Send me an email";
 const CTA_CHAT_LABEL = "📅 Book a 30-min chat";
-const FOOTER_NOTE = "© 2026 · Built with spite and love · Bengaluru";
+const FOOTER_NOTE = "© 2026 · Built with love, music and coffee · Bengaluru";
 const FOOT_LINKS = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
@@ -284,8 +284,10 @@ export default function Contact() {
         <div
           style={{
             position: "absolute",
-            top: 130,
-            right: `calc(${spacing.slabX} + 22px)`,
+            // 186 (was 130): sits just under the live-clock pill instead of
+            // covering "IN BENGALURU" (owner report, Nov '26).
+            top: 186,
+            right: `calc(${spacing.gutterRight} + 22px)`,
           }}
           aria-hidden='true'
         >
@@ -365,6 +367,11 @@ export default function Contact() {
             padding: "0 22px",
             display: "inline-block",
             transform: "rotate(-2deg)",
+            // Cap the pill so "SOMETHING." always fits the content column
+            // (≈6.9em wide + 44px padding; column = viewport − gutters,
+            // max 1280). It was clipped at 768 and 1024, not just phones.
+            fontSize:
+              "min(1em, calc((min(100vw - 2 * var(--spacing-slab-x) - var(--ribbon-w), var(--content-max)) - 44px) / 6.9))",
           }}
         >
           <ScrambleHover text={CONTACT_WORDS[2]} />
@@ -428,29 +435,33 @@ export default function Contact() {
             alignItems: stacked ? "flex-start" : "flex-end",
           }}
         >
-          <MagneticButton
-            kind='ghost'
-            onClick={() => {
-              window.location.href = MAILTO;
-            }}
-            style={{
-              background: cream,
-              color: red,
-              padding: "22px 34px",
-              fontSize: 22,
-            }}
-          >
-            {CTA_EMAIL_LABEL}
-          </MagneticButton>
-          <MagneticButton
-            kind='primary'
-            onClick={() => {
-              window.location.href = MAILTO;
-            }}
-            style={{ padding: "18px 28px", fontSize: 18 }}
-          >
-            {CTA_CHAT_LABEL}
-          </MagneticButton>
+          {/* Shared-width column: both CTAs match the wider one. */}
+          <div style={{ display: "grid", gap: 18, width: "max-content" }}>
+            <MagneticButton
+              kind='ghost'
+              onClick={() => {
+                window.location.href = MAILTO;
+              }}
+              style={{
+                background: cream,
+                color: red,
+                padding: "22px 34px",
+                fontSize: 22,
+                width: "100%",
+              }}
+            >
+              {CTA_EMAIL_LABEL}
+            </MagneticButton>
+            <MagneticButton
+              kind='primary'
+              onClick={() => {
+                window.location.href = MAILTO;
+              }}
+              style={{ padding: "18px 28px", fontSize: 18, width: "100%" }}
+            >
+              {CTA_CHAT_LABEL}
+            </MagneticButton>
+          </div>
           <Stamp
             color={cream}
             rotate={5}
