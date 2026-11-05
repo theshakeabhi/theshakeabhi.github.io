@@ -16,6 +16,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { track } from "./analytics";
+
 const STORAGE_KEY = "portfolio.tweaks";
 
 export interface Prefs {
@@ -153,6 +155,9 @@ export function PrefsProvider({ children }: { children?: ReactNode }) {
   const setPref = useCallback((key: PrefKey, value: boolean) => {
     setPrefs((s) => ({ ...s, [key]: value }));
     writeStored({ ...readStored(), [key]: value });
+    // The UI labels the minimal pref "FUNKY" (ON when minimal === false).
+    if (key === "minimal") track("funky_mode", { on: !value });
+    else track("pref_toggle", { pref: key, on: value });
   }, []);
 
   const value = useMemo<PrefsContextValue>(

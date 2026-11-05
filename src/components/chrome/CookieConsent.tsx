@@ -123,9 +123,9 @@ export default function CookieConsent() {
           lineHeight: 1.6,
         }}
       >
-        This site uses Google Analytics to count visits. Its cookies stay OFF
-        unless you accept. Sticky-note positions &amp; preferences live only in
-        your browser — never sent anywhere.
+        Visits are counted anonymously, without cookies. Google Analytics (and
+        its cookies) stays OFF unless you accept. Sticky-note positions &amp;
+        preferences live only in your browser — never sent anywhere.
       </p>
       <a
         href='/privacy'

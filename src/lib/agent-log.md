@@ -56,3 +56,9 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 ## Boot cover on repeat loads (quiet) · 2026-11-05T18:20:00+05:30
 
 - Repeat loads in a session now get the cream cover without the bar (data-boot-quiet) so the minimal-first frame never shows. Files: index.astro, prefs.tsx, global.css.
+
+## Analytics: GoatCounter + GA4 events · 2026-11-05T21:00:00+05:30
+
+- **Files touched**: new `src/lib/analytics.ts` (`track()` → GA4 when consented + GoatCounter event; `installLinkTracking()` delegated click listener; `GOATCOUNTER_CODE = "shakeabhi"`), `prefs.tsx` (setPref fires `funky_mode` / `pref_toggle`), `useEasterEgg.ts` (`easter_egg` with logo|konami trigger, fired from an effect on rave).
+- **Decisions**: GA events only when `window.__gtagLoaded` (consent preserved). No top-level browser access (SSR-safe).
+- **Self-check**: `yarn build` + eslint clean.

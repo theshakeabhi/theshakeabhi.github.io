@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "../components/Analytics.astro";
 import archivoBlackWoff2 from "@fontsource/archivo-black/files/archivo-black-latin-400-normal.woff2?url";
 import Portfolio from "../portfolio/Portfolio";
 import CookieConsent from "../components/chrome/CookieConsent";
@@ -129,6 +130,7 @@ const ogImageAlt =
         /* storage unavailable — treat as undecided, load nothing */
       }
     </script>
+    <Analytics />
   </head>
   <body>
     <div id="boot" aria-hidden="true">

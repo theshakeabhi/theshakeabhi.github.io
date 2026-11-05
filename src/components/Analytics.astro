@@ -1,0 +1,21 @@
+---
+// Cookieless GoatCounter pageviews + delegated link-click events, shared by
+// every page's <head>. GA4 (opt-in) stays in index.astro's consent script;
+// src/lib/analytics.ts track() forwards events to both when available.
+import { GOATCOUNTER_CODE } from "../lib/analytics";
+---
+
+{
+  GOATCOUNTER_CODE && (
+    <script
+      is:inline
+      data-goatcounter={`https://${GOATCOUNTER_CODE}.goatcounter.com/count`}
+      async
+      src="https://gc.zgo.at/count.js"
+    />
+  )
+}
+<script>
+  import { installLinkTracking } from "../lib/analytics";
+  installLinkTracking();
+</script>

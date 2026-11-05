@@ -1469,3 +1469,9 @@ History before this date lives earlier in this file.
 ## Boot cover on repeat loads (quiet) · 2026-11-05T18:20:00+05:30
 
 - Repeat loads in a session now get the cream cover without the bar (data-boot-quiet) so the minimal-first frame never shows. Files: index.astro, prefs.tsx, global.css.
+
+## Analytics: GoatCounter (cookieless) + GA4 custom events · 2026-11-05T21:00:00+05:30
+
+- **Files touched**: new `src/lib/analytics.ts`, `src/components/Analytics.astro`; `src/lib/{prefs.tsx,useEasterEgg.ts}`, `src/components/chrome/CookieConsent.tsx`, `src/pages/{index,404,privacy,terms}.astro`; per-folder logs.
+- **Events**: resume_download, contact_email, outbound_click (domain), funky_mode, pref_toggle, easter_egg — each tagged with the section id where relevant. GA receives them only after consent.
+- **Self-check**: `yarn build` + eslint clean.
