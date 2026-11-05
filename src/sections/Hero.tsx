@@ -7,17 +7,16 @@
 // row (logo button still wired, egg inert downstream; static dot), real
 // name at document size, role line, shared lead copy, plain links. Both
 // branches read the SAME shared constants below.
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Slab from "../components/primitives/Slab";
 import MinimalColumn from "../components/primitives/MinimalColumn";
-import Stamp from "../components/primitives/Stamp";
-import Burst from "../components/primitives/Burst";
 import Squiggle from "../components/primitives/Squiggle";
 import Hover from "../components/pointer/Hover";
+import { usePointer } from "../components/pointer/PointerProvider";
 import MagneticButton from "../components/interactive/MagneticButton";
+import Vinyl from "../components/interactive/Vinyl";
+import ShakeMe from "../components/interactive/ShakeMe";
 import Eyes from "../components/interactive/Eyes";
-import Tape from "../components/interactive/Tape";
-import Arrow from "../components/interactive/Arrow";
 import Marquee from "../components/text/Marquee";
 import ScrambleHover from "../components/text/ScrambleHover";
 import { usePrefs } from "../lib/prefs";
@@ -32,6 +31,7 @@ import {
   fonts,
   text,
   borders,
+  spacing,
 } from "../tokens";
 
 export interface HeroProps {
@@ -66,19 +66,32 @@ const MARQUEE_ITEMS = [
   "✦",
 ] as const;
 
-// The real one-page CV ships at public/cv.pdf (resume refresh, Sep '26).
+// The real two-page CV ships at public/cv.pdf (resume refresh, Sep '26).
 const CV_URL = "/cv.pdf";
 
 // Copy shared by BOTH design modes — never duplicated (AGENTS.md §Two
 // design modes). Constants are NATURAL case: fancy uppercases via CSS
 // textTransform (top bar, MagneticButton faces), minimal lowercases its
 // links via CSS. LOGO_TEXT is a wordmark — caps IS its natural case.
-const LOGO_TEXT = "ABHISHEK.SH";
+const LOGO_TEXT = "SHAKEABHI";
 const AVAILABLE = "Available for hire";
+// Fancy mega name (owner call, Nov '26): the nickname is the headline,
+// the real name rides in the mono intro line INSIDE the h1, so the heading
+// still reads "Hi, I'm Abhishek Chandrasenan. Online, I go by Shake Abhi"
+// for search engines and screen readers (Shake Abhi = the handle/domain;
+// IRL everyone says Shake Mon — that's the egg). Natural case; the h1
+// uppercases via CSS. Easter egg: click the red word → NICK_EGG ("Mon").
+const HERO_INTRO = "Hi, I'm Abhishek Chandrasenan. Online, I go by";
+const NICK_FIRST = "Shake";
+const NICK_LAST = "Abhi";
+const NICK_EGG = "Mon";
+const VINYL_SIZE = "clamp(170px, calc(34vw - 200px), 290px)";
+const NICK_EGG_NOTE = "(what everyone actually calls me)";
+
 const LEAD_PRE = "Software engineer who ships at ";
 const LEAD_EM = "founding-team speed";
 const LEAD_POST =
-  ", mentors humans, and treats production incidents like a sport. Most recently Frontend Lead at FanPro Studio — an AI media generation platform taken from an empty repo to public beta — based in Bengaluru.";
+  ", mentors humans, and treats production incidents like a sport. Most recently Lead Software Engineer at FanPro Studio — an AI media generation platform taken from an empty repo to public beta — based in Bengaluru.";
 // Shared label text, per-mode arrow glyph (mock: fancy →, minimal ↓).
 const CTA_WORK_TEXT = "See the work";
 const CTA_WORK_ARROW = { fancy: "→", minimal: "↓" } as const;
@@ -107,6 +120,37 @@ const minimalLinkStyle: CSSProperties = {
 
 export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
   const { minimal, reducedMotion } = usePrefs();
+  const { sfx } = usePointer();
+  const [mon, setMon] = useState(false);
+  const nick = mon ? NICK_EGG : NICK_LAST;
+  // Tilted tail like the old CHANDRA/SENAN split: Ab|hi, M|on.
+  const nickCut = Math.floor(nick.length / 2);
+  const toggleMon = () => {
+    setMon((m) => !m);
+    sfx.pop();
+  };
+  // SHAKE ME: restart the slab's `shake` keyframe on every click (off for
+  // a frame, then on); cleared after it finishes. Never under reduced motion.
+  const [shaking, setShaking] = useState(false);
+  const shakeRaf = useRef<number | null>(null);
+  const shakeTimer = useRef<number | null>(null);
+  const shake = () => {
+    if (reducedMotion) return;
+    setShaking(false);
+    if (shakeRaf.current !== null) cancelAnimationFrame(shakeRaf.current);
+    if (shakeTimer.current !== null) window.clearTimeout(shakeTimer.current);
+    shakeRaf.current = requestAnimationFrame(() => {
+      setShaking(true);
+      shakeTimer.current = window.setTimeout(() => setShaking(false), 650);
+    });
+  };
+  useEffect(
+    () => () => {
+      if (shakeRaf.current !== null) cancelAnimationFrame(shakeRaf.current);
+      if (shakeTimer.current !== null) window.clearTimeout(shakeTimer.current);
+    },
+    []
+  );
 
   // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
   // No marquee/eyes/tape/burst/arrow/squiggle wrappers here at all.
@@ -145,7 +189,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               }}
             >
               {/* No chip letter here — the mock's minimal top row is
-                  exactly "ABHISHEK.SH". */}
+                  exactly the wordmark (LOGO_TEXT). */}
               {LOGO_TEXT}
             </button>
             {/* Mockup .mtop nav a: muted, NO underline, hover → accent
@@ -271,13 +315,39 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
   const openCv = () => {
     window.open(CV_URL, "_blank", "noopener,noreferrer");
   };
+  // SEE THE WORK · SHAKE ME · GRAB THE CV — rendered in ONE of two spots
+  // by breakpoint (display:none hides the other from AT too).
+  const ctaRow = (className: string, style?: CSSProperties) => (
+    <div
+      className={className}
+      style={{ flexWrap: "wrap", alignItems: "center", gap: 14, ...style }}
+    >
+      <MagneticButton kind='danger' onClick={goToWork}>
+        {CTA_WORK_TEXT} {CTA_WORK_ARROW.fancy}
+      </MagneticButton>
+      <ShakeMe onShake={shake} />
+      <MagneticButton kind='ghost' onClick={openCv}>
+        {CTA_CV}
+      </MagneticButton>
+    </div>
+  );
 
   return (
     <Slab
       bg={cream}
       label='01 // HELLO'
       className='lg:min-h-[1020px]'
-      style={{ paddingTop: 70, paddingBottom: 60 }}
+      // 88 (was 70): drops the nav row clear of the fixed FUNKY toggle.
+      style={{
+        paddingTop: 88,
+        // Clears the absolute bottom marquee (~62px) + breathing room. Below
+        // lg the slab has no min-height, so without this the CTA row ran
+        // into the marquee on tablet/mobile.
+        paddingBottom: 140,
+        // No fixed descendants in the hero, so a transform here is safe
+        // (trap 1 only bites fixed chrome, which lives outside <main>).
+        animation: shaking ? "shake .6s cubic-bezier(.36,.07,.19,.97)" : "none",
+      }}
     >
       {/* Top bar */}
       <div
@@ -293,7 +363,7 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
           marginBottom: 50,
         }}
       >
-        {/* Named from its visible content ("A ABHISHEK.SH") — an aria-label
+        {/* Named from its visible content ("A SHAKEABHI") — an aria-label
             that hides the visible "A" breaks WCAG 2.5.3 voice control. */}
         <Hover
           as='button'
@@ -346,7 +416,12 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
             </Hover>
           ))}
         </nav>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        {/* Phones: the bar wraps, so this gets its own centred row instead
+            of dangling under the logo. */}
+        <div
+          className='max-sm:w-full max-sm:justify-center'
+          style={{ display: "flex", gap: 10, alignItems: "center" }}
+        >
           <span
             aria-hidden='true'
             style={{
@@ -362,84 +437,45 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
         </div>
       </div>
 
-      {/* Sticker chaos + eyes — 1440-positioned decoration, hidden < lg */}
-      <div aria-hidden='true' className='hidden lg:block'>
-        <div
-          style={{
-            position: "absolute",
-            top: 130,
-            right: 290,
-            transform: "rotate(8deg)",
-          }}
-        >
-          <Stamp color={cyan} rotate={0}>
-            ★ Senior · 6 yrs
-          </Stamp>
-        </div>
-        <div style={{ position: "absolute", top: 200, right: 130 }}>
-          <Burst size={88} color={yellow} rotate={12} />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "grid",
-              placeItems: "center",
-              fontFamily: fonts.display,
-              fontWeight: 900,
-              fontSize: 14,
-              color: ink,
-              transform: "rotate(-6deg)",
-              textAlign: "center",
-              lineHeight: 1,
-            }}
-          >
-            SHIPS
-            <br />
-            FAST!
-          </div>
-        </div>
-        <Tape
-          x={250}
-          y={620}
-          w={130}
-          rotate={-12}
-          color={`color-mix(in srgb, ${red} 50%, transparent)`}
-        />
-        <Tape
-          x={1020}
-          y={580}
-          w={110}
-          rotate={9}
-          color={`color-mix(in srgb, ${cyan} 50%, transparent)`}
-        />
-        {/* Two eye pairs (README: "Two pairs of googly eyes"). Bottom-left
-            pair = prototype (x 80 / y 900 at the 1020px slab height). */}
-        <div style={{ position: "absolute", left: 80, bottom: 70 }}>
-          <Eyes size={50} gap={14} />
-        </div>
-        <div style={{ position: "absolute", right: 110, top: 655 }}>
-          <Eyes size={44} gap={12} />
-        </div>
+      {/* Right column (owner picks, Nov '26): live Last.fm vinyl, then (xl+)
+          the CTA row with SHAKE ME in the middle (eyes removed for now). lg+ only;
+          NOT aria-hidden — caption + buttons are real content. Right-
+          aligned so the wide CTA row grows leftwards, never under the
+          vinyl. Between lg and xl the row is too wide for this column (it
+          would hit ABHI), so it falls back under the lead copy instead. */}
+      <div
+        // The column's box is as wide as the xl CTA row (~575px) and sits
+        // at zIndex 1, so its empty area covered the eyes after SHAKE and
+        // ate their double-click. The box itself ignores the pointer; its
+        // children (vinyl, CTA row) opt back in.
+        className='pointer-events-none hidden lg:flex [&>*]:pointer-events-auto'
+        style={{
+          position: "absolute",
+          // Tracks the content max-width on wide screens (30px inside the
+          // gutter); the clamp still rules up to 1440.
+          right: `max(clamp(56px, 7.6vw, 110px), calc(${spacing.gutterRight} + 30px))`,
+          // Vertically centred in the band between the nav row and the
+          // bottom marquee (owner call) — top/bottom pin the column to
+          // that band and justifyContent centres the stack inside it.
+          top: 130,
+          bottom: 90,
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          gap: 22,
+          zIndex: 1,
+        }}
+      >
+        <Vinyl size={VINYL_SIZE} />
+        {/* Extra air between the vinyl caption and the CTAs (owner call). */}
+        {ctaRow("hidden xl:flex", { marginTop: 28 })}
       </div>
+
+      {/* Sticker chaos + eyes — 1440-positioned decoration, hidden < lg */}
+      <div aria-hidden='true' className='hidden lg:block'></div>
 
       {/* Main type */}
       <div style={{ marginTop: 40, position: "relative" }}>
-        <div
-          style={{
-            fontFamily: fonts.mono,
-            fontWeight: 900,
-            fontSize: 32,
-            color: ink,
-            letterSpacing: "0.1em",
-            marginBottom: 8,
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-          }}
-        >
-          <span>HI, I'M</span>
-          <Squiggle w={120} color={red} />
-        </div>
         <h1
           style={{
             fontFamily: fonts.display,
@@ -452,24 +488,90 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
             textTransform: "uppercase",
           }}
         >
-          <ScrambleHover text='ABHISHEK' />
+          <span
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              columnGap: 16,
+              rowGap: 4,
+              fontFamily: fonts.mono,
+              fontWeight: 900,
+              fontSize: "clamp(15px, 1.67vw, 24px)",
+              lineHeight: 1.3,
+              letterSpacing: "0.1em",
+              marginBottom: 14,
+            }}
+          >
+            <span>{HERO_INTRO}</span>
+            <Squiggle w={120} color={red} />
+          </span>
+          <span style={{ position: "relative", display: "inline-block" }}>
+            <ScrambleHover text={NICK_FIRST} />
+            {/* Eye pair peeking out after SHAKE (owner ask): absolutely
+                placed in the ~140px gap before the vinyl, so it never moves
+                or covers anything. md+ only — on phones SHAKE fills the
+                width. */}
+            <span
+              aria-hidden='true'
+              className='hidden md:block'
+              style={{
+                position: "absolute",
+                left: "100%",
+                top: "50%",
+                marginLeft: 18,
+                transform: "translateY(-50%) rotate(-6deg)",
+                lineHeight: 0,
+              }}
+            >
+              <Eyes size={40} gap={10} />
+            </span>
+          </span>
           <br />
           <span
+            onClick={toggleMon}
             style={{
               color: red,
               position: "relative",
               display: "inline-block",
+              cursor: "pointer",
             }}
           >
-            <ScrambleHover text='CHANDRA' />
+            {/* key remounts ScrambleHover so it picks up the swapped word */}
+            <ScrambleHover key={`${nick}-a`} text={nick.slice(0, nickCut)} />
             <span
               style={{
                 display: "inline-block",
                 transform: "translateY(8px) rotate(-2deg)",
               }}
             >
-              <ScrambleHover text='SENAN' />
+              <ScrambleHover key={`${nick}-b`} text={nick.slice(nickCut)} />
             </span>
+            {mon && (
+              <span
+                aria-hidden='true'
+                // md+: beside the word. Phones get the in-flow copy below
+                // the h1 (beside MON it ran off a 393px screen).
+                className='hidden md:block'
+                style={{
+                  position: "absolute",
+                  left: "100%",
+                  top: "34%",
+                  marginLeft: 18,
+                  whiteSpace: "nowrap",
+                  fontFamily: fonts.hand,
+                  fontWeight: 700,
+                  fontSize: "clamp(20px, 2.2vw, 32px)",
+                  letterSpacing: 0,
+                  lineHeight: 1,
+                  textTransform: "none",
+                  color: ink,
+                  transform: "rotate(-6deg)",
+                }}
+              >
+                {NICK_EGG_NOTE}
+              </span>
+            )}
             <svg
               aria-hidden='true'
               style={{
@@ -490,13 +592,34 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               />
             </svg>
           </span>
+          {mon && (
+            <span
+              aria-hidden='true'
+              className='block md:hidden'
+              style={{
+                marginTop: 18,
+                fontFamily: fonts.hand,
+                fontWeight: 700,
+                fontSize: 24,
+                letterSpacing: 0,
+                lineHeight: 1,
+                textTransform: "none",
+                color: ink,
+                transform: "rotate(-3deg)",
+                transformOrigin: "left center",
+              }}
+            >
+              {NICK_EGG_NOTE}
+            </span>
+          )}
         </h1>
 
-        <div
-          className='flex flex-col items-start gap-8 lg:flex-row lg:gap-[60px]'
-          style={{ marginTop: 36, position: "relative" }}
-        >
+        <div style={{ marginTop: 36 }}>
           <p
+            // lg+: stop short of the absolute right column so the copy can
+            // never run under it — wider gap at xl+, where the ~560px CTA
+            // row sits in that (vertically centred) column.
+            className='max-w-[680px] lg:max-w-[min(680px,calc(100%_-_320px))] xl:max-w-[min(680px,calc(100%_-_630px))]'
             style={{
               fontFamily: fonts.body,
               fontWeight: 500,
@@ -504,7 +627,6 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
               lineHeight: "var(--text-lead--line-height)",
               color: ink,
               margin: 0,
-              maxWidth: 680,
             }}
           >
             {LEAD_PRE}
@@ -519,30 +641,11 @@ export default function Hero({ onLogoClick, clicks = 0 }: HeroProps) {
             </em>
             {LEAD_POST}
           </p>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 14,
-              marginTop: 8,
-              position: "relative",
-            }}
-          >
-            <MagneticButton kind='danger' onClick={goToWork}>
-              {CTA_WORK_TEXT} {CTA_WORK_ARROW.fancy}
-            </MagneticButton>
-            <MagneticButton kind='ghost' onClick={openCv}>
-              {CTA_CV}
-            </MagneticButton>
-            <span aria-hidden='true' className='hidden lg:inline'>
-              <Arrow
-                from={[-110, 60]}
-                to={[-10, 60]}
-                color={red}
-                label='start here'
-              />
-            </span>
-          </div>
+          {/* < xl fallback for the CTA row (see the right column). */}
+          {/* Centred on mobile/tablet; left-aligned under the lead at lg–xl. */}
+          {ctaRow("flex justify-center lg:justify-start xl:hidden", {
+            marginTop: 32,
+          })}
         </div>
       </div>
 

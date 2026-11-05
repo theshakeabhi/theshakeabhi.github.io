@@ -34,7 +34,7 @@ const PDF_URL = "/cv.pdf";
 // Copy shared by BOTH design modes, natural case — fancy uppercases via
 // CSS (MagneticButton faces), minimal lowercases via CSS.
 const RESUME_COPY =
-  "One page. PDF. No Comic Sans (here). Updated whenever I do something worth bragging about.";
+  "Two pages. PDF. No Comic Sans (here). Updated whenever I do something worth bragging about.";
 const CTA_PDF = "Download the PDF ↓";
 const CTA_PROFILE = "LinkedIn profile ↗";
 
@@ -66,8 +66,8 @@ const MINIMAL_LINK_CLASSES =
   "text-ink decoration-hairline hover:decoration-accent";
 
 const PAPER_SECTIONS = [
-  "FANPRO STUDIO · FRONTEND LEAD · '26",
-  "EXIMPE · LEAD FE · '22→'26",
+  "FANPRO STUDIO · LEAD SWE · '26",
+  "EXIMPE · LEAD SWE · '22→'26",
   "SELECTED WINS",
   "STACK",
 ];

@@ -1,7 +1,7 @@
 // P5 — Work slab (portfolio-1.jsx 288–463, README §Section Highlights).
 // Two mega-cards (4px border, 14px slab shadow, slight opposite rotations):
-// FanPro Studio (IN PRODUCTION rubber stamp, resume-true bullets) above
-// EximPe (SHIPPED & SCALED stamp, KPI tiles, 50K+ MAUs burst), followed by
+// FanPro Studio (resume-true bullets; rubber stamps removed Nov '26) above
+// EximPe (KPI tiles, 50K+ MAUs burst), followed by
 // the three BEFORE-EXIMPE tilt cards (Sawo Labs / QBurst / Zomato) with
 // metric stamps per bullet. Copy and metrics follow the Sep '26 resume
 // refresh (Zomato kept verbatim by owner's choice — see PRIOR_ROLES).
@@ -17,10 +17,10 @@ import Slab from "../components/primitives/Slab";
 import MinimalColumn from "../components/primitives/MinimalColumn";
 import Stamp from "../components/primitives/Stamp";
 import Burst from "../components/primitives/Burst";
-import PlaceholderImg from "../components/primitives/PlaceholderImg";
-import MagneticButton from "../components/interactive/MagneticButton";
-import RubberStamp from "../components/interactive/RubberStamp";
 import Tilt from "../components/interactive/Tilt";
+import ScreenCarousel, {
+  type ScreenSlide,
+} from "../components/interactive/ScreenCarousel";
 import ScrambleHover from "../components/text/ScrambleHover";
 import { usePrefs } from "../lib/prefs";
 import {
@@ -38,17 +38,16 @@ import {
 } from "../tokens";
 
 // Employer meta + status + tag copy shared by BOTH design modes, in
-// NATURAL case: fancy uppercases via CSS (RubberStamp, Stamp, the meta
+// NATURAL case: fancy uppercases via CSS (Stamp, the meta
 // lines), minimal lowercases its meta/sub lines via CSS. The minimal
 // sub-line derives from the same structured data the fancy chips render.
 const FANPRO_STATUS = "in production";
-const EXIMPE_STATUS = "shipped & scaled";
 const FANPRO_META = {
-  role: "Frontend Lead",
+  role: "Lead Software Engineer",
   date: "Mar '26 → Sep '26",
 } as const;
 const EXIMPE_META = {
-  role: "Lead Frontend Engineer",
+  role: "Lead Software Engineer",
   date: "May '22 → Mar '26",
 } as const;
 
@@ -62,7 +61,7 @@ interface EmployerTag {
 
 // Role is a past one now — no "Current" chip (resume: Mar → Sep 2026).
 const FANPRO_TAGS: EmployerTag[] = [
-  { text: "Frontend lead", color: red, rotate: -3 },
+  { text: "Lead software engineer", color: red, rotate: -3 },
   { text: "AI media", color: cyan, rotate: 2, sub: true },
   { text: "UAE · Remote", color: ink, rotate: -1, sub: true },
 ];
@@ -79,18 +78,73 @@ const subLine = (role: string, tags: EmployerTag[]) =>
 // Minimal-only names: the fancy titles are display-face JSX (FANPRO /
 // STUDIO AI line break, EXIM+PE color split) — the calm mode shows the
 // real casing instead.
+// Product screenshots (owner-supplied, Nov '26; cropped 1600×996 in
+// public/work/) — ONE list per employer, read by both design modes.
+const FANPRO_SLIDES: ScreenSlide[] = [
+  {
+    src: "/work/fanpro-explore.jpg",
+    alt: "FanPro Studio Explore page: a 'Create your AI influencer today' banner above Hijack, AI influencer and AI video generation tiles.",
+    caption: "Explore: the creation hub",
+  },
+  {
+    src: "/work/fanpro-images.jpg",
+    alt: "FanPro Studio Images tool: influencer picker and prompt panel beside a gallery of generated sci-fi scenes.",
+    caption: "Images: influencer shots",
+  },
+  {
+    src: "/work/fanpro-socials.jpg",
+    alt: "FanPro Studio Socials calendar: a week view with a posting heat map.",
+    caption: "Socials: content calendar",
+  },
+  {
+    src: "/work/fanpro-create-post.jpg",
+    alt: "FanPro Studio Create Post screen: post, reel and story composer with Instagram settings and a live post preview.",
+    caption: "Create post: compose & schedule",
+  },
+];
+const EXIMPE_SLIDES: ScreenSlide[] = [
+  {
+    src: "/work/eximpe-login.jpg",
+    alt: "EximPe app login: phone-number sign-in beside an FX savings card comparing bank rate with the EximPe rate.",
+    caption: "Exporter app: login",
+  },
+  {
+    src: "/work/eximpe-merchant-signup.jpg",
+    alt: "EximPe merchant portal sign-up: 'Collect payments from India with ease' with UPI, RuPay and net-banking methods.",
+    caption: "Merchant portal: sign-up",
+  },
+];
+
 const FANPRO_MINIMAL_NAME = "FanPro Studio";
 const EXIMPE_MINIMAL_NAME = "EximPe";
 
 // EximPe KPI tiles — every metric is on the master resume (−60% incidents
 // lives in the bullets; the old −50% API latency / +30% revenue-flow
 // tiles were unbacked and are gone).
-const WINS = [
+interface Win {
+  metric: string;
+  kicker: string;
+  color: string;
+}
+const WINS: Win[] = [
   { metric: "25% → 85%", kicker: "mobile KYC completion", color: red },
   { metric: "−30%", kicker: "transaction time", color: cyan },
   { metric: "−40%", kicker: "JS bundle", color: ink },
   { metric: "39 → 81", kicker: "Lighthouse performance", color: red },
-] as const;
+];
+// FanPro tiles (owner ask, Nov '26 — mirror EximPe). Every number is on the
+// resume: CLS 0.66 → 0.003, empty repo → public beta Mar → Jun '26 (four
+// months), 20+ generation types, scheduling across 11+ social platforms
+// (owner wording, Nov '26).
+const FANPRO_WINS: Win[] = [
+  // 0.66 → 0.003 is a 99.5% drop; the short form keeps this grid's
+  // shared metric size large on phones (owner: even tiles).
+  { metric: "−99%", kicker: "explore-page layout shift", color: red },
+  { metric: "4 mo", kicker: "empty repo → public beta", color: cyan },
+  { metric: "20+", kicker: "generation types", color: ink },
+  { metric: "11+", kicker: "social platforms with scheduling", color: red },
+  { metric: "3", kicker: "juniors mentored", color: cyan },
+];
 
 // Resume-true (Sep '26 refresh): empty repo → public beta, plus the
 // numbers the resume actually backs.
@@ -400,6 +454,99 @@ function MetricTile({
   );
 }
 
+/** Fancy 2×2 metric tiles under a card's screenshots (EximPe + FanPro). */
+function WinTiles({ wins }: { wins: Win[] }) {
+  // ONE metric size per grid, set by its longest metric, so every tile
+  // reads the same (owner: "make that look even"). Sized against the grid
+  // wrapper (inline-size container): a half-column is (50cqw − 6px gap)
+  // minus 24px padding + 6px border; Archivo Black ≈ 0.72em per glyph.
+  // Capped at the 26px design size, so wide screens are unchanged-ish.
+  const longest = Math.max(...wins.map((w) => w.metric.length));
+  const metricSize = `min(26px, calc((50cqw - 36px) / ${(longest * 0.72).toFixed(2)}))`;
+  return (
+    <div style={{ containerType: "inline-size", marginTop: 22 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          // Every row as tall as the tallest, so 1-, 2- and 3-line
+          // kickers don't make a ragged grid.
+          gridAutoRows: "1fr",
+          gap: 12,
+        }}
+      >
+        {wins.map((w, i) => (
+          <div
+            key={i}
+            style={{
+              border: borders.default,
+              padding: "10px 12px",
+              background: cream,
+              transform: `rotate(${i % 2 ? -0.5 : 0.5}deg)`,
+              minWidth: 0,
+              // Odd count → the last tile spans the full row.
+              gridColumn:
+                wins.length % 2 && i === wins.length - 1 ? "1 / -1" : undefined,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: fonts.display,
+                fontWeight: 900,
+                fontSize: metricSize,
+                color: w.color,
+                lineHeight: 1,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {w.metric}
+            </div>
+            <div
+              style={{
+                fontFamily: fonts.mono,
+                fontWeight: 600,
+                fontSize: 11,
+                color: ink,
+                marginTop: 6,
+                letterSpacing: "0.05em",
+                lineHeight: 1.4,
+                textTransform: "uppercase",
+              }}
+            >
+              {w.kicker}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Minimal inline "metric kicker" row (mock truth: natural-case kickers). */
+function MinimalWins({ wins }: { wins: Win[] }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "8px 22px",
+        marginTop: 14,
+        fontFamily: fonts.mono,
+        fontWeight: 400,
+        fontSize: 12,
+        letterSpacing: "0.04em",
+        color: slate,
+      }}
+    >
+      {wins.map((w, i) => (
+        <span key={i}>
+          <b style={{ color: ink, fontWeight: 700 }}>{w.metric}</b> {w.kicker}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function Work() {
   const { minimal } = usePrefs();
 
@@ -425,37 +572,24 @@ export default function Work() {
               <span style={{ color: accent }}>{FANPRO_STATUS}</span>
             </p>
             <MinimalBullets bullets={FANPRO_BULLETS} />
+            <ScreenCarousel
+              slides={FANPRO_SLIDES}
+              label='FanPro Studio product screens'
+            />
+            <MinimalWins wins={FANPRO_WINS} />
           </MinimalRoleBlock>
 
           <MinimalRoleBlock name={EXIMPE_MINIMAL_NAME} date={EXIMPE_META.date}>
-            {/* Mockup truth: EximPe's minimal sub-line carries NO status —
-                "shipped & scaled" renders in fancy's RubberStamp alone. */}
+            {/* Mockup truth: EximPe's minimal sub-line carries NO status. */}
             <p style={minimalRoleSubStyle}>
               {subLine(EXIMPE_META.role, EXIMPE_TAGS)}
             </p>
             <MinimalBullets bullets={EXIMPE_BULLETS} />
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px 22px",
-                marginTop: 14,
-                fontFamily: fonts.mono,
-                fontWeight: 400,
-                fontSize: 12,
-                letterSpacing: "0.04em",
-                color: slate,
-                // NO lowercase here — the kickers keep their natural case
-                // ("mobile KYC completion", "JS bundle") per mock.
-              }}
-            >
-              {WINS.map((w, i) => (
-                <span key={i}>
-                  <b style={{ color: ink, fontWeight: 700 }}>{w.metric}</b>{" "}
-                  {w.kicker}
-                </span>
-              ))}
-            </div>
+            <ScreenCarousel
+              slides={EXIMPE_SLIDES}
+              label='EximPe product screens'
+            />
+            <MinimalWins wins={WINS} />
           </MinimalRoleBlock>
 
           {PRIOR_ROLES.map((role, i) => (
@@ -530,13 +664,6 @@ export default function Work() {
           marginBottom: 70,
         }}
       >
-        <RubberStamp
-          text={FANPRO_STATUS}
-          color={red}
-          rotate={-14}
-          size={200}
-          style={{ bottom: -28, left: "min(360px, 45%)" }}
-        />
         <div className='grid grid-cols-1 gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-[50px]'>
           <div>
             <div
@@ -632,15 +759,13 @@ export default function Work() {
             </ul>
           </div>
 
-          {/* Right: product placeholder — no KPI tiles until the numbers
-              are real (no invented metrics for FanPro). */}
+          {/* Right: product screenshots + resume-backed wins. */}
           <div style={{ position: "relative" }}>
-            <PlaceholderImg
-              w='100%'
-              h={440}
-              label='Product Screens'
-              tone='mid'
+            <ScreenCarousel
+              slides={FANPRO_SLIDES}
+              label='FanPro Studio product screens'
             />
+            <WinTiles wins={FANPRO_WINS} />
           </div>
         </div>
       </div>
@@ -656,13 +781,6 @@ export default function Work() {
           transform: "rotate(0.35deg)",
         }}
       >
-        <RubberStamp
-          text={EXIMPE_STATUS}
-          color={red}
-          rotate={-14}
-          size={200}
-          style={{ bottom: -28, left: "min(360px, 45%)" }}
-        />
         <div className='grid grid-cols-1 gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-[50px]'>
           <div>
             <div
@@ -756,13 +874,11 @@ export default function Work() {
             </ul>
           </div>
 
-          {/* Right: product placeholder + wins */}
+          {/* Right: product screenshots + wins */}
           <div style={{ position: "relative" }}>
-            <PlaceholderImg
-              w='100%'
-              h={320}
-              label='Product Screens'
-              tone='mid'
+            <ScreenCarousel
+              slides={EXIMPE_SLIDES}
+              label='EximPe product screens'
             />
             <div
               aria-hidden='true'
@@ -789,54 +905,7 @@ export default function Work() {
                 MAUs
               </div>
             </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 12,
-                marginTop: 22,
-              }}
-            >
-              {WINS.map((w, i) => (
-                <div
-                  key={i}
-                  style={{
-                    border: borders.default,
-                    padding: "10px 12px",
-                    background: cream,
-                    transform: `rotate(${i % 2 ? -0.5 : 0.5}deg)`,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: fonts.display,
-                      fontWeight: 900,
-                      fontSize: 26,
-                      color: w.color,
-                      lineHeight: 1,
-                    }}
-                  >
-                    {w.metric}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: fonts.mono,
-                      fontWeight: 600,
-                      fontSize: 11,
-                      color: ink,
-                      marginTop: 4,
-                      letterSpacing: "0.05em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {w.kicker}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{ marginTop: 22 }}>
-              <MagneticButton kind='primary'>CASE STUDY →</MagneticButton>
-            </div>
+            <WinTiles wins={WINS} />
           </div>
         </div>
       </div>

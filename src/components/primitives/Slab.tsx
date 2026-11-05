@@ -26,7 +26,16 @@ export default function Slab({
         background: bg,
         // README §Spacing: 90px vertical (sections after the hero override
         // paddingTop to 110px); horizontal is fluid: clamp(20px, 5.5vw, 80px).
-        padding: `${spacing.slabY} ${spacing.slabX}`,
+        // Longhands, not the `padding` shorthand: callers override
+        // paddingTop/paddingBottom, and mixing the two warns in React on
+        // the minimal ⇄ funky re-render.
+        paddingTop: spacing.slabY,
+        paddingBottom: spacing.slabY,
+        // gutter = slabX until the viewport outgrows the 1280 content
+        // max, then whatever centres the content (full-bleed background).
+        paddingLeft: spacing.gutter,
+        // + ribbon width, so the visible right gutter matches the left.
+        paddingRight: spacing.gutterRight,
         overflow: "hidden",
         ...style,
       }}

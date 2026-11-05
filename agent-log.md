@@ -1385,3 +1385,64 @@ History before this date lives earlier in this file.
 - **Files touched**: `src/lib/useLastfmTrack.ts` (new), `src/sections/NowBoard.tsx`, `src/pages/privacy.astro`; per-folder logs for src/lib, src/sections, src/pages.
 - **Decisions/deviations**: Last.fm chosen over a Spotify serverless proxy (no backend on Pages). Inert until `LASTFM_API_KEY` is filled in.
 - **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean.
+
+## Work screenshots + Hero eyes + Stack aside · 2026-11-05T11:55:00+05:30
+
+- **Files touched**: `src/components/interactive/ScreenCarousel.tsx` (new), `src/sections/{Work,Hero,Skills}.tsx`; per-folder logs for src/components/interactive, src/sections.
+- **[public/]** `public/work/*.jpg` (new, 6 files, ~1.1MB): owner screenshots cropped to the browser window (no macOS shadow — trap 7) and resized to 1600×996 JPEG q78 via sips. Raw `Screenshot 2026-11-05 at *.png` files at repo root left untouched for the owner.
+- **Self-check**: `yarn build` (astro check 0/0/0) + eslint clean; dist/work ships all six.
+
+## Hero polish + wordmark rename · 2026-11-05T12:05:00+05:30
+
+- **Files touched**: `src/sections/Hero.tsx`, `src/components/chrome/MinimalToggle.tsx`; per-folder logs for src/sections, src/components/chrome.
+- **Decisions/deviations**: wordmark is now SHAKEABHI; start-here arrow given its own gap; funky nav lowered / toggle raised.
+- **Self-check**: `yarn build` (astro check 0 errors) + eslint clean.
+
+## About portrait · 2026-11-05T12:12:00+05:30
+
+- **Files touched**: `src/sections/{About,Hero}.tsx`; src/sections log.
+- **[public/]** `public/portrait.jpg` (new, 600×760, ~130KB): cropped from the owner's 2268×4032 photo via sips (raw `94F69E76-….JPG` left at repo root for the owner).
+- **Self-check**: `yarn build` + eslint clean.
+
+## Hero rename: SHAKE ABHI + Shake Mon egg · 2026-11-05T12:30:00+05:30
+
+- **Files touched**: `src/sections/Hero.tsx`, `src/components/chrome/PreferencesMenu.tsx`; logs for src/sections, src/components/chrome. Also earlier this session: SENIOR stamp removed.
+- **Self-check**: `yarn build` + eslint clean; full real name present in the pre-rendered h1.
+
+## Hero vinyl + SHAKE ME · 2026-11-05T13:05:00+05:30
+
+- **Files touched**: new `src/components/interactive/{Vinyl.tsx,vinylScratch.ts,ShakeMe.tsx}`; `src/sections/Hero.tsx`, `src/styles/global.css`, `src/components/primitives/Slab.tsx`, `src/lib/useLastfmTrack.ts`; per-folder logs for each.
+- **Decisions/deviations**: scratch synth kept outside the frozen Sfx contract; Slab warning fixed in passing.
+- **Self-check**: `yarn build` + eslint clean; no console errors/warnings in either mode.
+
+## [public/] FanPro slides: sidebar promo card replaced · 2026-11-05T13:25:00+05:30
+
+- **Files touched**: `public/work/fanpro-{explore,images,socials,create-post}.jpg` regenerated.
+- **Decisions/deviations**: owner-supplied clean card (`Screenshot 2026-11-05 at 12.42.46.png`: "Up to 50% off · 0 · See Pricing" + generic My Account) alpha-composited at (156, 1618) on each 3248×2122 original — offset found by locating the lime card border (identical position in all four) — via Pillow in a scratch venv, then the same sips crop (2974×1852 @ 133,96) → 1600w JPEG q78. Repo originals untouched.
+- **Self-check**: zoomed seam checks clean on all four; slides re-viewed.
+
+## Content max-width (1280) on wide screens · 2026-11-05T14:10:00+05:30
+
+- **Files touched**: `src/styles/global.css`, `src/tokens.ts`, `src/components/primitives/Slab.tsx`, `src/sections/{Hero,NowBoard,Contact}.tsx`; per-folder logs.
+- **Self-check**: `yarn build` + eslint clean; 1440/1920/2560 verified, minimal unaffected (MinimalColumn already 720).
+
+### [public/] cv.pdf replaced · 2026-11-05T14:30:00+05:30
+
+- **Files touched**: `public/cv.pdf` ← owner's new `abhishek-chandrasenan.pdf` (101,704 bytes). Only text change vs the old PDF: both lead titles now read "Lead Software Engineer" (FanPro, was "Frontend Lead"; EximPe, was "Lead Frontend Engineer").
+- **Decisions/deviations**: site copy still says Frontend Lead / Lead Frontend Engineer (Hero lead, Work meta + tag, Resume line) — flagged to the owner, not changed.
+- **Self-check**: build ships dist/cv.pdf byte-identical to the new file.
+
+## Site titles synced to the new CV · 2026-11-05T15:05:00+05:30
+
+- **Files touched**: `src/sections/{Work,Hero,Resume}.tsx`; src/sections log.
+- **Self-check**: `yarn build` + eslint clean; no "Frontend Lead"/"Lead Frontend Engineer" left in src.
+
+## Mobile polish pass (iPhone 16) · 2026-11-05T15:20:00+05:30
+
+- **Files touched**: `src/sections/{Hero,About,Work,NowBoard,Contact}.tsx`; src/sections log.
+- **Self-check**: `yarn build` + eslint clean; 393px screenshots verified.
+
+## iPad mini pass + ribbon-aware gutter + vinyl hint · 2026-11-05T16:00:00+05:30
+
+- **Files touched**: `src/styles/global.css`, `src/tokens.ts`, `src/components/primitives/Slab.tsx`, `src/components/chrome/PreferencesMenu.tsx`, `src/sections/{About,NowBoard,Contact,Hero}.tsx`; per-folder logs.
+- **Self-check**: `yarn build` + eslint clean; overflow audit clean at 393/768/1024/1440 (+ minimal 768).

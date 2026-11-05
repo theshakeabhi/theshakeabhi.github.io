@@ -33,37 +33,53 @@ interface RecentTracksResponse {
   };
 }
 
+// One in-flight/recent request shared by every caller (NowBoard's
+// Listening note + the Hero vinyl) so the page polls Last.fm once, not
+// once per component.
+const SHARE_MS = 30_000;
+let shared: { at: number; p: Promise<LastfmTrack | null> } | null = null;
+
+function fetchTrack(): Promise<LastfmTrack | null> {
+  const now = Date.now();
+  if (shared && now - shared.at < SHARE_MS) return shared.p;
+  const endpoint =
+    "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks" +
+    `&user=${encodeURIComponent(LASTFM_USER)}` +
+    `&api_key=${encodeURIComponent(LASTFM_API_KEY)}&format=json&limit=1`;
+  const p = (async () => {
+    try {
+      const res = await fetch(endpoint);
+      if (!res.ok) return null;
+      const data = (await res.json()) as RecentTracksResponse;
+      const t = data.recenttracks?.track?.[0];
+      const name = t?.name?.trim();
+      const artist = t?.artist?.["#text"]?.trim();
+      if (!name || !artist) return null;
+      return {
+        name,
+        artist,
+        url: t?.url ?? `https://www.last.fm/user/${LASTFM_USER}`,
+        nowPlaying: t?.["@attr"]?.nowplaying === "true",
+      };
+    } catch {
+      return null; // network/parse failure — callers keep what they had
+    }
+  })();
+  shared = { at: now, p };
+  return p;
+}
+
 export function useLastfmTrack(): LastfmTrack | null {
   const [track, setTrack] = useState<LastfmTrack | null>(null);
 
   useEffect(() => {
     if (!LASTFM_API_KEY) return;
     let cancelled = false;
-    const ctrl = new AbortController();
-    const endpoint =
-      "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks" +
-      `&user=${encodeURIComponent(LASTFM_USER)}` +
-      `&api_key=${encodeURIComponent(LASTFM_API_KEY)}&format=json&limit=1`;
 
     const load = async () => {
       if (document.hidden) return;
-      try {
-        const res = await fetch(endpoint, { signal: ctrl.signal });
-        if (!res.ok) return;
-        const data = (await res.json()) as RecentTracksResponse;
-        const t = data.recenttracks?.track?.[0];
-        const name = t?.name?.trim();
-        const artist = t?.artist?.["#text"]?.trim();
-        if (cancelled || !name || !artist) return;
-        setTrack({
-          name,
-          artist,
-          url: t?.url ?? `https://www.last.fm/user/${LASTFM_USER}`,
-          nowPlaying: t?.["@attr"]?.nowplaying === "true",
-        });
-      } catch {
-        // Network/abort/parse failure — keep whatever we last showed.
-      }
+      const t = await fetchTrack();
+      if (!cancelled && t) setTrack(t);
     };
 
     void load();
@@ -74,7 +90,6 @@ export function useLastfmTrack(): LastfmTrack | null {
     document.addEventListener("visibilitychange", onVisible);
     return () => {
       cancelled = true;
-      ctrl.abort();
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };

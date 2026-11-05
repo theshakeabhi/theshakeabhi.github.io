@@ -150,9 +150,10 @@ your package number. Only P0 touches `package.json` / lockfile.
 The design is 1440px-native and re-flows (no viewport-scale hack):
 
 - **≥1440px**: exact design sizes (fluid type caps at spec).
-- **<1024px (lg)**: two-column sections stack to a single column.
-- **<768px (md)**: cork board becomes a vertical list of notes;
-  SectionDividers render a static centered tag row (no marquee);
+- **<1024px (lg)**: two-column sections stack to a single column; the
+  Now cork board becomes a static note grid (2 cols from 640px, 1 col
+  on phones) — the 1280-design board overlapped its notes at 768.
+- **<768px (md)**: SectionDividers render a static centered tag row (no marquee);
   SideRibbon is not rendered.
 - **pointer: coarse**: no custom cursor, no cursor trail, no eye tracking,
   no magnetic pull (tap-scale instead). Sticky-note drag still works

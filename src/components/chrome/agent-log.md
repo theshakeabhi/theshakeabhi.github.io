@@ -30,3 +30,18 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Files touched**: `PreferencesMenu.tsx` — returns null when `prefs.minimal` (guard after all hooks); the minimal-only "SFX / CURSOR / MAGNETIC apply to funky mode" note is gone (unreachable); flipping the Funky row also closes the panel so it reopens closed.
 - **Decisions/deviations**: owner request. Mode switching in minimal is the top-right `MinimalToggle` only. SSR output (minimal default) no longer contains the button, so no hydration diff.
 - **Self-check**: build + eslint clean; `TWEAKS` absent from dist/index.html.
+
+## FUNKY toggle nudged up in funky · 2026-11-05T12:05:00+05:30
+
+- **Files touched**: `MinimalToggle.tsx` — `top: minimal ? 28 : 18` (funky sits just under the 14px ScrollProgress strip, clear of the hero nav row / AVAILABLE FOR HIRE).
+- **Self-check**: screenshots at 1024/1440 in both modes; build + eslint clean.
+
+## Tweaks hint for the Shake Mon egg · 2026-11-05T12:30:00+05:30
+
+- **Files touched**: `PreferencesMenu.tsx` — HINTS gains "Click the red name in the hero to see what everyone actually calls me."
+- **Self-check**: build + eslint clean.
+
+## Tweaks: vinyl hint · 2026-11-05T16:00:00+05:30
+
+- **Files touched**: `PreferencesMenu.tsx` — HINTS gains "Grab the vinyl in the hero and spin it — scratch it (sound on for the full effect)."
+- **Self-check**: build + eslint clean.

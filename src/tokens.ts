@@ -93,6 +93,10 @@ export const text = {
 /* ── Spacing ────────────────────────────────────────────────── */
 export const spacing = {
   slabX: "var(--spacing-slab-x)",
+  /** slabX, widened on > 1440 screens so content caps at --content-max. */
+  gutter: "var(--spacing-gutter)",
+  /** gutter + the SideRibbon's width — use for anything anchored to the RIGHT edge. */
+  gutterRight: "calc(var(--spacing-gutter) + var(--ribbon-w))",
   slabY: "var(--spacing-slab-y)",
   slabTopDeep: "var(--spacing-slab-top-deep)",
 } as const;
