@@ -22,3 +22,14 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
   visitor on funky; no stored value now means minimal.
 - **Self-check**: build/check/lint clean; SSR + first client render agree
   (no hydration warnings in a headless run).
+
+## Last.fm now-playing hook · 2026-11-05T11:21:00+05:30
+
+- **Files touched**: `useLastfmTrack.ts` (new) — fetches `user.getrecenttracks` (limit 1) for `theshakeabhi`; 90s poll while visible + refetch on visibilitychange; null on SSR/first paint/failure/empty key.
+- **Decisions/deviations**: owner linked Spotify → Last.fm (Spotify's API needs a secret; GitHub Pages has no backend). The read-only API key ships in source by design; the shared secret is never used. `LASTFM_API_KEY` is empty until the owner provides it — the hook is a no-op until then.
+- **Self-check**: build (astro check 0/0/0) + eslint clean.
+
+## Last.fm API key set · 2026-11-05T11:24:00+05:30
+
+- **Files touched**: `useLastfmTrack.ts` — `LASTFM_API_KEY` filled with the owner's read-only key (shared secret deliberately NOT stored anywhere).
+- **Self-check**: live call returns 200 with `access-control-allow-origin: *`; account has 0 scrobbles so far, so the static fallback shows until Spotify scrobbling starts. Build + eslint clean.

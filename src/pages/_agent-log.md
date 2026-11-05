@@ -49,3 +49,13 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Decisions/deviations**: storage failure / no JS now falls back to
   minimal, matching the pre-rendered island.
 - **Self-check**: all four built pages carry `<html lang="en" data-minimal>`.
+
+## Remove Writing + Playground sections · 2026-11-05T10:59:30+05:30
+
+- **Files touched**: `index.astro` — meta description no longer advertises "writing, playground".
+- **Self-check**: build OK.
+
+## Privacy: Last.fm disclosure · 2026-11-05T11:21:00+05:30
+
+- **Files touched**: `privacy.astro` — §04 discloses the browser-side Last.fm lookup (IP visible to Last.fm, no cookies); meta description + "Last updated" (November 5, 2026) bumped.
+- **Self-check**: build OK.

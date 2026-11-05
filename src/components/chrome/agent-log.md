@@ -24,3 +24,9 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Self-check**: headless 1440 run — fresh visit minimal, FUNKY click →
   full-fat (+ flourishes, theme-color cream), persists over reload, flips
   back; zero console errors/warnings.
+
+## Tweaks menu hidden in minimal · 2026-11-05T11:04:00+05:30
+
+- **Files touched**: `PreferencesMenu.tsx` — returns null when `prefs.minimal` (guard after all hooks); the minimal-only "SFX / CURSOR / MAGNETIC apply to funky mode" note is gone (unreachable); flipping the Funky row also closes the panel so it reopens closed.
+- **Decisions/deviations**: owner request. Mode switching in minimal is the top-right `MinimalToggle` only. SSR output (minimal default) no longer contains the button, so no hydration diff.
+- **Self-check**: build + eslint clean; `TWEAKS` absent from dist/index.html.

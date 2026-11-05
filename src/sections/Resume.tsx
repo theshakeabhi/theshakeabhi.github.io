@@ -87,7 +87,7 @@ export default function Resume() {
       >
         <MinimalColumn>
           <div style={minimalLabelStyle}>
-            <span>09 / cv</span>
+            <span>06 / cv</span>
           </div>
           <p
             style={{
@@ -144,7 +144,7 @@ export default function Resume() {
   return (
     <Slab
       bg={creamWarm}
-      label='09 // CV'
+      label='06 // CV'
       id='cv'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",

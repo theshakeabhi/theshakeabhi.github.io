@@ -23,3 +23,8 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Self-check**: gates green (check 0/0/0, lint clean, build OK); dist
   contains "SIX YEARS OF SHIPPING" ×6 (marquee repeat), zero "SEVEN
   YEARS".
+
+## Remove Writing + Playground sections · 2026-11-05T10:59:30+05:30
+
+- **Files touched**: `Portfolio.tsx` — dropped the Writing/Playground imports and mounts (they sat between NowBoard and the Testimonials gate; no dividers attached).
+- **Self-check**: build + lint clean.

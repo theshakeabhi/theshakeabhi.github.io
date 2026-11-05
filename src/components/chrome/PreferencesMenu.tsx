@@ -116,6 +116,11 @@ export default function PreferencesMenu() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, close]);
 
+  // Minimal mode is quiet chrome: no Tweaks button at all (owner call,
+  // Nov '26). Mode switching stays on the top-right MinimalToggle. Guard
+  // AFTER all hooks; the island pre-renders minimal, so SSR emits nothing.
+  if (prefs.minimal) return null;
+
   return (
     <div
       style={{
@@ -162,67 +167,53 @@ export default function PreferencesMenu() {
             key={key}
             label={label}
             checked={invert ? !prefs[key] : prefs[key]}
-            onToggle={() => prefs.setPref(key, !prefs[key])}
+            onToggle={() => {
+              prefs.setPref(key, !prefs[key]);
+              // Leaving funky unmounts the menu — reopen it closed later.
+              if (key === "minimal") setOpen(false);
+            }}
           />
         ))}
-        {prefs.minimal ? (
-          // Minimal mode mutes sfx, hides the cursor pieces and freezes the
-          // magnet — say so instead of listing eggs that are all inert.
+        <>
           <div
             style={{
-              marginTop: 10,
+              height: 2,
+              background: ink,
+              margin: "12px 0 10px",
+            }}
+          />
+          <div
+            style={{
               fontFamily: fonts.mono,
-              fontWeight: 500,
+              fontWeight: 900,
               fontSize: 11,
-              letterSpacing: "0.08em",
-              lineHeight: 1.6,
-              color: slate,
+              letterSpacing: "0.2em",
+              color: ink,
+              marginBottom: 6,
             }}
           >
-            SFX / CURSOR / MAGNETIC apply to funky mode.
+            EASTER EGGS
           </div>
-        ) : (
-          <>
-            <div
-              style={{
-                height: 2,
-                background: ink,
-                margin: "12px 0 10px",
-              }}
-            />
-            <div
-              style={{
-                fontFamily: fonts.mono,
-                fontWeight: 900,
-                fontSize: 11,
-                letterSpacing: "0.2em",
-                color: ink,
-                marginBottom: 6,
-              }}
-            >
-              EASTER EGGS
-            </div>
-            <ul
-              style={{
-                listStyle: "none",
-                margin: 0,
-                padding: "2px 0 0",
-                fontFamily: fonts.body,
-                fontWeight: 500,
-                fontSize: 13,
-                lineHeight: 1.45,
-                color: slate,
-                display: "flex",
-                flexDirection: "column",
-                gap: 4,
-              }}
-            >
-              {HINTS.map((hint, i) => (
-                <li key={i}>✶ {hint}</li>
-              ))}
-            </ul>
-          </>
-        )}
+          <ul
+            style={{
+              listStyle: "none",
+              margin: 0,
+              padding: "2px 0 0",
+              fontFamily: fonts.body,
+              fontWeight: 500,
+              fontSize: 13,
+              lineHeight: 1.45,
+              color: slate,
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+            }}
+          >
+            {HINTS.map((hint, i) => (
+              <li key={i}>✶ {hint}</li>
+            ))}
+          </ul>
+        </>
       </section>
       <button
         ref={toggleRef}

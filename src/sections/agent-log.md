@@ -86,3 +86,26 @@ entry rather than an edit.
   "Kochi · On-site"/"2019 → 2022"/"THREE WARM-UPS" present in HTML and
   JS bundle; "2020 → 2022"/"TWO WARM-UPS" gone; all other refresh
   strings unchanged.
+
+## Remove Writing + Playground sections · 2026-11-05T10:59:30+05:30
+
+- **Files touched**: deleted `Writing.tsx`, `Playground.tsx`; `Hero.tsx` (NAV drops the "Writing" → #writing link), `Resume.tsx` (09 → 06), `Contact.tsx` (10 → 07).
+- **Decisions/deviations**: owner request — Writing was placeholder posts (all hrefs → dev.to profile), Playground cut. Slab labels and minimal `NN / name` rows renumbered together so both modes match. `Testimonials.tsx` (still unmounted, content empty) keeps its `08` label — renumber it when it ships.
+- **Self-check**: `yarn build` (astro check 0/0/0) OK; `npx eslint .` clean.
+
+## Now board copy refresh · 2026-11-05T11:04:00+05:30
+
+- **Files touched**: `NowBoard.tsx` — notes cut from 8 to 5: Building (Moments), Reading (Atomic Habits), Listening (unchanged, pending a Spotify decision), Drinking (cortado / French press), Open to (any development). Mentoring (n3), Obsessing over (n5), Avoiding (n6) removed; stamp → "Updated Nov '26".
+- **Decisions/deviations**: surviving ids kept so stored `sticky_v2_<id>` positions still apply (trap 4); defaults re-laid 3-over-2 on the 1280×560 board; n1/n7/n8 resized for the longer copy; n8 recoloured lavender so it does not repeat n1 yellow. Both modes read the one NOTES array.
+- **Self-check**: build (astro check 0/0/0) + eslint clean; new copy present in the bundle.
+
+## Live Listening note · 2026-11-05T11:21:00+05:30
+
+- **Files touched**: `NowBoard.tsx` — `withLiveListening` swaps n4's body for the latest Last.fm scrobble ("On repeat right now" / "Last played": "track" by artist) in all three renders (minimal rows, compact list, cork board).
+- **Decisions/deviations**: hook called before the minimal guard; static n4 copy is the SSR/fallback text, so first paint is identical. Plain text, no link (notes are drag targets).
+- **Self-check**: build + eslint clean.
+
+## Listening fallback copy · 2026-11-05T11:30:00+05:30
+
+- **Files touched**: `NowBoard.tsx` — n4 static/fallback body now owner copy: techno, hard techno, schranz, indie.
+- **Self-check**: build + eslint clean.

@@ -130,17 +130,17 @@ usePrefs(): {
 
 ## File ownership (never edit a file you don't own)
 
-| Pkg | Owns                                                                                                                                                                                                                      |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P0  | Foundation: package.json, configs, `src/styles/global.css`, `src/tokens.ts`, `src/lib/prefs.tsx`, `src/lib/useMediaQuery.ts`, `src/components/primitives/*`, all stubs until their owner lands                            |
-| P1  | Pointer: `src/components/pointer/*` (PointerProvider, CustomCursor, CursorTrail, Hover)                                                                                                                                   |
-| P2  | Magnetic + tilt: `src/components/interactive/MagneticButton.tsx`, `Tilt.tsx`                                                                                                                                              |
-| P3  | Eyes/sticky/stamps: `src/components/interactive/Eyes.tsx`, `StickyNote.tsx`, `Tape.tsx`, `RubberStamp.tsx`, `Scribble.tsx`, `Arrow.tsx`                                                                                   |
-| P4  | Text/marquee/chrome/sfx: `src/components/text/*` (Scramble, ScrambleHover, Marquee), `src/components/chrome/SideRibbon.tsx`, `ScrollProgress.tsx`, `src/lib/sfx.ts`                                                       |
-| P5  | Sections: `src/sections/Hero.tsx`, `About.tsx`, `Skills.tsx`, `Work.tsx`                                                                                                                                                  |
-| P6  | Sections: `src/sections/NowBoard.tsx`, `Writing.tsx`, `Playground.tsx`, `Testimonials.tsx`, `Resume.tsx`, `Contact.tsx` + `src/components/chrome/RaveOverlay.tsx` + `useLocalTime`/`useEasterEgg` hooks + `src/content/*` |
-| P7  | PreferencesMenu + `src/portfolio/Portfolio.tsx` integration (rave/Konami/logo wiring, sfx mute wiring, reduced-motion audit)                                                                                              |
-| P8  | Launch pages: privacy/terms/404, CookieConsent, `public/robots.txt`, `public/og.png`, favicons, `src/pages/index.astro` head                                                                                              |
+| Pkg | Owns                                                                                                                                                                                           |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0  | Foundation: package.json, configs, `src/styles/global.css`, `src/tokens.ts`, `src/lib/prefs.tsx`, `src/lib/useMediaQuery.ts`, `src/components/primitives/*`, all stubs until their owner lands |
+| P1  | Pointer: `src/components/pointer/*` (PointerProvider, CustomCursor, CursorTrail, Hover)                                                                                                        |
+| P2  | Magnetic + tilt: `src/components/interactive/MagneticButton.tsx`, `Tilt.tsx`                                                                                                                   |
+| P3  | Eyes/sticky/stamps: `src/components/interactive/Eyes.tsx`, `StickyNote.tsx`, `Tape.tsx`, `RubberStamp.tsx`, `Scribble.tsx`, `Arrow.tsx`                                                        |
+| P4  | Text/marquee/chrome/sfx: `src/components/text/*` (Scramble, ScrambleHover, Marquee), `src/components/chrome/SideRibbon.tsx`, `ScrollProgress.tsx`, `src/lib/sfx.ts`                            |
+| P5  | Sections: `src/sections/Hero.tsx`, `About.tsx`, `Skills.tsx`, `Work.tsx`                                                                                                                       |
+| P6  | Sections: `src/sections/NowBoard.tsx`, `Testimonials.tsx`, `Resume.tsx`, `Contact.tsx` + `src/components/chrome/RaveOverlay.tsx` + `useLocalTime`/`useEasterEgg` hooks + `src/content/*`       |
+| P7  | PreferencesMenu + `src/portfolio/Portfolio.tsx` integration (rave/Konami/logo wiring, sfx mute wiring, reduced-motion audit)                                                                   |
+| P8  | Launch pages: privacy/terms/404, CookieConsent, `public/robots.txt`, `public/og.png`, favicons, `src/pages/index.astro` head                                                                   |
 
 Stubs are marked `// STUB(P<n>): …` — replace ONLY the ones tagged with
 your package number. Only P0 touches `package.json` / lockfile.
@@ -165,7 +165,7 @@ The design is 1440px-native and re-flows (no viewport-scale hack):
 
 The site ships TWO complete design modes behind one persisted pref
 (`usePrefs().minimal`, localStorage `"portfolio.tweaks"`, flipped by the
-fixed top-right `MinimalToggle` or the PreferencesMenu row). **Minimal is
+fixed top-right `MinimalToggle`, or the PreferencesMenu row — the Tweaks menu only renders in funky mode). **Minimal is
 the default**; full-fat ("funky") is opt-in — the toggle and the menu row
 are both labelled FUNKY and read ON when `minimal === false`.
 

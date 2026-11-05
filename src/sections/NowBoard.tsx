@@ -1,7 +1,7 @@
 // P6 — Now section (portfolio-2.jsx): cork graph-paper board on
-// --color-cork with 8 draggable sticky notes at the prototype's exact
-// positions/rotations/colors. Positions persist under localStorage
-// sticky_v2_n1..n8 (trap 4 — never drop the v2_ prefix); the "↻ RESET
+// --color-cork with 5 draggable sticky notes (owner copy, Nov '26; ids/
+// colors from the prototype). Positions persist under localStorage
+// sticky_v2_<id> (trap 4 — never drop the v2_ prefix); the "↻ RESET
 // LAYOUT" ghost button clears them and remounts the board via a key bump.
 // Below 768px the board collapses into a vertical list of notes (drag off
 // — AGENTS.md §Responsive breakpoints).
@@ -19,6 +19,7 @@ import ScrambleHover from "../components/text/ScrambleHover";
 import { usePointer } from "../components/pointer/PointerProvider";
 import { useMediaQuery } from "../lib/useMediaQuery";
 import { usePrefs } from "../lib/prefs";
+import { useLastfmTrack, type LastfmTrack } from "../lib/useLastfmTrack";
 import {
   cream,
   creamWarm,
@@ -47,7 +48,9 @@ interface NowNote {
   body: string;
 }
 
-// Prototype positions/rotations/colors/copy — verbatim from portfolio-2.jsx.
+// Ids kept from the prototype so returning visitors' dragged positions
+// (sticky_v2_<id>, trap 4) still apply; Nov '26 owner copy, laid out
+// 3-over-2 on the 1280×560 design board.
 const NOTES: NowNote[] = [
   {
     id: "n1",
@@ -55,87 +58,54 @@ const NOTES: NowNote[] = [
     y: 40,
     rotate: -4,
     color: sticky.yellow,
-    w: 240,
-    h: 210,
+    w: 270,
+    h: 230,
     label: "Building →",
-    body: "A FE eval harness that lets Claude propose UI tweaks on real PRs without nuking the design system.",
+    body: "Moments: a thread-style social app. You don't post one-offs, you post a thread of moments strung together.",
   },
   {
     id: "n2",
-    x: 350,
+    x: 520,
     y: 70,
     rotate: 3,
     color: sticky.mint,
     w: 230,
     h: 200,
     label: "Reading →",
-    body: '"A Philosophy of Software Design" (Ousterhout) — for the fourth time. Still right.',
-  },
-  {
-    id: "n3",
-    x: 620,
-    y: 50,
-    rotate: -2,
-    color: sticky.red,
-    w: 230,
-    h: 200,
-    label: "Mentoring →",
-    body: 'Weekly "code postmortems" — no shame, all signal.',
+    body: '"Atomic Habits" (James Clear).',
   },
   {
     id: "n4",
-    x: 880,
-    y: 80,
+    x: 950,
+    y: 50,
     rotate: 5,
     color: sticky.sky,
     w: 230,
     h: 200,
     label: "Listening →",
-    body: "Lo-fi when shipping. Sigur Rós when debugging. Silence when on-call.",
-  },
-  {
-    id: "n5",
-    x: 170,
-    y: 290,
-    rotate: 4,
-    color: sticky.yellow,
-    w: 250,
-    h: 210,
-    label: "Obsessing over →",
-    body: "View Transitions API + the boring elegance of native form validation.",
-  },
-  {
-    id: "n6",
-    x: 460,
-    y: 300,
-    rotate: -5,
-    color: sticky.lavender,
-    w: 240,
-    h: 210,
-    label: "Avoiding →",
-    body: "Meetings that could've been a Loom. Frameworks-of-the-week. Untyped JSON.",
+    body: "Techno, hard techno and schranz when shipping. Indie when I need to come back down.",
   },
   {
     id: "n7",
-    x: 740,
+    x: 270,
     y: 310,
     rotate: 3,
     color: sticky.orange,
-    w: 240,
+    w: 260,
     h: 210,
     label: "Drinking →",
-    body: "Filter coffee. Aggressive amounts of it. South Indian, always.",
+    body: "A medium-roast cortado if I'm at a café, or a good French press if I'm home.",
   },
   {
     id: "n8",
-    x: 1020,
+    x: 760,
     y: 300,
     rotate: -3,
-    color: sticky.yellow,
-    w: 230,
+    color: sticky.lavender,
+    w: 250,
     h: 200,
     label: "Open to →",
-    body: "Staff/Lead roles. Founding teams. AI-native dev tools. Say hi.",
+    body: "Any kind of development. I just want something that tickles my brain.",
   },
 ];
 
@@ -151,7 +121,7 @@ const PINS: CSSProperties[] = [
 // Stamp copy shared by BOTH design modes (label-row right side in
 // minimal) — natural case; the fancy Stamp and the minimal label row
 // both uppercase via CSS.
-const UPDATED = "Updated Sep '26";
+const UPDATED = "Updated Nov '26";
 
 const ink25 = `color-mix(in srgb, ${ink} 25%, transparent)`;
 const gridLine = `color-mix(in srgb, ${ink} 6%, transparent)`;
@@ -182,6 +152,14 @@ const noteBodyStyle: CSSProperties = {
   lineHeight: 1.1,
 };
 
+// Live Listening note (n4): Last.fm's latest scrobble once it loads after
+// mount; until then (and on SSR / any failure) the static n4 copy shows.
+function withLiveListening(notes: NowNote[], live: LastfmTrack | null) {
+  if (!live) return notes;
+  const body = `${live.nowPlaying ? "On repeat right now" : "Last played"}: "${live.name}" by ${live.artist}.`;
+  return notes.map((n) => (n.id === "n4" ? { ...n, body } : n));
+}
+
 function NoteContent({ label, body }: { label: string; body: string }) {
   return (
     <>
@@ -196,6 +174,7 @@ export default function NowBoard() {
   const compact = useMediaQuery("(max-width: 767px)");
   const { minimal } = usePrefs();
   const [boardKey, setBoardKey] = useState(0);
+  const notes = withLiveListening(NOTES, useLastfmTrack());
 
   // Minimal branch — guard AFTER all hooks (AGENTS.md §Two design modes).
   // No borderTop: the preceding SectionDivider already draws the hairline.
@@ -208,7 +187,7 @@ export default function NowBoard() {
             <span>{UPDATED}</span>
           </div>
           <div style={{ borderTop: borders.default }}>
-            {NOTES.map((n) => (
+            {notes.map((n) => (
               <div
                 key={n.id}
                 style={{
@@ -351,7 +330,7 @@ export default function NowBoard() {
             marginTop: 40,
           }}
         >
-          {NOTES.map((n) => (
+          {notes.map((n) => (
             <div
               key={n.id}
               style={{
@@ -403,7 +382,7 @@ export default function NowBoard() {
             />
           ))}
 
-          {NOTES.map((n) => (
+          {notes.map((n) => (
             <StickyNote
               key={n.id}
               id={n.id}

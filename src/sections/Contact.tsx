@@ -139,7 +139,7 @@ export default function Contact() {
       >
         <MinimalColumn>
           <div style={minimalLabelStyle}>
-            <span>10 / contact</span>
+            <span>07 / contact</span>
           </div>
           {/* Mockup .mh2 at 24px — natural case ("Let's build something."),
               NOT the 36px contact token. */}
@@ -271,7 +271,7 @@ export default function Contact() {
   return (
     <Slab
       bg={red}
-      label='10 // SAY HI'
+      label='07 // SAY HI'
       id='contact'
       style={{
         paddingTop: "var(--spacing-slab-top-deep)",
