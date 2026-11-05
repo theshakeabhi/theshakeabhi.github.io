@@ -2,8 +2,8 @@
 // frozen Sfx contract (AGENTS.md §Frozen contracts) — the Vinyl gates it on
 // usePrefs().sfx itself.
 //
-// Trap 5: the AudioContext is created/resumed ONLY from start(), which the
-// Vinyl calls inside a pointerdown (a user gesture). Nothing runs at import
+// Trap 5: the shared AudioContext (vinylAudio.ts) is created/resumed ONLY
+// from startScratch(), which the Vinyl calls inside a pointerdown. Nothing runs at import
 // time, so the module is SSR-safe.
 //
 // Voice: looping white noise → bandpass (the "hiss" of the needle) plus a
@@ -11,7 +11,8 @@
 // velocity drives pitch, filter cutoff and level; direction flips pitch
 // down for a backspin feel.
 
-let ctx: AudioContext | null = null;
+import { getAudioCtx, peekAudioCtx } from "./vinylAudio";
+
 let noiseBuf: AudioBuffer | null = null;
 
 interface Voice {
@@ -23,22 +24,8 @@ interface Voice {
 }
 let voice: Voice | null = null;
 
-function getCtx(): AudioContext | null {
-  if (typeof window === "undefined") return null;
-  if (!ctx) {
-    const AC =
-      window.AudioContext ??
-      (window as unknown as { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AC) return null;
-    ctx = new AC();
-  }
-  if (ctx.state === "suspended") void ctx.resume();
-  return ctx;
-}
-
 export function startScratch() {
-  const ac = getCtx();
+  const ac = getAudioCtx();
   if (!ac || voice) return;
   if (!noiseBuf) {
     noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
@@ -70,6 +57,7 @@ export function startScratch() {
 
 /** v: signed horizontal drag speed in px/ms (≈ −3…3 for a hard flick). */
 export function updateScratch(v: number) {
+  const ctx = peekAudioCtx();
   if (!ctx || !voice) return;
   const t = ctx.currentTime;
   const speed = Math.min(Math.abs(v), 3);
@@ -81,6 +69,7 @@ export function updateScratch(v: number) {
 }
 
 export function stopScratch() {
+  const ctx = peekAudioCtx();
   if (!ctx || !voice) return;
   const v = voice;
   voice = null;

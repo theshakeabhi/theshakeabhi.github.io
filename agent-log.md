@@ -1446,3 +1446,13 @@ History before this date lives earlier in this file.
 
 - **Files touched**: `src/styles/global.css`, `src/tokens.ts`, `src/components/primitives/Slab.tsx`, `src/components/chrome/PreferencesMenu.tsx`, `src/sections/{About,NowBoard,Contact,Hero}.tsx`; per-folder logs.
 - **Self-check**: `yarn build` + eslint clean; overflow audit clean at 393/768/1024/1440 (+ minimal 768).
+
+## Side A — acid loop on the vinyl · 2026-11-05T16:40:00+05:30
+
+- **Files touched**: new `src/components/interactive/{acidLoop,vinylAudio}.ts`; `src/components/interactive/{Vinyl.tsx,vinylScratch.ts}`, `src/components/chrome/PreferencesMenu.tsx`; per-folder logs.
+- **Self-check**: `yarn build` + eslint clean; behaviour verified headless; audio needs a human listen.
+
+## Last.fm integration removed · 2026-11-05T16:55:00+05:30
+
+- **Files touched**: `src/lib/useLastfmTrack.ts` (deleted), `src/components/interactive/Vinyl.tsx`, `src/sections/{NowBoard,Hero}.tsx`, `src/pages/privacy.astro`; per-folder logs.
+- **Self-check**: `yarn build` + eslint clean; dist has no Last.fm request or key.
