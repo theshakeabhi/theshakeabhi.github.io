@@ -1456,3 +1456,16 @@ History before this date lives earlier in this file.
 
 - **Files touched**: `src/lib/useLastfmTrack.ts` (deleted), `src/components/interactive/Vinyl.tsx`, `src/sections/{NowBoard,Hero}.tsx`, `src/pages/privacy.astro`; per-folder logs.
 - **Self-check**: `yarn build` + eslint clean; dist has no Last.fm request or key.
+
+## Boot screen over funky hydration reflow · 2026-11-05T17:30:00+05:30
+
+- **Files touched**: `src/pages/index.astro` (#boot markup + data-booting in head script, 3s failsafe), `src/lib/prefs.tsx` (release after mode swap, 2 rAFs), `src/styles/global.css` (boot styles).
+- **Decision**: loader only for stored-funky visitors (minimal visitors have no reflow). Tokens only.
+
+## Boot screen: first-load only + fill to 100% · 2026-11-05T18:00:00+05:30
+
+- Files: index.astro, prefs.tsx, global.css. Gated by sessionStorage "portfolio.booted"; bar animates 0→100% (1.2s) and release waits for it (+hold); failsafe 3.5s.
+
+## Boot cover on repeat loads (quiet) · 2026-11-05T18:20:00+05:30
+
+- Repeat loads in a session now get the cream cover without the bar (data-boot-quiet) so the minimal-first frame never shows. Files: index.astro, prefs.tsx, global.css.

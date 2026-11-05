@@ -133,6 +133,21 @@ export function PrefsProvider({ children }: { children?: ReactNode }) {
     const meta = document.querySelector('meta[name="theme-color"]');
     const bg = getComputedStyle(el).getPropertyValue("--color-cream").trim();
     if (meta && bg) meta.setAttribute("content", bg);
+    // First-load boot screen (index.astro): wait for the swap to paint AND
+    // for the bar to reach 100% (BOOT_MS), then a short beat, then release.
+    if (el.hasAttribute("data-booting")) {
+      const BOOT_MS = 1400; // bar fill (1.2s in global.css) + hold at 100%
+      const start = (window as { __bootStart?: number }).__bootStart;
+      const quiet = el.hasAttribute("data-boot-quiet");
+      const wait = quiet
+        ? 0
+        : Math.max(0, BOOT_MS - (Date.now() - (start ?? 0)));
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          window.setTimeout(() => el.removeAttribute("data-booting"), wait)
+        )
+      );
+    }
   }, [prefs.minimal]);
 
   const setPref = useCallback((key: PrefKey, value: boolean) => {

@@ -44,3 +44,15 @@ minimal-mode feature — lives in the repo-root `agent-log.md`.
 - **Files touched**: `useLastfmTrack.ts` deleted (owner deleted the Last.fm account).
 - **Decisions/deviations**: the shipped read-only API key goes with it; nothing else in src/lib depended on it.
 - **Self-check**: no `audioscrobbler` / key in dist; build + eslint clean.
+
+## Boot screen over funky hydration reflow · 2026-11-05T17:30:00+05:30
+
+- Boot overlay (#boot) for stored-funky visitors; see root agent-log.md.
+
+## Boot screen: first-load only + fill to 100% · 2026-11-05T18:00:00+05:30
+
+- Files: index.astro, prefs.tsx, global.css. Gated by sessionStorage "portfolio.booted"; bar animates 0→100% (1.2s) and release waits for it (+hold); failsafe 3.5s.
+
+## Boot cover on repeat loads (quiet) · 2026-11-05T18:20:00+05:30
+
+- Repeat loads in a session now get the cream cover without the bar (data-boot-quiet) so the minimal-first frame never shows. Files: index.astro, prefs.tsx, global.css.

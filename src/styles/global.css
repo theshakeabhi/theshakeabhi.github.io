@@ -315,6 +315,70 @@ input[type="range"]::-moz-range-thumb {
   }
 }
 
+/* ── Boot screen — held over the minimal→funky hydration reflow ─────
+   Shown only while html[data-booting] (set pre-paint for stored-funky
+   visitors, released by prefs.tsx). Quiet mono layout + one hard-edged
+   funky bar; tokens only, so it matches whichever mode is active. */
+#boot {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-cream);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+html[data-booting] #boot {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
+}
+html[data-boot-quiet] .boot-card {
+  display: none;
+}
+html[data-boot-quiet] #boot {
+  transition-duration: 0.15s;
+}
+.boot-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(280px, 70vw);
+}
+.boot-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+}
+.boot-bar {
+  display: block;
+  height: 18px;
+  border: 3px solid var(--color-ink);
+  background: var(--color-cream);
+  box-shadow: 5px 5px 0 var(--color-ink);
+  overflow: hidden;
+}
+.boot-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--color-accent);
+  animation: boot-fill 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes boot-fill {
+  to {
+    width: 100%;
+  }
+}
+
 /* ══ MINIMAL MODE — html[data-minimal] ═══════════════════════════════
    The second design mode: the SAME tokens, re-declared quiet. The
    attribute is set BEFORE first paint by the is:inline head script in

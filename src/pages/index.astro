@@ -45,6 +45,22 @@ const ogImageAlt =
           /* full-fat --color-cream; meta can't read CSS vars */
           var __tc = document.querySelector('meta[name="theme-color"]');
           if (__tc) __tc.setAttribute("content", "#f5f1e8");
+          /* Funky visitors, hold a boot
+             screen over the minimal-first hydration reflow. prefs.tsx
+             releases it once the bar has filled to 100%; the timer is a
+             failsafe so a JS failure can never trap the page. */
+          /* Repeat loads get the same cover without the bar (quiet), so
+             the minimal-first frame is never visible. */
+          if (sessionStorage.getItem("portfolio.booted")) {
+            document.documentElement.setAttribute("data-boot-quiet", "");
+          } else {
+            sessionStorage.setItem("portfolio.booted", "1");
+          }
+          window.__bootStart = Date.now();
+          document.documentElement.setAttribute("data-booting", "");
+          setTimeout(function () {
+            document.documentElement.removeAttribute("data-booting");
+          }, 3500);
         }
       } catch (_e) {
         /* storage unavailable — stay minimal */
@@ -115,6 +131,12 @@ const ogImageAlt =
     </script>
   </head>
   <body>
+    <div id="boot" aria-hidden="true">
+      <div class="boot-card">
+        <span class="boot-label">abhishek / loading</span>
+        <span class="boot-bar"><span class="boot-fill"></span></span>
+      </div>
+    </div>
     <Portfolio client:load />
     <!-- Own island, outside PointerProvider — keeps the normal OS cursor -->
     <CookieConsent client:idle />
